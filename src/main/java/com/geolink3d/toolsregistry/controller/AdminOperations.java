@@ -7,10 +7,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/tools-registry/admin")
 public class AdminOperations {
 
-	
-	@RequestMapping("/err")
-	public String goErrorPage() {
-		return "error";
-	}
-	
+
 }
