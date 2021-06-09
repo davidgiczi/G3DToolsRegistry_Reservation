@@ -1,18 +1,25 @@
 package com.geolink3d.toolsregistry.model;
 
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name="geoworkers")
-public class GeoWorker implements Comparable<GeoWorker>{
+public class GeoWorker {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +33,14 @@ public class GeoWorker implements Comparable<GeoWorker>{
 	@Column(nullable = false)
 	private String password;
 	private boolean enabled;
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(
+			name= "geoworkers_roles",
+			joinColumns= {@JoinColumn(name = "geoworker_id")},
+			inverseJoinColumns = {@JoinColumn(name = "role_id")}
+			)
+	private Set<Role> roles = new HashSet<>();
 
 	public GeoWorker() {
 	}
@@ -86,15 +101,29 @@ public class GeoWorker implements Comparable<GeoWorker>{
 		this.enabled = enabled;
 	}
 
-	@Override
-	public int compareTo(GeoWorker o) {
-		
-		String fullname1 = this.lastname + " " + this.firstname;
-		String fullname2 = o.lastname + " " + o.firstname; 
-		
-		return fullname1.compareTo(fullname2) > 0 ? 1 : fullname1.compareTo(fullname2) < 0 ? -1 : 0;
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 	
+	public void addRoles(String roleName) {
+		
+		if(this.roles == null || this.roles.isEmpty()) {
+			this.roles = new HashSet<>();
+		}
+			this.roles.add(new Role(roleName));
+		
+	}
+
+	@Override
+	public String toString() {
+		return "GeoWorker [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", instruments="
+				+ instruments + ", username=" + username + ", password=" + password + ", enabled=" + enabled
+				+ ", roles=" + roles + "]";
+	}
 	
 	
 }

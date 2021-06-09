@@ -1,24 +1,20 @@
 package com.geolink3d.toolsregistry.model;
 
-
-
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "instruments")
-public class GeoInstrument {
-
+@Table(name = "additionals")
+public class GeoAdditional {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -32,13 +28,11 @@ public class GeoInstrument {
 	@Column(length = 1000)
 	private String comment;
 	@ManyToOne
-	private GeoWorker geoworker;
-	@OneToMany(mappedBy = "instrument")
-	private List<GeoAdditional> additionals;
+	private GeoInstrument instrument;
 	private boolean deleted;
 	private boolean used;
 	
-	public GeoInstrument() {
+	public GeoAdditional() {
 	}
 
 	public Long getId() {
@@ -97,12 +91,12 @@ public class GeoInstrument {
 		this.comment = comment;
 	}
 
-	public GeoWorker getGeoworker() {
-		return geoworker;
+	public GeoInstrument getInstrument() {
+		return instrument;
 	}
 
-	public void setGeoworker(GeoWorker geoworker) {
-		this.geoworker = geoworker;
+	public void setInstrument(GeoInstrument instrument) {
+		this.instrument = instrument;
 	}
 
 	public boolean isDeleted() {
@@ -120,14 +114,7 @@ public class GeoInstrument {
 	public void setUsed(boolean used) {
 		this.used = used;
 	}
-
-	public List<GeoAdditional> getAdditionals() {
-		return additionals;
-	}
-
-	public void setAdditionals(List<GeoAdditional> additionals) {
-		this.additionals = additionals;
-	}
+	
 	
 	
 }

@@ -1,28 +1,24 @@
 package com.geolink3d.toolsregistry.model;
 
-
-
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "instruments")
-public class GeoInstrument {
+@Table(name = "used_tools")
+public class UsedTool {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	private String name;
+	private String workername;
+	private String toolname;
 	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
 	private Date pickUpDate;
 	private String pickUpPlace;
@@ -31,103 +27,57 @@ public class GeoInstrument {
 	private String putDownPlace;
 	@Column(length = 1000)
 	private String comment;
-	@ManyToOne
-	private GeoWorker geoworker;
-	@OneToMany(mappedBy = "instrument")
-	private List<GeoAdditional> additionals;
-	private boolean deleted;
-	private boolean used;
 	
-	public GeoInstrument() {
+	public UsedTool() {
 	}
-
+	
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public String getName() {
-		return name;
+	public String getWorkername() {
+		return workername;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setWorkername(String workername) {
+		this.workername = workername;
 	}
-
+	public String getToolname() {
+		return toolname;
+	}
+	public void setToolname(String toolname) {
+		this.toolname = toolname;
+	}
 	public Date getPickUpDate() {
 		return pickUpDate;
 	}
-
 	public void setPickUpDate(Date pickUpDate) {
 		this.pickUpDate = pickUpDate;
 	}
-
 	public String getPickUpPlace() {
 		return pickUpPlace;
 	}
-
 	public void setPickUpPlace(String pickUpPlace) {
 		this.pickUpPlace = pickUpPlace;
 	}
-
 	public Date getPutDownDate() {
 		return putDownDate;
 	}
-
 	public void setPutDownDate(Date putDownDate) {
 		this.putDownDate = putDownDate;
 	}
-
 	public String getPutDownPlace() {
 		return putDownPlace;
 	}
-
 	public void setPutDownPlace(String putDownPlace) {
 		this.putDownPlace = putDownPlace;
 	}
-
 	public String getComment() {
 		return comment;
 	}
-
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-	public GeoWorker getGeoworker() {
-		return geoworker;
-	}
-
-	public void setGeoworker(GeoWorker geoworker) {
-		this.geoworker = geoworker;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
-	public boolean isUsed() {
-		return used;
-	}
-
-	public void setUsed(boolean used) {
-		this.used = used;
-	}
-
-	public List<GeoAdditional> getAdditionals() {
-		return additionals;
-	}
-
-	public void setAdditionals(List<GeoAdditional> additionals) {
-		this.additionals = additionals;
-	}
-	
-	
+		
 }
