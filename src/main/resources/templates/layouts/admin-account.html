@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title th:text="#{title}"></title>
+<link rel="stylesheet" th:href="@{/css/registry.css}">
+</head>
+<body>
+<br>
+<a id="signout" sec:authorize="isAuthenticated()" th:href="@{/tools-registry/logout}" th:text="#{sign.out}"></a>
+<br><br><br>
+<div id="auth" sec:authorize="isAuthenticated()">
+ <span th:text="#{auth}"></span><b><span sec:authentication="name"></span></b></div>
+<br>
+<div id="options" sec:authorize="isAuthenticated()">
+ <a th:href="@{/tools-registry/admin/workers}" th:text="#{workers}"></a>&nbsp;&nbsp;&nbsp;
+ <a th:href="@{/tools-registry/admin/instruments}" th:text="#{instruments}"></a>&nbsp;&nbsp;&nbsp;
+ <a th:href="@{/tools-registry/admin/additionals}" th:text="#{additionals}"></a>&nbsp;&nbsp;&nbsp;
+ <a th:href="@{/tools-registry/admin/tools-in-use}" th:text="#{tools.in.use}"></a>&nbsp;&nbsp;&nbsp;
+ <a th:href="@{/tools-registry/admin/tools-history}" th:text="#{tools.history}"></a>&nbsp;&nbsp;&nbsp;
+</div>
+
+<div layout:fragment="error"></div>
+<div layout:fragment="workers"></div>
+<div layout:fragment="instruments"></div>
+<div layout:fragment="additionals"></div>
+<div layout:fragment="tools-in-use"></div>
+<div layout:fragment="tools-history"></div>
+
+</body>
+<script type="text/javascript" th:src="@{/script/admin-account.js}"></script>
+</html>

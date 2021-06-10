@@ -79,5 +79,12 @@ public class UsedTool {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
+
+	@Override
+	public String toString() {
+		return "UsedTool [id=" + id + ", workername=" + workername + ", toolname=" + toolname + ", pickUpDate="
+				+ pickUpDate + ", pickUpPlace=" + pickUpPlace + ", putDownDate=" + putDownDate + ", putDownPlace="
+				+ putDownPlace + ", comment=" + comment + "]";
+	}
 		
 }

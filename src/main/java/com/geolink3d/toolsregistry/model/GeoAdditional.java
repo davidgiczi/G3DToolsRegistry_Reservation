@@ -114,7 +114,12 @@ public class GeoAdditional {
 	public void setUsed(boolean used) {
 		this.used = used;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "GeoAdditional [id=" + id + ", name=" + name + ", pickUpDate=" + pickUpDate + ", pickUpPlace="
+				+ pickUpPlace + ", putDownDate=" + putDownDate + ", putDownPlace=" + putDownPlace + ", comment="
+				+ comment + ", instrument=" + instrument + ", deleted=" + deleted + ", used=" + used + "]";
+	}
 	
 }

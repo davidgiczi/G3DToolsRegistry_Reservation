@@ -25,7 +25,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		
-		GeoWorker authedWorker =workerService.findGeoWorkerByUserName(authentication.getName());
+		GeoWorker authedWorker = workerService.findGeoWorkerByUserName(authentication.getName());
 		Role guest = new Role("ROLE_GUEST");
 		if(authedWorker != null && authedWorker.getRoles().contains(guest)) {
 		authedWorker.getRoles().remove(guest);

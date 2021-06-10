@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/admin-account">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+
+<div layout:fragment="workers">
+
+<input id="search-field" th:onkeyup="'searchPassenger()'" type="text" th:placeholder="#{search}">
+
+<h1 th:text="#{workers}"></h1>
+
+<div id="empty" th:if="${#lists.isEmpty(workers)}" th:text="#{empty.workers}"></div>
+
+<table th:if="${not #lists.isEmpty(workers)}">
+	<tr>
+	<th th:text="#{number}"></th>
+	<th th:text="#{lastname}"></th>
+	<th th:text="#{firstname}"></th>
+	<th th:text="#{username}"></th>
+	<th th:text="#{password}"></th>
+	<th th:text="#{enabled}"></th>
+	<th th:text="#{role}"></th>
+	</tr>
+	
+	<tr th:each="worker : ${workers}">
+	<td th:utext="${workerStat.count}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${worker.lastname}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${worker.firstname}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${worker.username}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	<td th:classappend="${workerStat.odd} ? '' : 'colored'"><a th:onclick="'enterWorkerAccount(\'' + ${worker.id} + '\');'" th:utext="${worker.password}"></a>
+	<td th:if="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'">-</td>
+	<td th:unless="${worker.id == 1}" th:utext="${worker.enabled}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	<td th:if="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'">ADMIN</td>
+	<td th:unless="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	
+	<!-- td th:classappend="${clientStat.odd} ? '' : 'colored'"><a th:onclick="'enterUserAccount(\'' + ${client.id} + '\');'" th:utext="${client.password}"></a></td>
+	
+	<td th:utext="${client.activation}"  th:classappend="${clientStat.odd} ? '' : 'colored'"></td>
+	
+	
+	<td th:if="${client.id != 1}" th:classappend="${clientStat.odd} ? '' : 'colored'"><a th:onclick="'enabledUserAccount(\'' + ${client.id} + '\');'" th:utext="${client.enabled}" ></a></td>
+	<td th:if="${client.id == 1}" th:classappend="${clientStat.odd} ? '' : 'colored'">-</td>
+	
+	<td th:classappend="${clientStat.odd} ? '' : 'colored'"><a th:onclick="'goReservations(\'' + ${client.id} + '\');'" th:text="#{orders}"></a></td>
+	
+	<td th:if="${client.id != 1}" th:classappend="${clientStat.odd} ? '' : 'colored'">
+	<select th:onchange="'setRole(\'' + ${client.id} + '\');'" id="roleSelect">
+	<option th:each="role : ${client.ROLES}" th:if="${client.role == role}" th:text="${role}" selected="selected"></option>
+	<option th:each="role : ${client.ROLES}" th:unless="${client.role == role}" th:text="${role}"></option>
+	</select>
+	</td>
+	
+	<td th:if="${client.id != 1}" th:classappend="${clientStat.odd} ? '' : 'colored'"><a th:text="#{del}" th:onclick="'deleteUser(\'' + ${client.id} + '\');'"></a></td>
+	<td th:if="${client.id == 1}" th:classappend="${clientStat.odd} ? '' : 'colored'">-</td>
+	</tr> -->
+
+</table>
+
+</div>
+
+</body>
+</html>

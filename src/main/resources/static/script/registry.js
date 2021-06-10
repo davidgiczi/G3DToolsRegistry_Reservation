@@ -343,15 +343,21 @@ function isEqual(){
 	}
 }
 
-var isNonClicked = true;
 
 function isOK(){
-	
-	
-	 if(isValidUsr() && isValidPwd(null) && isEqual() && isNonClicked){
-		document.getElementById("regForm").submit();
+		
+	 if(!isValidUsr() || !isValidPwd(null) || !isEqual()){
 		document.getElementById("regist-submit-btn").disabled = true;
-		isNonClicked = false;
+		return;	
 	}
 	
+	document.getElementById("regist-submit-btn").disabled = false;
+}
+
+
+function send(){
+	
+	 if(isValidUsr() && isValidPwd(null) && isEqual()){
+		document.getElementById("regForm").submit();
+	}
 }

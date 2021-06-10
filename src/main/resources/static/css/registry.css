@@ -12,24 +12,26 @@ table{
 }
 
 th{
-	background-color: #FFCCFF;
-	border: solid 1px gray;
+	background-color: white;
+	border: none;
 	border-collapse: collapse;
 	text-align: center;
 	color:  #606060;
+	height: 40px;
 }	
 	
 table, td{
 	background-color:white;
-	border: solid 1px gray;
+	border: none;
 	border-collapse: collapse;
 	text-align: center;
 	color:  gray;
+	height: 40px;
 }
 
 h1{
 	font-size: 38px;
-	color: white;
+	color: #BA55D3;
 	text-align: center;
 }
 
@@ -83,6 +85,7 @@ h1{
 	font-size: 12px;
 	}
 #error {
+	text-align: center;
 	font-family: Helvetica;
 	font-size: 12px;
 	color: red;
@@ -92,7 +95,8 @@ h1{
 	font-size: 12px;
 	color: green;
 	}
-hr{
+hr{	
+	width: 50%;
 	background-color: lightgray;
 	border-color: lightgray;
 }
@@ -130,6 +134,8 @@ a {
 }
 
 #search-field{
+	position: absolute;
+	left:30%;
 	background-color: lightgray;
 	height: 20px;
 	width: 120px;

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layouts/main_user">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
 
 <meta charset="UTF-8">
@@ -27,7 +28,7 @@
 <input type="email" id="uname" name="username" size="50" th:field="*{username}" th:placeholder="#{email}"/>
 <div id="username-error"></div>
 <div id="username-correct"></div>
-<h4 th:text="#{pass}"></h4>
+<h4 th:text="#{password}"></h4>
 <input type="password" id="pass" name="pass" size="50"/><br>
 <div id="password-error"></div>
 <div id="password-correct"></div>
@@ -38,7 +39,7 @@
 <div id="passwords-equal"></div>
 <br><br><br>
 </form>
-<input type="button" id=regist-submit-btn onclick="isOk()" th:value="#{send}"/>
+<input type="button" id=regist-submit-btn onclick="send()" th:value="#{send}"/>
 <br>
 
 </div>

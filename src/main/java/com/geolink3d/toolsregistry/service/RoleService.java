@@ -31,13 +31,13 @@ public class RoleService {
 	}
 	
 	
-	public String getPassengerRoleAsString(Set<Role> passengerRoles) {
+	public String getGeoWorkerRoleAsString(Set<Role> workerRoles) {
 		
 		List<Role> roles = roleRepo.findAll();
 		String roleString = "ROLE_USER";
 		
 		for (Role role : roles) {
-			if(passengerRoles.contains(role)) {
+			if(workerRoles.contains(role)) {
 				roleString = role.getRole();
 			}
 		}
