@@ -42,7 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 			.csrf().disable()
 			.authorizeRequests()
-				.antMatchers("/tools/registry/login").permitAll()
+				.antMatchers("/tools-registry/login").permitAll()
+				.antMatchers("/tools-registry/enter").permitAll()
 				.antMatchers("/tools-registry/registration").permitAll()
 				.antMatchers("/script/**", "/css/**").permitAll()
 				.antMatchers("/console/**").permitAll()
@@ -51,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.formLogin()
 				.loginPage("/tools-registry/login")
-				.defaultSuccessUrl("/tools-registry/admin/account", true)
+				.defaultSuccessUrl("/tools-registry/enter", true)
 				.permitAll()
 			.and()
 			.logout()

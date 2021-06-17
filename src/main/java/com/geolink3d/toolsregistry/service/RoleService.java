@@ -20,7 +20,10 @@ public class RoleService {
 		this.roleRepo = roleRepo;
 	}
 
-
+	public List<Role> findAll(){
+		return roleRepo.findAll();
+	}
+	
 	public List<String> getRoleStringStore(){
 			
 	List<Role> roles = roleRepo.findAll();

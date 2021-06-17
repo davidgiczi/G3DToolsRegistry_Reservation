@@ -29,8 +29,7 @@ table, td{
 	height: 40px;
 }
 
-h1{
-	font-size: 38px;
+h1, h3{
 	color: #BA55D3;
 	text-align: center;
 }
@@ -142,4 +141,11 @@ a {
 	border-radius: 5px;
 	text-align: center;
 }
+
+button{
+	width: 5em;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
 

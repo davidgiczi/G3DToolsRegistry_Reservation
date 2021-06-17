@@ -1,6 +1,7 @@
 package com.geolink3d.toolsregistry.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,12 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 	
 	@Override
 	public List<GeoWorker> findAll() {
-		return workerRepo.findAll();
+		
+		List<GeoWorker> workers = workerRepo.findAll();
+		workers.forEach(w -> w.setRole(roleService.getGeoWorkerRoleAsString(w.getRoles())));
+		Collections.sort(workers);
+		
+		return workers;
 	};
 
 	@Override

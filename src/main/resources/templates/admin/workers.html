@@ -35,9 +35,15 @@
 	<td th:utext="${worker.username}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
 	<td th:classappend="${workerStat.odd} ? '' : 'colored'"><a th:onclick="'enterWorkerAccount(\'' + ${worker.id} + '\');'" th:utext="${worker.password}"></a>
 	<td th:if="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'">-</td>
-	<td th:unless="${worker.id == 1}" th:utext="${worker.enabled}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
-	<td th:if="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'">ADMIN</td>
-	<td th:unless="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	
+	<td th:if="${worker.id != 1 && worker.enabled}" th:classappend="${workerStat.odd} ? '' : 'colored'">
+	<a><button style="background-color:#3996f3;" th:if="${worker.enabled}" th:onclick="'enabledUserAccount(\'' + ${worker.id} + '\');'">Igen</button></a></td>
+	<td  th:unless="${worker.enabled}" th:classappend="${workerStat.odd} ? '' : 'colored'">
+	<a><button style="background-color:red;" th:unless="${worker.enabled}" th:onclick="'enabledUserAccount(\'' + ${worker.id} + '\');'">Nem</button></a></td>
+	
+	<td th:if="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'">ROLE_ADMIN</td>
+	<td th:unless="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'"><a th:onclick="'changeRole(\'' + ${worker.id} + '\');'" th:text="${worker.role}"></a></td>
+	
 	
 	<!-- td th:classappend="${clientStat.odd} ? '' : 'colored'"><a th:onclick="'enterUserAccount(\'' + ${client.id} + '\');'" th:utext="${client.password}"></a></td>
 	

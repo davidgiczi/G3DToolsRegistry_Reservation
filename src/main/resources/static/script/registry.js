@@ -155,25 +155,6 @@ function sendModifiedTicket(){
 	document.getElementById("modified_ticket_form").submit();
 }
 
-function changePassword(){
-	
-	var newPwd = prompt(document.getElementById("newPwdMsg").value);
-	
-	if(newPwd != null){
-		
-		if(isValidPwd(newPwd)){
-			
-			document.getElementById("changePass").value = newPwd;
-			document.getElementById("changePassForm").submit();
-			
-		}
-		else{
-			alert(document.getElementById("newPwdError").value);
-		}
-		
-	}
-	
-}
 
 function getArrivalDate(){
 	var date = document.getElementById("dep-date").value;

@@ -20,7 +20,6 @@ import com.geolink3d.toolsregistry.model.Role;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
 import com.geolink3d.toolsregistry.service.RoleService;
 
-
 @Controller
 @RequestMapping("/tools-registry/admin")
 public class AdminOperations {
@@ -43,6 +42,7 @@ public class AdminOperations {
 
 	@RequestMapping("/account")
 	public String goAdminAccount() {
+		
 		return "layouts/admin-account";
 	}
 	
@@ -50,13 +50,14 @@ public class AdminOperations {
 	public String goWorkersPage(Model model) {
 		
 		List<GeoWorker> workers = workerService.findAll();
-		model.addAttribute("workers", workers);
+		model.addAttribute("workers",workers);
 		
 		return "admin/workers";
 	}
 	
 	@RequestMapping("/instruments")
 	public String goInstrumentsPage() {
+		
 		return "admin/instruments";
 	}
 	
@@ -121,4 +122,46 @@ public class AdminOperations {
 				
 		return "redirect:/tools-registry/user/account";
 	}
+	
+	
+	@RequestMapping("/enabled")
+	public String enabledUserAccount(@RequestParam("id") Long id) {
+		
+		Optional<GeoWorker> worker = workerService.findGeoWorkerById(id);
+		
+		if(worker.isPresent()) {
+			if(worker.get().isEnabled()) {
+				worker.get().setEnabled(false);
+			}
+			else {
+				worker.get().setEnabled(true);
+			}
+			
+			workerService.save(worker.get());
+			
+		}
+		return "redirect:/tools-registry/admin/workers";
+	}
+	
+
+	@RequestMapping("/change-role")
+	public String changeRole(@RequestParam("id") Long id) {
+		
+		Optional<GeoWorker> worker = workerService.findGeoWorkerById(id);
+		
+		if(worker.isPresent()) {
+			if(worker.get().getRoles().contains(new Role("ROLE_USER"))) {
+				worker.get().getRoles().clear();
+				worker.get().addRoles("ROLE_ADMIN");
+			}
+			else if(worker.get().getRoles().contains(new Role("ROLE_ADMIN"))){
+				worker.get().getRoles().clear();
+				worker.get().addRoles("ROLE_USER");
+			}		
+			workerService.save(worker.get());
+		}
+		
+		return "redirect:/tools-registry/admin/workers";
+	}
+	
 }

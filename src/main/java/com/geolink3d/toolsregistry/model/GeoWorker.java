@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="geoworkers")
-public class GeoWorker {
+public class GeoWorker implements Comparable<GeoWorker> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +33,7 @@ public class GeoWorker {
 	@Column(nullable = false)
 	private String password;
 	private boolean enabled;
+	private String role;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(
@@ -109,6 +110,14 @@ public class GeoWorker {
 		this.roles = roles;
 	}
 	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public void addRoles(String roleName) {
 		
 		if(this.roles == null || this.roles.isEmpty()) {
@@ -117,13 +126,24 @@ public class GeoWorker {
 			this.roles.add(new Role(roleName));
 		
 	}
-
+	
+	@Override
+	public int compareTo(GeoWorker o) {
+		
+		String fullName1 = this.getLastname() + " " + this.getFirstname();
+		String fullName2 = o.getLastname() + " " + o.getFirstname();
+		
+		return fullName1.compareTo(fullName2) > 0 ? 1 : fullName1.compareTo(fullName2) < 0 ? -1 : 0;
+	}
+	
 	@Override
 	public String toString() {
 		return "GeoWorker [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", instruments="
 				+ instruments + ", username=" + username + ", password=" + password + ", enabled=" + enabled
-				+ ", roles=" + roles + "]";
+				+ ", role=" + role + "]";
 	}
+
+	
 	
 	
 }
