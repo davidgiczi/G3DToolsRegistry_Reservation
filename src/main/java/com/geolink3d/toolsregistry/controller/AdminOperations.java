@@ -151,17 +151,47 @@ public class AdminOperations {
 		
 		if(worker.isPresent()) {
 			if(worker.get().getRoles().contains(new Role("ROLE_USER"))) {
-				worker.get().getRoles().clear();
-				worker.get().addRoles("ROLE_ADMIN");
+				
+				Role userRole = roleService.findByRole("ROLE_USER");
+				
+				if(userRole != null) {
+					worker.get().getRoles().add(userRole);
+				}
+				else {
+					worker.get().addRoles("ROLE_USER");
+				}
+				
 			}
 			else if(worker.get().getRoles().contains(new Role("ROLE_ADMIN"))){
-				worker.get().getRoles().clear();
-				worker.get().addRoles("ROLE_USER");
+				
+				Role adminRole = roleService.findByRole("ROLE_ADMIN");
+				
+				if(adminRole != null) {
+					worker.get().getRoles().add(adminRole);
+				}
+				else {
+					worker.get().addRoles("ROLE_ADMIN");
+				}
 			}		
 			workerService.save(worker.get());
 		}
 		
 		return "redirect:/tools-registry/admin/workers";
+	}
+	
+	@RequestMapping("/search")
+	public String searchPassenger(@RequestParam(value = "text") String text, Model model) {
+		
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/admin/workers";
+		}else {
+			List<GeoWorker> workers = workerService.findByText(text);
+			model.addAttribute("txt", text);
+			model.addAttribute("workers", workers);		
+		}
+		
+		return "admin/workers";
 	}
 	
 }

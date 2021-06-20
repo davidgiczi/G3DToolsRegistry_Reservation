@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	>
+<head>
+<meta charset="UTF-8">
+<title th:text="#{title}"></title>
+<link rel="stylesheet" th:href="@{/css/registry.css}">
+</head>
+<body>
+
+<h1 th:text="#{login}"></h1>
+<hr>
+<br>
+<br>
+<br>
+
+
+<div id="login">
+
+<form th:action="@{/tools-registry/login}" method="POST">
+<br>
+<br>
+<input type="text" id="username" name="username" th:placeholder="#{email}"  size="30" required="required"/><br><br>
+<input type="password" id="password" name="password" th:placeholder="#{password}" size="30" required="required"/><br><br>
+<div id="error" th:if="${param.error}" th:text="#{error.login}"></div>
+<div id="logout" th:if="${param.logout}" th:text="#{logout}"></div><br>
+<input type="submit" th:value="#{login}"><br><br>
+<a th:href="@{/tools-registry/registration}" th:text="#{registration}"></a>
+</form>
+</div>
+
+<span th:switch="${activationSuccess}">
+<input th:case="true" type="hidden" id="activation-success"  th:value="#{activation.success}"/> 
+<input th:case="false" type="hidden" id="activation-success"   th:value="#{activation.unsuccess}"/> 
+</span>
+
+</body>
+<script type="text/javascript" th:src="@{/script/registry.js}"></script>
+</html>

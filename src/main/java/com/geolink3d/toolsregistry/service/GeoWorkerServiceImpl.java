@@ -119,14 +119,15 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 		
 		geoworkers.addAll(workerRepo.findByPassword(EncoderService.encodeByBase64(text)));
 		
-		/*PassengerHighlighter highlighter = new PassengerHighlighter();
-		highlighter.setSearchedExpression(text);
-		highlighter.createInputPassengerStore(passengers, roleService);
-		highlighter.createHighlightedPassengerStore();
+		geoworkers.forEach(w -> w.setRole(roleService.getGeoWorkerRoleAsString(w.getRoles())));
+		Collections.sort(geoworkers);
 		
-		return highlighter.getHighlightedPassengertStore();*/
-		return geoworkers;
-	
+		GeoWorkerHighlighter highlighter = new GeoWorkerHighlighter(geoworkers);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedGeoWorkerStore();
+		
+		return highlighter.getHighlightedGeoWorkerStore();
+		
 	}
 	
 }

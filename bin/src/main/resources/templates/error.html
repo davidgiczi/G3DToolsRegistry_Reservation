@@ -18,14 +18,7 @@
 <br>
 <br>
 <h1 style="color:red" th:text="#{error.message}"></h1>
-<div style="text-align: center;">
-<span>
-<font th:text="#{error.tipp1}"></font>
-<a  sec:authorize="isAuthenticated()" th:href="@{/tools-registry/login}" th:text="#{go.login}"></a>
-<a  sec:authorize="!isAuthenticated()" th:href="@{/tools-registry/login}" th:text="#{go.login}"></a>
-<font th:text="#{error.tipp2}"></font>
-</span>
-</div>
+<h3 style="color:#BA55D3;" th:text="#{tipp.message}"></h3>
 
 </body>
 </html>

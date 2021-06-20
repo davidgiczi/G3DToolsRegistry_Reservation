@@ -29,7 +29,7 @@ table, td{
 	height: 40px;
 }
 
-h1 {
+h1, h3{
 	color: #BA55D3;
 	text-align: center;
 }
@@ -133,6 +133,8 @@ a {
 }
 
 #search-field{
+	position: absolute;
+	left:30%;
 	background-color: lightgray;
 	height: 20px;
 	width: 120px;
@@ -145,12 +147,5 @@ button{
 	cursor: pointer;
 	border-radius: 5px;
 }
-	
-font{
-	font-family: Helvetica;
-	font-size: 16px;
-	color: #4B0082;
-}
-#add-instructions{
-	float: right;
-}
+
+

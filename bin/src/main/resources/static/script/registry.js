@@ -1,7 +1,6 @@
 /**
  * 
  */
- 
  if(document.getElementById("changePassMsg") != null){
 	alert(document.getElementById("changePassMsg").value);
 }
@@ -13,8 +12,19 @@ if(document.getElementById("activation-success") != null){
 	alert(document.getElementById("activation-success").value);
 }
 
+if(document.getElementById("search-field") != null){	
+document.getElementById("search-field").addEventListener("focus", setup);
+document.getElementById("search-field").focus();
+}
 if(document.getElementById("mod_arr_date") != null){
 	document.getElementById("mod_arr_date").value = getModifiedDate(document.getElementById("langSelect").value);
+}
+
+function setup(){
+if(document.getElementById("search-value").value != null){
+var searchValue = document.getElementById("search-value").value;
+document.getElementById("search-field").value = searchValue;
+}
 }
 
 function searchTicketByPassenger(){
@@ -29,6 +39,12 @@ function searchTicketByAdmin(id){
 	var str = document.getElementById("search-field").value;
 	var lang = document.getElementById("langSelect").value.toLowerCase();
 	location.href = location.origin + "/admin/ticket/search?text=" + str + "&lang=" + lang + "&id=" + id
+}
+
+function searchPassenger(){
+	var str = document.getElementById("search-field").value;
+	var lang = document.getElementById("langSelect").value.toLowerCase();
+	location.href = location.origin + "/admin/passenger/search?text=" + str + "&lang=" + lang;
 }
 
 function cancelTicket(id){
