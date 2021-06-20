@@ -150,28 +150,21 @@ public class AdminOperations {
 		Optional<GeoWorker> worker = workerService.findGeoWorkerById(id);
 		
 		if(worker.isPresent()) {
+			
+			Role adminRole = roleService.findByRole("ROLE_ADMIN");
+			Role userRole = roleService.findByRole("ROLE_USER");
+			
 			if(worker.get().getRoles().contains(new Role("ROLE_USER"))) {
-				
-				Role userRole = roleService.findByRole("ROLE_USER");
-				
-				if(userRole != null) {
-					worker.get().getRoles().add(userRole);
-				}
-				else {
-					worker.get().addRoles("ROLE_USER");
-				}
+			
+			worker.get().getRoles().clear();
+			worker.get().getRoles().add(adminRole);
 				
 			}
 			else if(worker.get().getRoles().contains(new Role("ROLE_ADMIN"))){
+			
+			worker.get().getRoles().clear();
+			worker.get().getRoles().add(userRole);
 				
-				Role adminRole = roleService.findByRole("ROLE_ADMIN");
-				
-				if(adminRole != null) {
-					worker.get().getRoles().add(adminRole);
-				}
-				else {
-					worker.get().addRoles("ROLE_ADMIN");
-				}
 			}		
 			workerService.save(worker.get());
 		}
