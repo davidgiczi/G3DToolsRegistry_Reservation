@@ -12,6 +12,8 @@
 
 <div layout:fragment="workers">
 
+<input id="search-field" th:onkeyup="'searchWorker()'" type="text" th:placeholder="#{search}"/>
+<br>
 <h1 th:text="#{workers}"></h1>
 
 <div id="empty" th:if="${#lists.isEmpty(workers)}" th:text="#{empty.workers}"></div>

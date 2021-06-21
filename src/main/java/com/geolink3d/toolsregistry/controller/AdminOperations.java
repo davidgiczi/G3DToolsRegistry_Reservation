@@ -15,9 +15,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoWorker;
+import com.geolink3d.toolsregistry.model.Location;
 import com.geolink3d.toolsregistry.model.Role;
+import com.geolink3d.toolsregistry.service.GeoInstrumentService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
+import com.geolink3d.toolsregistry.service.LocationService;
 import com.geolink3d.toolsregistry.service.RoleService;
 
 @Controller
@@ -27,7 +33,9 @@ public class AdminOperations {
 	
 	private GeoWorkerService workerService;
 	private RoleService roleService;
-	
+	private GeoInstrumentService instrumentService;
+	private LocationService locationService;
+ 	
 	@Autowired
 	public void setWorkerService(GeoWorkerService workerService) {
 		this.workerService = workerService;
@@ -37,8 +45,16 @@ public class AdminOperations {
 	public void setRoleService(RoleService roleService) {
 		this.roleService = roleService;
 	}
-
-
+	
+	@Autowired
+	public void setInstrumentService(GeoInstrumentService instrumentService) {
+		this.instrumentService = instrumentService;
+	}
+	
+	@Autowired
+	public void setLocationService(LocationService locationService) {
+		this.locationService = locationService;
+	}
 
 	@RequestMapping("/account")
 	public String goAdminAccount() {
@@ -56,7 +72,17 @@ public class AdminOperations {
 	}
 	
 	@RequestMapping("/instruments")
-	public String goInstrumentsPage() {
+	public String goInstrumentsPage(Model model) {
+		
+		List<GeoWorker> workers = workerService.findAll();
+		List<GeoInstrument> usableInstruments = instrumentService.findUseableGeoInstrument();
+		List<GeoInstrument> deletedInstruments = instrumentService.findDeletedGeoInstrument();
+		List<Location> locations = locationService.findAll();
+		model.addAttribute("workers", workers);
+		model.addAttribute("usable", usableInstruments);
+		model.addAttribute("deleted", deletedInstruments);
+		model.addAttribute("locations", locations);
+		model.addAttribute("delindex", usableInstruments.size());
 		
 		return "admin/instruments";
 	}
@@ -187,4 +213,47 @@ public class AdminOperations {
 		return "admin/workers";
 	}
 	
+	@RequestMapping("/add-instrument")
+	public String addInstrument(@RequestParam(value="inst") String instrument, RedirectAttributes rdAttr) {
+		
+		if(instrumentService.saveNewGeoInstrument(instrument)) {
+			rdAttr.addAttribute("instSaved","\"" + instrument + "\" műszer hozzáadva a nyilvántartáshoz.");	
+		}
+		else {
+			rdAttr.addAttribute("instSaved", "\""+ instrument + "\" néven már szerepel műszer a nyilvántartásban.");
+		}
+		
+		return "redirect:/tools-registry/admin/instruments";
+	}
+	
+	@RequestMapping("/add-location")
+	public String addLocation(@RequestParam(value="location") String location, RedirectAttributes rdAttr) {
+		
+		if(locationService.saveNewGeoLocation(location)) {
+			rdAttr.addAttribute("locSaved","\"" + location + "\"  telephely hozzáadva a nyilvántartáshoz.");	
+		}
+		else {
+			rdAttr.addAttribute("locSaved", "\""+ location + "\" néven már szerepel telephely a nyilvántartásban.");
+		}
+		
+		return "redirect:/tools-registry/admin/instruments";
+	}
+	
+	@RequestMapping("/cancel-restore")
+	public String cancelRestoreInstrument(@RequestParam("id") Long id) {
+		
+		Optional<GeoInstrument> instrument = instrumentService.findById(id);
+		
+		if(instrument.isPresent()) {
+			if(instrument.get().isDeleted()) {
+				instrument.get().setDeleted(false);
+			}
+			else {
+				instrument.get().setDeleted(true);
+			}
+			
+			instrumentService.save(instrument.get());	
+		}
+		return "redirect:/tools-registry/admin/instruments";
+	}
 }

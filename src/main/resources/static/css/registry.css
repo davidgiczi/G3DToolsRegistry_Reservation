@@ -133,6 +133,7 @@ a {
 }
 
 #search-field{
+	float: right;
 	background-color: lightgray;
 	height: 20px;
 	width: 120px;
@@ -141,7 +142,8 @@ a {
 }
 
 button{
-	width: 5em;
+	width:100px;
+	height:30px;
 	cursor: pointer;
 	border-radius: 5px;
 }
@@ -151,6 +153,21 @@ font{
 	font-size: 16px;
 	color: #4B0082;
 }
-#add-instructions{
+
+span{
+	display: inline-block;
+}
+
+#add-options{
 	float: right;
 }
+
+.selection_field{
+	width: 150px;
+	height: 30px;
+	cursor: pointer;
+	border-radius: 5px;
+	background-color: white;
+	text-align-last: center;
+}
+

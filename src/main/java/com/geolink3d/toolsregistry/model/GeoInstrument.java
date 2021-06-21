@@ -17,16 +17,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "instruments")
-public class GeoInstrument {
+public class GeoInstrument implements Comparable<GeoInstrument> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date pickUpDate;
 	private String pickUpPlace;
-	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date putDownDate;
 	private String putDownPlace;
 	@Column(length = 1000)
@@ -129,6 +129,14 @@ public class GeoInstrument {
 		this.additionals = additionals;
 	}
 
+	
+	@Override
+	public int compareTo(GeoInstrument o) {
+		
+		return  this.name.compareTo(o.getName()) > 0 ? 1 : this.name.compareTo(o.getName()) < 0 ? -1 : 0;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "GeoInstrument [id=" + id + ", name=" + name + ", pickUpDate=" + pickUpDate + ", pickUpPlace="
@@ -136,6 +144,8 @@ public class GeoInstrument {
 				+ comment + ", geoworker=" + geoworker + ", additionals=" + additionals + ", deleted=" + deleted
 				+ ", used=" + used + "]";
 	}
+
+	
 	
 	
 }

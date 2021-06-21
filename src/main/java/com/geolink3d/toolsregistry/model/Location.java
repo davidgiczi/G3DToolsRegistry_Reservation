@@ -14,7 +14,7 @@ public class Location {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	private boolean deleted;
+	
 	
 	public Location() {
 	}
@@ -35,17 +35,9 @@ public class Location {
 		this.name = name;
 	}
 
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-
 	@Override
 	public String toString() {
-		return "Location [id=" + id + ", name=" + name + ", deleted=" + deleted + "]";
+		return "Location [id=" + id + ", name=" + name + "]";
 	}
 	
 	

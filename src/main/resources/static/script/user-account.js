@@ -8,7 +8,7 @@
  
  function changePassword(){
 	
-	var newPwd = prompt(document.getElementById("newPwdMsg").value);
+	var newPwd = prompt(document.getElementById("newPwdMsg").value).trim();
 	
 	if(newPwd != null){
 		
