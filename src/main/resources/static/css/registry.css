@@ -115,6 +115,14 @@ input[type=button], input[type=submit]{
 	cursor: pointer;
 }
 
+input[type=date]{
+	background-color: lightgray;
+	height: 23px;
+	width: 150px;
+	border-radius: 5px;
+	text-align: center;
+}
+
 a {
 	font-family: Helvetica;
 	font-size: 15px;

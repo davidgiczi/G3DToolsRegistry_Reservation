@@ -82,7 +82,7 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 	};
 
 	@Override
-	public Optional<GeoWorker> findGeoWorkerById(Long id) {
+	public Optional<GeoWorker> findById(Long id) {
 		return workerRepo.findById(id);
 	}
 
@@ -129,5 +129,15 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 		return highlighter.getHighlightedGeoWorkerStore();
 		
 	}
+
+	@Override
+	public GeoWorker findByFullName(String fullName) {
+		
+		String firstName = fullName.split("\\s+")[1];
+		String lastName = fullName.split("\\s+")[0];
+		
+		return workerRepo.findByFullName(firstName, lastName);
+	}
+	
 	
 }

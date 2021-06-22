@@ -10,11 +10,54 @@
 <body>
 
 <div layout:fragment="tools-in-use">
-
+<span id="add-options">
+<input type="date"><a>-naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date"><a>-napig</a>&nbsp;&nbsp;&nbsp;
+<input id="search-field" th:onkeyup="'searchUsedInstrument()'" type="text" th:placeholder="#{search}"/>
+</span>
+<br>
 <h1 th:text="#{tools.in.use}"></h1>
 
+<div id="empty" th:if="${#lists.isEmpty(using)}" th:text="#{empty.using.instruments}"></div>
 
+<table th:if="${not #lists.isEmpty(using)}" style="width: 80%">
+	<tr>
+	<th th:text="#{number}"></th>
+	<th th:text="#{instrument.additional.name}"></th>
+	<th th:text="#{instrument.user}"></th>
+	<th th:text="#{instrument.pickup.place}"></th>
+	<th th:text="#{instrument.pickup.date}"></th>
+	<th th:text="#{instrument.put.down.place}"></th>
+	<th th:text="#{instrument.comment}"></th>
+	<th th:text="#{instrument.put.down}"></th>
+	</tr>
+	
+	<tr th:each="use : ${using}">
+	<td th:utext="${useStat.count}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${use.name}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'" th:utext="${use.geoworker.lastname + ' ' + use.geoworker.firstname}" ></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'" th:utext="${use.pickUpPlace}"></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'" th:utext="${#dates.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}"></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'">
+	<select class="selection_field" th:id="${use.id} + place">
+	<option th:if="${use.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
+	<option th:unless="${use.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
+	</select>
+	</td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'">
+	<textarea id="comment" rows="3" cols="30" th:utext="${use.comment}" th:id="${use.id} + comment"></textarea>
+	</td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'">
+	<Button th:onclick="'putDown(\'' + ${use.id} + '\');'">Lead</button>
+	</td>
+	
+	</table>
+
+<input type="hidden" th:if="${param.alreadyUsed != null}" th:value="${param.alreadyUsed}" id="alreadyUsed">
 </div>
+
+
+
 
 </body>
 </html>

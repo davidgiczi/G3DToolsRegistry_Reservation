@@ -10,8 +10,9 @@ public interface GeoWorkerService {
 	boolean registerGeoWorker(GeoWorker workerToRegister);
 	GeoWorker findGeoWorkerByUserName(String username);
 	List<GeoWorker> findAll();
-	Optional<GeoWorker> findGeoWorkerById(Long id);
+	Optional<GeoWorker> findById(Long id);
 	void save(GeoWorker worker);
 	void delete(GeoWorker worker);
 	List<GeoWorker> findByText(String text);
+	GeoWorker findByFullName(String fullName);
 }

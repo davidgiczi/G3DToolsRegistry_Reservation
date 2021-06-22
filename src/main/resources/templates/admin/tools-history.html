@@ -10,6 +10,12 @@
 <body>
 
 <div layout:fragment="tools-history">
+<span id="add-options">
+<input type="date"><a>-naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date"><a>-napig</a>&nbsp;&nbsp;&nbsp;
+<input id="search-field" th:onkeyup="'searchUsedInstrument()'" type="text" th:placeholder="#{search}"/>
+</span>
+<br>
 
 <h1 th:text="#{tools.history}"></h1>
 

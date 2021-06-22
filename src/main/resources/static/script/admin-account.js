@@ -14,6 +14,14 @@ if(document.getElementById("locSaved") != null){
 alert(document.getElementById("locSaved").value);
 }
 
+if(document.getElementById("alreadyUsed") != null){	
+alert(document.getElementById("alreadyUsed").value);
+}
+
+if(document.getElementById("workerNotChosen") != null){	
+alert(document.getElementById("workerNotChosen").value);
+}
+
 function setup(){
 if(document.getElementById("search-value").value != null){
 var searchValue = document.getElementById("search-value").value;
@@ -35,12 +43,28 @@ function changeRole(id){
 
 function searchWorker(){
 	var str = document.getElementById("search-field").value;
-	location.href = location.origin + "/tools-registry/admin/search?text=" + str;
+	location.href = location.origin + "/tools-registry/admin/search-worker?text=" + str;
+}
+
+function searchInstrument(){
+	var str = document.getElementById("search-field").value;
+	/*location.href = location.origin + "/tools-registry/admin/search-instrument?text=" + str;*/
 }
 
 function cancelRestore(id){
 	
 	location.href = location.origin + "/tools-registry/admin/cancel-restore?id=" + id;
+}
+
+function pickUp(id){
+	var workerid = document.getElementById(id+"worker").value;
+	var place = document.getElementById(id+"place").value;
+	var comment = document.getElementById(id+"comment").value;
+	document.getElementById("instrument-id").value = id;
+	document.getElementById("worker-id").value = workerid;
+	document.getElementById("from-location").value = place;
+	document.getElementById("msg").value = comment;
+	document.getElementById("takeaway-form").submit();
 }
 
  function addInstrument(){

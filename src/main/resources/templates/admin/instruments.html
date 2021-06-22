@@ -20,7 +20,7 @@
 
 <div id="empty" th:if="${#lists.isEmpty(usable) && #lists.isEmpty(deleted)}" th:text="#{empty.instruments}"></div>
 
-<table th:if="${not #lists.isEmpty(usable)}">
+<table th:if="${not #lists.isEmpty(usable)}" style="width: 80%">
 	<tr>
 	<th th:text="#{number}"></th>
 	<th th:text="#{instrument.name}"></th>
@@ -28,7 +28,7 @@
 	<th th:text="#{instrument.pickup.place}"></th>
 	<th th:text="#{instrument.pickup.date}"></th>
 	<th th:text="#{instrument.comment}"></th>
-	<th th:text="#{instrument.use}"></th>
+	<th th:text="#{instrument.pick.up}"></th>
 	<th th:text="#{instrument.deleted}"></th>
 	</tr>
 	
@@ -37,82 +37,88 @@
 	<td th:utext="${use.name}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
-	<select th:if="${use.geoworker != null}" class="selection_field" th:id="${useStat.count}" disabled="disabled">
-	<option th:if="${use.geoworker == worker}" th:each="worker : ${workers}" th:text="${worker.lastname + ' ' + worker.firstname}" selected="selected"></option>
-	<option th:unless="${use.geoworker == worker}" th:each="worker : ${workers}" th:text="${worker.lastname + ' ' + worker.firstname}"></option>
+	<select th:if="${use.used}" class="selection_field" disabled="disabled">
+	<option th:if="${use.geoworker == worker}" th:each="worker : ${workers}" th:utext="${worker.lastname + ' ' + worker.firstname}" selected="selected"></option>
+	<option th:unless="${use.geoworker == worker}" th:each="worker : ${workers}" th:utext="${worker.lastname + ' ' + worker.firstname}"></option>
 	</select>
 	
-	<select th:unless="${use.geoworker != null}" class="selection_field" th:id="${useStat.count}">
+	<select th:unless="${use.used}" class="selection_field" th:id="${use.id} + worker">
 	<option>-</option>
-	<option th:each="worker : ${workers}" th:text="${worker.lastname + ' ' + worker.firstname}"></option>
+	<option th:each="worker : ${workers}" th:utext="${worker.lastname + ' ' + worker.firstname}" th:value="${worker.id}"></option>
 	</select>
 	</td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
-	<select th:if="${use.geoworker != null}" class="selection_field" th:id="${useStat.count}" disabled="disabled">
-	<option th:if="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:text="${location.name}" selected="selected"></option>
-	<option th:unless="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:text="${location.name}"></option>
+	<select th:if="${use.used}" class="selection_field" disabled="disabled">
+	<option th:if="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
+	<option th:unless="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
 	</select>
-	<select th:unless="${use.geoworker != null}" class="selection_field" th:id="${useStat.count}">
-	<option th:if="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:text="${location.name}" selected="selected"></option>
-	<option th:unless="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:text="${location.name}"></option>
+	
+	<select th:unless="${use.used}" class="selection_field" th:id="${use.id} + place">
+	<option th:if="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
+	<option th:unless="${use.putDownPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
 	</select>
 	</td>
-	<td th:if="${use.pickUpDate != null}" th:utext="${#dates.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
-	<td th:unless="${use.pickUpDate != null}" th:classappend="${useStat.odd} ? '' : 'colored'">-</td>
 	
-	<td th:if="${use.geoworker != null}" th:classappend="${useStat.odd} ? '' : 'colored'">
-	<textarea th:if="${use.geoworker != null}" id="comment" rows="3" cols="30" th:text="${use.comment}" readonly="readonly"></textarea></td>
-	<td th:unless="${use.geoworker != null}" th:classappend="${useStat.odd} ? '' : 'colored'">
-	<textarea th:unless="${use.geoworker != null}" id="comment" rows="3" cols="30" th:text="${use.comment}"></textarea></td>
+	<td th:if="${use.used}" th:utext="${#dates.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:unless="${use.used}" th:classappend="${useStat.odd} ? '' : 'colored'">-</td>
 	
-	<td th:if="${use.geoworker == null}" th:classappend="${useStat.odd} ? '' : 'colored'">
-	<Button th:if="${use.geoworker == null}">Felvesz</button></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'">
+	<textarea th:if="${use.used}" id="comment" rows="3" cols="30" th:utext="${use.comment}" readonly="readonly"></textarea>
+	<textarea th:unless="${use.used}" id="comment" rows="3" cols="30" th:utext="${use.comment}" th:id="${use.id} + comment"></textarea>
+	</td>
 	
-	<td th:unless="${use.geoworker == null}" th:classappend="${useStat.odd} ? '' : 'colored'">
-	<Button th:unless="${use.geoworker == null}" disabled="disabled">Felvesz</button></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'">
+	<Button th:if="${use.used}" disabled="disabled">Felvesz</button>
+	<Button th:unless="${use.used}" th:onclick="'pickUp(\'' + ${use.id} + '\');'">Felvesz</button>
+	</td>
 	
-	<td th:if="${use.geoworker == null}" th:classappend="${useStat.odd} ? '' : 'colored'">
-	<Button style="background-color: red" th:if="${use.geoworker == null}" th:onclick="'cancelRestore(\'' + ${use.id} + '\');'">Törlés</button></td>
-	<td th:unless="${use.geoworker == null}" th:classappend="${useStat.odd} ? '' : 'colored'">
-	<Button th:unless="${use.geoworker == null}" disabled="disabled">Törlés</button></td>
+	<td th:classappend="${useStat.odd} ? '' : 'colored'">
+	<Button th:if="${use.used}" disabled="disabled">Törlés</button>
+	<Button th:unless="${use.used}" style="background-color: red"  th:onclick="'cancelRestore(\'' + ${use.id} + '\');'">Törlés</button></td>
 	</tr>
 	
 	<tr th:each="del : ${deleted}">
-	<td th:utext="${delStat.count + delindex}" th:classappend="${delStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${delStat.count + delIndex}" th:classappend="${delStat.odd} ? '' : 'colored'"></td>
 	<td th:utext="${del.name}" th:classappend="${delStat.odd} ? '' : 'colored'"></td>
 	
 	<td th:classappend="${delStat.odd} ? '' : 'colored'">
-	<select class="selection_field" th:id="${delStat.count}" disabled="disabled">
+	<select class="selection_field" disabled="disabled">
 	<option>-</option>
 	</select>
 	</td>
 	
 	<td th:classappend="${delStat.odd} ? '' : 'colored'">
-	<select class="selection_field" th:id="${delStat.count}" disabled="disabled">
+	<select class="selection_field" disabled="disabled">
 	<option>-</option>
 	</select>
 	</td>
 	<td th:classappend="${delStat.odd} ? '' : 'colored'">-</td>
 
 	<td th:classappend="${delStat.odd} ? '' : 'colored'">
-	<textarea id="comment" rows="3" cols="30" readonly="readonly"></textarea></td>
+	<textarea rows="3" cols="30" readonly="readonly"></textarea></td>
 	
 	<td th:classappend="${delStat.odd} ? '' : 'colored'"><Button disabled="disabled">Felvesz</button></td>
-	<td th:classappend="${delStat.odd} ? '' : 'colored'"><Button style="background-color: #3996f3" th:onclick="'cancelRestore(\'' + ${del.id} + '\');'">Visszaállítás</button></td>
-	
+	<td th:classappend="${delStat.odd} ? '' : 'colored'">
+	<Button style="background-color: #3996f3" th:onclick="'cancelRestore(\'' + ${del.id} + '\');'">Visszaállítás</button></td>
 	</tr>
-	
 	
 </table>
 
-
+<form th:action="@{/tools-registry/admin/instrument-takeaway}" method="post" id="takeaway-form">
+<input type="hidden" value="" name="instrument-id" id="instrument-id">
+<input type="hidden" value="" name="worker-id" id="worker-id">
+<input type="hidden" value="" name="from-location" id="from-location">
+<input type="hidden" value="" name="comment" id="msg">
+</form> 
+ 
 <input type="hidden" th:value="#{new.instrument}" id="newInstMsg">
 <input type="hidden" th:value="#{new.instrument.error}" id="newInstError">
 <input type="hidden" th:if="${param.instSaved != null}" th:value="${param.instSaved}" id="instSaved">
 <input type="hidden" th:value="#{new.location}" id="newLocationMsg">
 <input type="hidden" th:value="#{new.location.error}" id="newLocationError">
 <input type="hidden" th:if="${param.locSaved != null}" th:value="${param.locSaved}" id="locSaved">
+<input type="hidden" th:if="${param.workerNotChosen != null}" th:value="${param.workerNotChosen}" id="workerNotChosen">
 </div>
 
 

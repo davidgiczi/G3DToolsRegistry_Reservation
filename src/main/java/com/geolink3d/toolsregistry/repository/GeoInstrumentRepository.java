@@ -17,5 +17,21 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 	List<GeoInstrument> findDeletedGeoInstruments();
 	@Query(value = "select * from instruments where deleted = false and used = true" , nativeQuery = true)
 	List<GeoInstrument> findNotDeletedButUsedGeoInstruments();
+	@Query(value = "select * from instruments where"
+			+ " (deleted = false and name like %:text%)"
+			+ " or "
+			+ "(deleted = false and comment like %:text%)"
+			+ " or "
+			+ "(deleted = false and pick_up_place like %:text%)"
+			, nativeQuery = true)
+	List<GeoInstrument> findNotDeletedInstrumentsByText(@Param("text") String text);
+	@Query(value = "select * from instruments where"
+			+ " (deleted = true and name like %:text%)"
+			+ " or "
+			+ "(deleted = true and comment like %:text%)"
+			+ " or "
+			+ "(deleted = true and pick_up_place like %:text%)"
+			, nativeQuery = true)
+	List<GeoInstrument> findDeletedInstrumentsByText(@Param("text") String text);
 	
 }
