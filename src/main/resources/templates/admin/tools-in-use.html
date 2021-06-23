@@ -11,8 +11,8 @@
 
 <div layout:fragment="tools-in-use">
 <span id="add-options">
-<input type="date"><a>-naptól</a>&nbsp;&nbsp;&nbsp;
-<input type="date"><a>-napig</a>&nbsp;&nbsp;&nbsp;
+<input type="date"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date"><a> - napig</a>&nbsp;&nbsp;&nbsp;
 <input id="search-field" th:onkeyup="'searchUsedInstrument()'" type="text" th:placeholder="#{search}"/>
 </span>
 <br>
@@ -20,7 +20,7 @@
 
 <div id="empty" th:if="${#lists.isEmpty(using)}" th:text="#{empty.using.instruments}"></div>
 
-<table th:if="${not #lists.isEmpty(using)}" style="width: 80%">
+<table th:if="${not #lists.isEmpty(using)}">
 	<tr>
 	<th th:text="#{number}"></th>
 	<th th:text="#{instrument.additional.name}"></th>
@@ -48,10 +48,16 @@
 	<textarea id="comment" rows="3" cols="30" th:utext="${use.comment}" th:id="${use.id} + comment"></textarea>
 	</td>
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
-	<Button th:onclick="'putDown(\'' + ${use.id} + '\');'">Lead</button>
+	<Button th:onclick="'restoreInstrument(\'' + ${use.id} + '\');'">Lead</button>
 	</td>
 	
 	</table>
+	
+<form th:action="@{/tools-registry/admin/restore-instrument}" method="post" id="instrument-restore-form">
+<input type="hidden" value="" name="instrument-id" id="back-instrument-id">
+<input type="hidden" value="" name="location" id="back-location">
+<input type="hidden" value="" name="comment" id="back-msg">
+</form> 
 
 <input type="hidden" th:if="${param.alreadyUsed != null}" th:value="${param.alreadyUsed}" id="alreadyUsed">
 </div>

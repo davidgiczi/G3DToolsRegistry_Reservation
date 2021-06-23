@@ -48,7 +48,7 @@ function searchWorker(){
 
 function searchInstrument(){
 	var str = document.getElementById("search-field").value;
-	/*location.href = location.origin + "/tools-registry/admin/search-instrument?text=" + str;*/
+	location.href = location.origin + "/tools-registry/admin/search-instrument?text=" + str;
 }
 
 function cancelRestore(id){
@@ -56,15 +56,24 @@ function cancelRestore(id){
 	location.href = location.origin + "/tools-registry/admin/cancel-restore?id=" + id;
 }
 
-function pickUp(id){
+function takeawayInstrument(id){
 	var workerid = document.getElementById(id+"worker").value;
 	var place = document.getElementById(id+"place").value;
 	var comment = document.getElementById(id+"comment").value;
-	document.getElementById("instrument-id").value = id;
-	document.getElementById("worker-id").value = workerid;
+	document.getElementById("from-instrument-id").value = id;
+	document.getElementById("from-worker-id").value = workerid;
 	document.getElementById("from-location").value = place;
-	document.getElementById("msg").value = comment;
+	document.getElementById("from-msg").value = comment;
 	document.getElementById("takeaway-form").submit();
+}
+
+function restoreInstrument(id){
+	var place = document.getElementById(id+"place").value;
+	var comment = document.getElementById(id+"comment").value;
+	document.getElementById("back-instrument-id").value = id;
+	document.getElementById("back-location").value = place;
+	document.getElementById("back-msg").value = comment;
+	document.getElementById("instrument-restore-form").submit();
 }
 
  function addInstrument(){
@@ -101,6 +110,11 @@ function isValidInputText(text){
 		
 	return true;
 }
-	
+
+function getDate(){
+	var from = document.getElementById("pickupdate").value;
+	var to = document.getElementById("putdowndate").value;
+	location.href = location.origin + "/tools-registry/admin/search-by-dates?from=" + from + "&to=" + to;
+}
 
 

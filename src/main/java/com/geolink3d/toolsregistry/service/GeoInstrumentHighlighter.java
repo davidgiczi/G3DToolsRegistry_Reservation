@@ -39,16 +39,6 @@ public class GeoInstrumentHighlighter {
 				createEndIndexStore();
 				highlightedGeoIntsrumentStore.get(i).setName(createHighlightedString(highlightedGeoIntsrumentStore.get(i).getName()));
 			}
-		    if(highlightedGeoIntsrumentStore.get(i).getPickUpPlace().toLowerCase().contains(searchedExpression)) {
-				createBeginIndexStore(highlightedGeoIntsrumentStore.get(i).getPickUpPlace().toLowerCase());
-				createEndIndexStore();
-				highlightedGeoIntsrumentStore.get(i).setPickUpPlace(createHighlightedString(highlightedGeoIntsrumentStore.get(i).getPickUpPlace()));
-			}
-		    if(highlightedGeoIntsrumentStore.get(i).getComment().toLowerCase().contains(searchedExpression)) {
-				createBeginIndexStore(highlightedGeoIntsrumentStore.get(i).getComment().toLowerCase());
-				createEndIndexStore();
-				highlightedGeoIntsrumentStore.get(i).setComment(createHighlightedString(highlightedGeoIntsrumentStore.get(i).getComment()));
-			}
 		}
 
 	}

@@ -12,17 +12,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "used_tools")
-public class UsedTool {
+public class UsedTool implements Comparable<UsedTool> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String workername;
 	private String toolname;
-	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date pickUpDate;
 	private String pickUpPlace;
-	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date putDownDate;
 	private String putDownPlace;
 	@Column(length = 1000)
@@ -80,6 +80,12 @@ public class UsedTool {
 		this.comment = comment;
 	}
 
+	@Override
+	public int compareTo(UsedTool o) {
+		
+		return this.getPickUpDate().getTime() > o.getPickUpDate().getTime() ?  - 1 : o.getPickUpDate().getTime() < this.getPickUpDate().getTime() ? 1 : 0;
+	}
+	
 	@Override
 	public String toString() {
 		return "UsedTool [id=" + id + ", workername=" + workername + ", toolname=" + toolname + ", pickUpDate="

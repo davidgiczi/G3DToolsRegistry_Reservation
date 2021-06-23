@@ -20,7 +20,7 @@
 
 <div id="empty" th:if="${#lists.isEmpty(usable) && #lists.isEmpty(deleted)}" th:text="#{empty.instruments}"></div>
 
-<table th:if="${not #lists.isEmpty(usable)}" style="width: 80%">
+<table th:if="${not #lists.isEmpty(usable) || not #lists.isEmpty(deleted)}">
 	<tr>
 	<th th:text="#{number}"></th>
 	<th th:text="#{instrument.name}"></th>
@@ -70,7 +70,7 @@
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
 	<Button th:if="${use.used}" disabled="disabled">Felvesz</button>
-	<Button th:unless="${use.used}" th:onclick="'pickUp(\'' + ${use.id} + '\');'">Felvesz</button>
+	<Button th:unless="${use.used}" th:onclick="'takeawayInstrument(\'' + ${use.id} + '\');'">Felvesz</button>
 	</td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
@@ -105,11 +105,11 @@
 	
 </table>
 
-<form th:action="@{/tools-registry/admin/instrument-takeaway}" method="post" id="takeaway-form">
-<input type="hidden" value="" name="instrument-id" id="instrument-id">
-<input type="hidden" value="" name="worker-id" id="worker-id">
+<form th:action="@{/tools-registry/admin/takeaway-instrument}" method="post" id="takeaway-form">
+<input type="hidden" value="" name="instrument-id" id="from-instrument-id">
+<input type="hidden" value="" name="worker-id" id="from-worker-id">
 <input type="hidden" value="" name="from-location" id="from-location">
-<input type="hidden" value="" name="comment" id="msg">
+<input type="hidden" value="" name="comment" id="from-msg">
 </form> 
  
 <input type="hidden" th:value="#{new.instrument}" id="newInstMsg">

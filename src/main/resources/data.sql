@@ -17,9 +17,9 @@ INSERT INTO locations (name) values ('Kecskemét');
 INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
 VALUES ('Drone', null, false, null, null,  null, null, false, null);
 INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
-VALUES ('S7 Total Station', 'Hello World!', false, '2021-06-21 06:05', 'Dunakeszi',  null, null, true, 3);
+VALUES ('S7 Total Station', 'Hello World!', false, null, null,  null, null, false, null);
 INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
 VALUES ('FARO Laser Scanner', null, true, null, null, null, null, false, null);
 INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
-VALUES ('Leica Total Station', null, true, null, null, 'Debrecen', null, false, null);
+VALUES ('Leica Total Station', null, true, null, null, null, null, false, null);
 

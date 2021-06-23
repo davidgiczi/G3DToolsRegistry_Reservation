@@ -1,5 +1,6 @@
 package com.geolink3d.toolsregistry.controller;
 
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -22,10 +23,12 @@ import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoWorker;
 import com.geolink3d.toolsregistry.model.Location;
 import com.geolink3d.toolsregistry.model.Role;
+import com.geolink3d.toolsregistry.model.UsedTool;
 import com.geolink3d.toolsregistry.service.GeoInstrumentService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
 import com.geolink3d.toolsregistry.service.LocationService;
 import com.geolink3d.toolsregistry.service.RoleService;
+import com.geolink3d.toolsregistry.service.UsedToolService;
 
 @Controller
 @RequestMapping("/tools-registry/admin")
@@ -36,6 +39,7 @@ public class AdminOperations {
 	private RoleService roleService;
 	private GeoInstrumentService instrumentService;
 	private LocationService locationService;
+	private UsedToolService usedToolService;
  	
 	@Autowired
 	public void setWorkerService(GeoWorkerService workerService) {
@@ -55,6 +59,11 @@ public class AdminOperations {
 	@Autowired
 	public void setLocationService(LocationService locationService) {
 		this.locationService = locationService;
+	}
+
+	@Autowired
+	public void setUsedToolService(UsedToolService usedToolService) {
+		this.usedToolService = usedToolService;
 	}
 
 	@RequestMapping("/account")
@@ -105,7 +114,11 @@ public class AdminOperations {
 	}
 	
 	@RequestMapping("/tools-history")
-	public String goToolsHistoryPage() {
+	public String goToolsHistoryPage(Model model) {
+		
+		List<UsedTool> used = usedToolService.findAll();
+		model.addAttribute("tools", used);
+		
 		return "admin/tools-history";
 	}
 	
@@ -225,13 +238,18 @@ public class AdminOperations {
 		
 		
 		if(text.isEmpty()) {
-			return "redirect:/tools-registry/admin/workers";
+			return "redirect:/tools-registry/admin/instruments";
 		}else {
 			List<GeoInstrument> usable = instrumentService.findNotDeletedInstrumentsByText(text);
 			List<GeoInstrument> deleted= instrumentService.findDeletedInstrumentsByText(text);
-			model.addAttribute("txt", text);
 			model.addAttribute("usable", usable);
 			model.addAttribute("deleted", deleted);	
+			List<GeoWorker> workers = workerService.findAll();
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("workers", workers);
+			model.addAttribute("locations", locations);
+			model.addAttribute("txt", text);
+			model.addAttribute("delIndex", usable.size());
 		}
 		
 		return "admin/instruments";
@@ -281,7 +299,7 @@ public class AdminOperations {
 		return "redirect:/tools-registry/admin/instruments";
 	}
 	
-	@PostMapping("/instrument-takeaway")
+	@PostMapping("/takeaway-instrument")
 	public String takeawayInstrument(HttpServletRequest request, RedirectAttributes rdAttr) {
 		
 		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
@@ -303,10 +321,67 @@ public class AdminOperations {
 		}
 		instrument.get().setPickUpPlace(request.getParameter("from-location"));
 		instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
-		instrument.get().setComment(request.getParameter("comment"));
+		String comment = request.getParameter("comment");
+		if(comment.length() > 1000) {
+		instrument.get().setComment(comment.substring(999));
+		}
+		else {
+			instrument.get().setComment(comment);
+		}
 		instrumentService.save(instrument.get());
 		}
 	
 		return "redirect:/tools-registry/admin/tools-in-use";
+	}
+	
+	@PostMapping("/restore-instrument")
+	public String restoreInstrument(HttpServletRequest request) {
+		
+		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
+		
+		if(instrument.isPresent()) {
+			instrument.get().setUsed(false);
+			instrument.get().setPutDownDate(new Date(System.currentTimeMillis()));
+			instrument.get().setPutDownPlace(request.getParameter("location"));
+			String comment = request.getParameter("comment");
+			if(comment.length() > 1000) {
+			instrument.get().setComment(comment.substring(999));
+			}
+			else {
+				instrument.get().setComment(comment);
+			}
+			instrumentService.save(instrument.get());
+			
+			createAndSaveUsedTool(instrument.get());
+			
+		}
+		
+		return "redirect:/tools-registry/admin/instruments";
+	}
+	
+	private void createAndSaveUsedTool(GeoInstrument usedInstrument) {
+		
+		UsedTool used = new UsedTool();
+		used.setToolname(usedInstrument.getName());
+		used.setWorkername(usedInstrument.getGeoworker().getLastname() + " " + usedInstrument.getGeoworker().getFirstname());
+		used.setPickUpPlace(usedInstrument.getPickUpPlace());
+		used.setPickUpDate(usedInstrument.getPickUpDate());
+		used.setPutDownPlace(usedInstrument.getPutDownPlace());
+		used.setPutDownDate(usedInstrument.getPutDownDate());
+		used.setComment(usedInstrument.getComment());
+		usedToolService.save(used);
+	}
+	
+	@RequestMapping("/search-by-dates")
+	public String searchUsedToolsByDates(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to, Model model) {
+	
+		try {
+			List<UsedTool> used = usedToolService.findBetweenDates(from, to);
+			model.addAttribute("tools", used);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return "admin/tools-history";
 	}
 }
