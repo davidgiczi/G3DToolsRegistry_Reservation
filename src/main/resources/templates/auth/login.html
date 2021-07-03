@@ -32,9 +32,8 @@
 </form>
 </div>
 
-<span th:switch="${activationSuccess}">
-<input th:case="true" type="hidden" id="activation-success"  th:value="#{activation.success}"/> 
-<input th:case="false" type="hidden" id="activation-success"   th:value="#{activation.unsuccess}"/> 
+<span th:switch="${activationIsNeeded}">
+<input th:case="true" type="hidden" id="activation-needs"  th:value="#{activation.needed}"/> 
 </span>
 
 </body>

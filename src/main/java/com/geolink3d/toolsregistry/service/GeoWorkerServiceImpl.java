@@ -59,7 +59,6 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 			workerToRegister.addRoles("ROLE_USER");
 		}
 		
-		workerToRegister.setEnabled(true);
 		workerToRegister.setPassword(EncoderService.encodeByBase64(workerToRegister.getPassword()));
 		workerRepo.save(workerToRegister);
 		

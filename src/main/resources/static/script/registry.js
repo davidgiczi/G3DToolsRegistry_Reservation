@@ -9,8 +9,8 @@
 if(document.getElementById("needful-activation") != null)
 alert(document.getElementById("needful-activation").value);
 
-if(document.getElementById("activation-success") != null){
-	alert(document.getElementById("activation-success").value);
+if(document.getElementById("activation-needs") != null){
+	alert(document.getElementById("activation-needs").value);
 }
 
 if(document.getElementById("mod_arr_date") != null){

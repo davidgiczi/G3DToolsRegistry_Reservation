@@ -68,16 +68,16 @@ public class LoginAndRegistrationOperations {
 	}
 	
 	@PostMapping("/registration")
-	public String registration(@ModelAttribute GeoWorker user, RedirectAttributes attribute, Model model) {
+	public String registration(@ModelAttribute GeoWorker user, RedirectAttributes rdAttr, Model model) {
 		
 		if(!workerService.registerGeoWorker(user)) {
 			
-			attribute.addAttribute("exists", true);
+			rdAttr.addAttribute("exists", true);
 			
 			return "redirect:/tools-registry/registration";
 		}
 		
-		model.addAttribute("activationSuccess", true);
+		model.addAttribute("activationIsNeeded", true);
 		
 		return "auth/login";
 	}
