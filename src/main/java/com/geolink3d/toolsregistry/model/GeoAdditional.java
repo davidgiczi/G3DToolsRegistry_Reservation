@@ -13,7 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "additionals")
-public class GeoAdditional {
+public class GeoAdditional implements Comparable<GeoAdditional> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -29,6 +29,8 @@ public class GeoAdditional {
 	private String comment;
 	@ManyToOne
 	private GeoInstrument instrument;
+	@ManyToOne
+	private GeoWorker geoworker;
 	private boolean deleted;
 	private boolean used;
 	
@@ -115,11 +117,25 @@ public class GeoAdditional {
 		this.used = used;
 	}
 
+	public GeoWorker getGeoworker() {
+		return geoworker;
+	}
+
+	public void setGeoworker(GeoWorker geoworker) {
+		this.geoworker = geoworker;
+	}
+	
+	@Override
+	public int compareTo(GeoAdditional o) {
+		
+		return  this.name.compareTo(o.getName()) > 0 ? 1 : this.name.compareTo(o.getName()) < 0 ? -1 : 0;
+	}
+
 	@Override
 	public String toString() {
 		return "GeoAdditional [id=" + id + ", name=" + name + ", pickUpDate=" + pickUpDate + ", pickUpPlace="
 				+ pickUpPlace + ", putDownDate=" + putDownDate + ", putDownPlace=" + putDownPlace + ", comment="
 				+ comment + ", instrument=" + instrument + ", deleted=" + deleted + ", used=" + used + "]";
 	}
-	
+
 }

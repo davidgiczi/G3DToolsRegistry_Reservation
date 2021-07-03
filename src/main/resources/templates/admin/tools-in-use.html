@@ -11,45 +11,62 @@
 
 <div layout:fragment="tools-in-use">
 <span id="add-options">
-<input type="date"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
 <input type="date"><a> - napig</a>&nbsp;&nbsp;&nbsp;
 <input id="search-field" th:onkeyup="'searchUsedInstrument()'" type="text" th:placeholder="#{search}"/>
 </span>
 <br>
 <h1 th:text="#{tools.in.use}"></h1>
 
-<div id="empty" th:if="${#lists.isEmpty(using)}" th:text="#{empty.using.instruments}"></div>
+<div id="empty" th:if="${#lists.isEmpty(toolsInUse)}" th:text="#{empty.using.instruments}"></div>
 
-<table th:if="${not #lists.isEmpty(using)}">
+<table th:if="${not #lists.isEmpty(toolsInUse)}">
 	<tr>
 	<th th:text="#{number}"></th>
 	<th th:text="#{instrument.additional.name}"></th>
-	<th th:text="#{instrument.user}"></th>
-	<th th:text="#{instrument.pickup.place}"></th>
-	<th th:text="#{instrument.pickup.date}"></th>
-	<th th:text="#{instrument.put.down.place}"></th>
-	<th th:text="#{instrument.comment}"></th>
-	<th th:text="#{instrument.put.down}"></th>
+	<th th:text="#{tool.user}"></th>
+	<th th:text="#{tool.pickup.place}"></th>
+	<th th:text="#{tool.pickup.date}"></th>
+	<th th:text="#{tool.put.down.place}"></th>
+	<th th:text="#{tool.comment}"></th>
+	<th th:text="#{tool.put.down}"></th>
 	</tr>
 	
-	<tr th:each="use : ${using}">
-	<td th:utext="${useStat.count}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${use.name}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
-	<td th:classappend="${useStat.odd} ? '' : 'colored'" th:utext="${use.geoworker.lastname + ' ' + use.geoworker.firstname}" ></td>
-	<td th:classappend="${useStat.odd} ? '' : 'colored'" th:utext="${use.pickUpPlace}"></td>
-	<td th:classappend="${useStat.odd} ? '' : 'colored'" th:utext="${#dates.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}"></td>
-	<td th:classappend="${useStat.odd} ? '' : 'colored'">
-	<select class="selection_field" th:id="${use.id} + place">
-	<option th:if="${use.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
-	<option th:unless="${use.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
+	<tr th:each="tool : ${toolsInUse}">
+	<td th:utext="${toolStat.count}"  th:if=${tool.isColored} style="color: red" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${toolStat.count}"  th:unless=${tool.isColored} th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	
+	<td th:utext="${tool.toolName}" th:if=${tool.isColored} style="color: red" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.toolName}" th:unless=${tool.isColored} th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.toolUser}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.toolUser}" th:unless=${tool.isColored}></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.pickUpPlace}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.pickUpPlace}" th:unless=${tool.isColored}></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:unless=${tool.isColored}></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
+	<select class="selection_field" th:id="${tool.id} + place">
+	<option th:if="${tool.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
+	<option th:unless="${tool.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
 	</select>
 	</td>
-	<td th:classappend="${useStat.odd} ? '' : 'colored'">
-	<textarea id="comment" rows="3" cols="30" th:utext="${use.comment}" th:id="${use.id} + comment"></textarea>
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
+	<textarea id="comment" rows="3" cols="30" th:utext="${tool.comment}" th:id="${tool.id} + comment"></textarea>
 	</td>
-	<td th:classappend="${useStat.odd} ? '' : 'colored'">
-	<Button th:onclick="'restoreInstrument(\'' + ${use.id} + '\');'">Lead</button>
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
+	<Button th:onclick="'restoreInstrument(\'' + ${tool.id} + '\');'">Lead</button>
 	</td>
+	</tr>
 	
 	</table>
 	

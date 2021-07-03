@@ -19,11 +19,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
+import com.geolink3d.toolsregistry.model.GeoTool;
 import com.geolink3d.toolsregistry.model.GeoWorker;
 import com.geolink3d.toolsregistry.model.Location;
 import com.geolink3d.toolsregistry.model.Role;
 import com.geolink3d.toolsregistry.model.UsedTool;
+import com.geolink3d.toolsregistry.service.GeoAdditionalService;
 import com.geolink3d.toolsregistry.service.GeoInstrumentService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
 import com.geolink3d.toolsregistry.service.LocationService;
@@ -40,6 +44,7 @@ public class AdminOperations {
 	private GeoInstrumentService instrumentService;
 	private LocationService locationService;
 	private UsedToolService usedToolService;
+	private GeoAdditionalService additionalService;
  	
 	@Autowired
 	public void setWorkerService(GeoWorkerService workerService) {
@@ -64,6 +69,11 @@ public class AdminOperations {
 	@Autowired
 	public void setUsedToolService(UsedToolService usedToolService) {
 		this.usedToolService = usedToolService;
+	}
+	
+	@Autowired
+	public void setAdditionalService(GeoAdditionalService additionalService) {
+		this.additionalService = additionalService;
 	}
 
 	@RequestMapping("/account")
@@ -92,23 +102,36 @@ public class AdminOperations {
 		model.addAttribute("usable", usableInstruments);
 		model.addAttribute("deleted", deletedInstruments);
 		model.addAttribute("locations", locations);
-		model.addAttribute("delIndex", usableInstruments.size());
+		model.addAttribute("useableSize", usableInstruments.size());
 		
 		return "admin/instruments";
 	}
 	
 	@RequestMapping("/additionals")
-	public String goAdditionalsPage() {
+	public String goAdditionalsPage(Model model) {
+		
+		List<GeoWorker> workers = workerService.findAll();
+		List<GeoAdditional> usableAdditionals = additionalService.findUseableGeoAdditional();
+		List<GeoAdditional> deletedAdditionals = additionalService.findDeletedGeoAdditionals();
+		List<GeoInstrument> usableInstruments = instrumentService.findUseableGeoInstrument();
+		List<Location> locations = locationService.findAll();
+		model.addAttribute("workers", workers);
+		model.addAttribute("usable", usableAdditionals);
+		model.addAttribute("deleted", deletedAdditionals);
+		model.addAttribute("instruments", usableInstruments);
+		model.addAttribute("locations", locations);
+		model.addAttribute("useableSize", usableAdditionals.size());
+		
 		return "admin/additionals";
 	}
 	
 	@RequestMapping("/tools-in-use")
 	public String goToolsInUsePage(Model model) {
 		
-		List<GeoInstrument> usingInstruments = instrumentService.findUsedGeoInstrument();
+		List<GeoTool> toolsInUse = instrumentService.findUsedGeoTool();
 		List<Location> locations = locationService.findAll();
 		model.addAttribute("locations", locations);
-		model.addAttribute("using", usingInstruments);
+		model.addAttribute("toolsInUse", toolsInUse);
 		
 		return "admin/tools-in-use";
 	}
@@ -249,23 +272,36 @@ public class AdminOperations {
 			model.addAttribute("workers", workers);
 			model.addAttribute("locations", locations);
 			model.addAttribute("txt", text);
-			model.addAttribute("delIndex", usable.size());
+			model.addAttribute("useableSize", usable.size());
 		}
 		
 		return "admin/instruments";
 	}
 	
 	@RequestMapping("/add-instrument")
-	public String addInstrument(@RequestParam(value="inst") String instrument, RedirectAttributes rdAttr) {
+	public String addInstrument(@RequestParam(value="inst") String instrumentName, RedirectAttributes rdAttr) {
 		
-		if(instrumentService.saveNewGeoInstrument(instrument)) {
-			rdAttr.addAttribute("instSaved","\"" + instrument + "\" műszer hozzáadva a nyilvántartáshoz.");	
+		if(instrumentService.saveNewGeoInstrument(instrumentName)) {
+			rdAttr.addAttribute("instSaved","\"" + instrumentName + "\" műszer hozzáadva a nyilvántartáshoz.");	
 		}
 		else {
-			rdAttr.addAttribute("instSaved", "\""+ instrument + "\" néven már szerepel műszer a nyilvántartásban.");
+			rdAttr.addAttribute("instSaved", "\""+ instrumentName + "\" néven már szerepel műszer a nyilvántartásban.");
 		}
 		
 		return "redirect:/tools-registry/admin/instruments";
+	}
+	
+	@RequestMapping("/add-additional")
+	public String addAdditional(@RequestParam(value="additional") String additionalName, RedirectAttributes rdAttr) {
+		
+		if(additionalService.saveNewGeoAdditional(additionalName)) {
+			rdAttr.addAttribute("additionalSaved","\"" + additionalName + "\" kiegészítő hozzáadva a nyilvántartáshoz.");	
+		}
+		else {
+			rdAttr.addAttribute("additionalSaved", "\""+ additionalName + "\" néven már szerepel kiegészítő a nyilvántartásban.");
+		}
+		
+		return "redirect:/tools-registry/admin/additionals";
 	}
 	
 	@RequestMapping("/add-location")
@@ -281,7 +317,7 @@ public class AdminOperations {
 		return "redirect:/tools-registry/admin/instruments";
 	}
 	
-	@RequestMapping("/cancel-restore")
+	@RequestMapping("/cancel-restore-instrument")
 	public String cancelRestoreInstrument(@RequestParam("id") Long id) {
 		
 		Optional<GeoInstrument> instrument = instrumentService.findById(id);
@@ -299,6 +335,24 @@ public class AdminOperations {
 		return "redirect:/tools-registry/admin/instruments";
 	}
 	
+	@RequestMapping("/cancel-restore-additional")
+	public String cancelRestoreAdditional(@RequestParam("id") Long id) {
+		
+		Optional<GeoAdditional> additional = additionalService.findById(id);
+		
+		if(additional.isPresent()) {
+			if(additional.get().isDeleted()) {
+				additional.get().setDeleted(false);
+			}
+			else {
+				additional.get().setDeleted(true);
+			}
+			
+			additionalService.save(additional.get());	
+		}
+		return "redirect:/tools-registry/admin/additionals";
+	}
+	
 	@PostMapping("/takeaway-instrument")
 	public String takeawayInstrument(HttpServletRequest request, RedirectAttributes rdAttr) {
 		
@@ -306,31 +360,28 @@ public class AdminOperations {
 		
 		if(instrument.get().isUsed()) {
 			rdAttr.addAttribute("alreadyUsed", "Az eszköz nem vehető fel mivel már használatban van. Lásd \"Felvett eszközök\" oldalon.");
+			return "redirect:/tools-registry/admin/tools-in-use";
 		}
 		else if("-".equals(request.getParameter("worker-id"))) {
 			rdAttr.addAttribute("workerNotChosen", "Nem választottál dolgozót az eszköz felvételéhez.");
 			return "redirect:/tools-registry/admin/instruments";
 		}
-		else {
+		
 		Long id = Long.valueOf(request.getParameter("worker-id"));
 		Optional<GeoWorker> worker = workerService.findById(id);
 		instrument.get().setUsed(true);
 		instrument.get().setGeoworker(worker.get());
-		if(instrument.get().getPutDownPlace() == null) {
-			instrument.get().setPutDownPlace(request.getParameter("from-location"));
-		}
 		instrument.get().setPickUpPlace(request.getParameter("from-location"));
 		instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
 		String comment = request.getParameter("comment");
-		if(comment.length() > 1000) {
+		if(comment.length() > 999) {
 		instrument.get().setComment(comment.substring(999));
 		}
 		else {
 			instrument.get().setComment(comment);
 		}
 		instrumentService.save(instrument.get());
-		}
-	
+		
 		return "redirect:/tools-registry/admin/tools-in-use";
 	}
 	
@@ -339,22 +390,22 @@ public class AdminOperations {
 		
 		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
 		
-		if(instrument.isPresent()) {
-			instrument.get().setUsed(false);
-			instrument.get().setPutDownDate(new Date(System.currentTimeMillis()));
-			instrument.get().setPutDownPlace(request.getParameter("location"));
-			String comment = request.getParameter("comment");
-			if(comment.length() > 1000) {
-			instrument.get().setComment(comment.substring(999));
-			}
-			else {
-				instrument.get().setComment(comment);
-			}
-			instrumentService.save(instrument.get());
+		instrument.get().setUsed(false);
+		instrument.get().setPutDownDate(new Date(System.currentTimeMillis()));
+		instrument.get().setPutDownPlace(request.getParameter("location"));
 			
-			createAndSaveUsedTool(instrument.get());
-			
-		}
+		String comment = request.getParameter("comment");
+		if(comment.length() > 999) {
+		instrument.get().setComment(comment.substring(999));
+			}
+		else {
+			instrument.get().setComment(comment);
+			}
+
+		createAndSaveUsedTool(instrument.get());
+		instrument.get().setPickUpPlace(request.getParameter("location"));
+		instrument.get().setGeoworker(null);
+		instrumentService.save(instrument.get());
 		
 		return "redirect:/tools-registry/admin/instruments";
 	}
@@ -379,7 +430,7 @@ public class AdminOperations {
 			List<UsedTool> used = usedToolService.findBetweenDates(from, to);
 			model.addAttribute("tools", used);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			System.out.println("BAD DATE FORMATS: " + from +", " + to);
 		}
 		
 		return "admin/tools-history";

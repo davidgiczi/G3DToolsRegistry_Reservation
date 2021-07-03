@@ -10,6 +10,10 @@ if(document.getElementById("instSaved") != null){
 alert(document.getElementById("instSaved").value);
 }
 
+if(document.getElementById("additionalSaved") != null){	
+alert(document.getElementById("additionalSaved").value);
+}
+
 if(document.getElementById("locSaved") != null){	
 alert(document.getElementById("locSaved").value);
 }
@@ -51,9 +55,14 @@ function searchInstrument(){
 	location.href = location.origin + "/tools-registry/admin/search-instrument?text=" + str;
 }
 
-function cancelRestore(id){
+function cancelRestoreInstrument(id){
 	
-	location.href = location.origin + "/tools-registry/admin/cancel-restore?id=" + id;
+	location.href = location.origin + "/tools-registry/admin/cancel-restore-instrument?id=" + id;
+}
+
+function cancelRestoreAdditional(id){
+	
+	location.href = location.origin + "/tools-registry/admin/cancel-restore-additional?id=" + id;
 }
 
 function takeawayInstrument(id){
@@ -85,6 +94,19 @@ function restoreInstrument(id){
 	}
 	else{
 			alert(document.getElementById("newInstError").value);
+		}
+		
+	}
+	
+	function addAdditional(){
+	
+	var newAdditional = prompt(document.getElementById("newAdditionalMsg").value).trim();
+	
+	if(isValidInputText(newAdditional)){
+			location.href = location.origin + "/tools-registry/admin/add-additional?additional=" + newAdditional;
+	}
+	else{
+			alert(document.getElementById("newAdditionalError").value);
 		}
 		
 	}

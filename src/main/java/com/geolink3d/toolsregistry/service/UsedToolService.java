@@ -2,14 +2,11 @@ package com.geolink3d.toolsregistry.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.geolink3d.toolsregistry.model.UsedTool;
 import com.geolink3d.toolsregistry.repository.UsedToolRepository;
 

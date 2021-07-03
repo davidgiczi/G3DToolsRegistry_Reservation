@@ -11,7 +11,7 @@
 
 <div layout:fragment="tools-history">
 <span id="add-options">
-<input type="date" id="pickupdate" th:value="2021-07-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date" id="pickupdate" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
 <input type="date" id="putdowndate" th:onchange="'getDate()'"><a> - napig</a>&nbsp;&nbsp;&nbsp;
 <input id="search-field" th:onkeyup="'searchForToolHistory()'" type="text" th:placeholder="#{search}"/>
 </span>
@@ -24,12 +24,12 @@
 	<tr>
 	<th th:text="#{number}"></th>
 	<th th:text="#{instrument.name}"></th>
-	<th th:text="#{instrument.user}"></th>
-	<th th:text="#{instrument.pickup.place}"></th>
-	<th th:text="#{instrument.pickup.date}"></th>
-	<th th:text="#{instrument.put.down.place}"></th>
-	<th th:text="#{instrument.put.down.date}"></th>
-	<th th:text="#{instrument.comment}"></th>
+	<th th:text="#{tool.user}"></th>
+	<th th:text="#{tool.pickup.place}"></th>
+	<th th:text="#{tool.pickup.date}"></th>
+	<th th:text="#{tool.put.down.place}"></th>
+	<th th:text="#{tool.put.down.date}"></th>
+	<th th:text="#{tool.comment}"></th>
 	</tr>
 	
 	<tr th:each="tool : ${tools}">

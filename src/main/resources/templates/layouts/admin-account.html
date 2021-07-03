@@ -14,7 +14,7 @@
 <a id="signout" sec:authorize="isAuthenticated()" th:href="@{/tools-registry/logout}" th:text="#{sign.out}"></a>
 <br><br><br>
 <div id="auth" sec:authorize="isAuthenticated()">
- <span th:text="#{auth}"></span><b><span sec:authentication="name"></span></b></div>
+ <span th:text="#{auth}"></span>&nbsp;<b><span sec:authentication="name"></span></b></div>
 <br><br>
 <span id="options" sec:authorize="isAuthenticated()">
  <a th:href="@{/tools-registry/admin/workers}" th:text="#{workers}"></a>&nbsp;&nbsp;&nbsp;

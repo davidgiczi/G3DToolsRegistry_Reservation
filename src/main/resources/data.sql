@@ -23,3 +23,13 @@ VALUES ('FARO Laser Scanner', null, true, null, null, null, null, false, null);
 INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
 VALUES ('Leica Total Station', null, true, null, null, null, null, false, null);
 
+INSERT INTO additionals (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id, instrument_id) 
+VALUES ('FARO balls', null, false, null, null,  null, null, false, null, null);
+INSERT INTO additionals (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id, instrument_id) 
+VALUES ('Trimble műszerállvány', 'Hello World!', false, null, null,  null, null, false, null, null);
+INSERT INTO additionals (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id, instrument_id) 
+VALUES ('FARO prizma', null, true, null, null, null, null, false, null, null);
+INSERT INTO additionals (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id, instrument_id) 
+VALUES ('Leica prizma', null, true, null, null, null, null, false, null, null);
+
+

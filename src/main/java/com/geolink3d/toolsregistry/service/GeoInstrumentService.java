@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
+import com.geolink3d.toolsregistry.model.GeoTool;
 import com.geolink3d.toolsregistry.repository.GeoInstrumentRepository;
 
 
@@ -47,10 +50,43 @@ public class GeoInstrumentService {
 		return deleted;
 	}
 	
-	public List<GeoInstrument> findUsedGeoInstrument(){
-		List<GeoInstrument> used = instrumentRepo.findNotDeletedButUsedGeoInstruments();
-		Collections.sort(used, new UsedGeoInstrumentComparator());
-		return used;
+	public List<GeoTool> findUsedGeoTool(){
+		
+		List<GeoInstrument> usedIntsruments= instrumentRepo.findNotDeletedButUsedGeoInstruments();
+		Collections.sort(usedIntsruments, new UsedGeoInstrumentComparator());
+		
+		List<GeoTool> toolStore = new ArrayList<>();
+		boolean isColored = true;
+		for (GeoInstrument geoInstrument : usedIntsruments) {
+			GeoTool instrumentTool = new GeoTool();
+			instrumentTool.setId(geoInstrument.getId());
+			instrumentTool.setToolName(geoInstrument.getName());
+			instrumentTool.setToolUser(geoInstrument.getGeoworker().getLastname() + " " + geoInstrument.getGeoworker().getFirstname());
+			instrumentTool.setPickUpDate(geoInstrument.getPickUpDate());
+			instrumentTool.setPickUpPlace(geoInstrument.getPickUpPlace());
+			instrumentTool.setComment(geoInstrument.getComment());
+			instrumentTool.setColored(isColored);
+			instrumentTool.setInstruction(true);
+			toolStore.add(instrumentTool);
+			
+			for (GeoAdditional geoAdditional : geoInstrument.getAdditionals()) {
+				GeoTool additionalTool = new GeoTool();
+				additionalTool.setId(geoAdditional.getId());
+				additionalTool.setToolName(geoInstrument.getName() + "/" + geoAdditional.getName());
+				additionalTool.setToolUser(geoAdditional.getGeoworker().getLastname() + " " + geoAdditional.getGeoworker().getFirstname());
+				additionalTool.setPickUpDate(geoAdditional.getPickUpDate());
+				additionalTool.setPickUpPlace(geoAdditional.getPickUpPlace());
+				additionalTool.setComment(geoAdditional.getComment());
+				additionalTool.setColored(isColored);
+				additionalTool.setInstruction(false);
+				toolStore.add(instrumentTool);
+			}
+			
+			isColored = !isColored;
+			
+		}
+		
+		return toolStore;
 	}
 	
 	public Optional<GeoInstrument> findById(Long id){

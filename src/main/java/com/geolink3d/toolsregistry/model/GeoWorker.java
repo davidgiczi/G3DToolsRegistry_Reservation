@@ -28,6 +28,8 @@ public class GeoWorker implements Comparable<GeoWorker> {
 	private String lastname;
 	@OneToMany(mappedBy = "geoworker")
 	private List<GeoInstrument> instruments;
+	@OneToMany(mappedBy = "geoworker")
+	private List<GeoAdditional> additionals;
 	@Column(unique = true, nullable = false)
 	private String username;
 	@Column(nullable = false)
@@ -116,6 +118,14 @@ public class GeoWorker implements Comparable<GeoWorker> {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public List<GeoAdditional> getAdditionals() {
+		return additionals;
+	}
+
+	public void setAdditionals(List<GeoAdditional> additionals) {
+		this.additionals = additionals;
 	}
 
 	public void addRoles(String roleName) {
