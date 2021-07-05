@@ -38,26 +38,104 @@ public class GeoInstrumentService {
 		return false;
 	}
 	
-	public List<GeoInstrument> findUseableGeoInstrument(){
+	public List<GeoTool> findUseableGeoTools(){
 		List<GeoInstrument> usable = instrumentRepo.findNotDeletedGeoInstruments();
 		Collections.sort(usable);
-		return usable;
+		return convertUsableGeoInstrumentStoreToGeoToolStore(usable);
 	}
 	
-	public List<GeoInstrument> findDeletedGeoInstrument(){
+	public List<GeoTool> findDeletedGeoTools(){
 		List<GeoInstrument> deleted = instrumentRepo.findDeletedGeoInstruments();
 		Collections.sort(deleted);
-		return deleted;
+		return convertDeletedGeoInstrumentStoreToGeoToolStore(deleted);
 	}
 	
-	public List<GeoTool> findUsedGeoTool(){
+	public List<GeoTool> findUsedGeoTools(){
 		
 		List<GeoInstrument> usedIntsruments= instrumentRepo.findNotDeletedButUsedGeoInstruments();
 		Collections.sort(usedIntsruments, new UsedGeoInstrumentComparator());
+
+		return convertGeoInstrumentToGeoToolForDisplay(usedIntsruments);
+	}
+	
+	public Optional<GeoInstrument> findById(Long id){
+		return instrumentRepo.findById(id);
+	}
+	
+	public void save(GeoInstrument instrument) {
+		instrumentRepo.save(instrument);
+	}
+	
+	
+	public List<GeoTool> findNotDeletedGeoToolsByText(String text) {
+		
+		List<GeoInstrument> geoinstruments= new ArrayList<>();
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		geoinstruments = instrumentRepo.findNotDeletedGeoInstrumentsByText(text);
+		
+		if(geoinstruments.isEmpty()) {
+		geoinstruments= instrumentRepo.findNotDeletedGeoInstrumentsByText(text.toUpperCase());
+		}
+		if(geoinstruments.isEmpty()) {
+		geoinstruments.addAll(instrumentRepo.findNotDeletedGeoInstrumentsByText(text.toLowerCase()));
+		}
+		
+		Collections.sort(geoinstruments);
+
+		List<GeoTool> toolStore = convertUsableGeoInstrumentStoreToGeoToolStore(geoinstruments);
+		
+		GeoToolHighlighter highlighter = new GeoToolHighlighter(toolStore);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedGeoToolStore();
+		
+		return highlighter.getHighlightedGeoToolStore();
+		
+	}
+	
+	public List<GeoTool> findDeletedGeoToolsByText(String text) {
+		
+		List<GeoInstrument> geoinstruments= new ArrayList<>();
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		geoinstruments = instrumentRepo.findDeletedGeoInstrumentsByText(text);
+		
+		if(geoinstruments.isEmpty()) {
+		geoinstruments= instrumentRepo.findDeletedGeoInstrumentsByText(text.toUpperCase());
+		}
+		if(geoinstruments.isEmpty()) {
+		geoinstruments.addAll(instrumentRepo.findDeletedGeoInstrumentsByText(text.toLowerCase()));
+		}
+		
+		Collections.sort(geoinstruments);
+		
+		List<GeoTool> toolStore = convertDeletedGeoInstrumentStoreToGeoToolStore(geoinstruments);
+		
+		GeoToolHighlighter highlighter = new GeoToolHighlighter(toolStore);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedGeoToolStore();
+		
+		return highlighter.getHighlightedGeoToolStore();
+		
+	}
+	
+	public List<GeoTool> convertGeoInstrumentToGeoToolForDisplay(List<GeoInstrument> instrumentStore){
 		
 		List<GeoTool> toolStore = new ArrayList<>();
 		boolean isColored = true;
-		for (GeoInstrument geoInstrument : usedIntsruments) {
+		for (GeoInstrument geoInstrument : instrumentStore) {
 			GeoTool instrumentTool = new GeoTool();
 			instrumentTool.setId(geoInstrument.getId());
 			instrumentTool.setToolName(geoInstrument.getName());
@@ -83,78 +161,52 @@ public class GeoInstrumentService {
 			}
 			
 			isColored = !isColored;
-			
 		}
+		
 		
 		return toolStore;
 	}
 	
-	public Optional<GeoInstrument> findById(Long id){
-		return instrumentRepo.findById(id);
+	public boolean isNextRowIsColored() {
+		
+		List<GeoTool> instrumentTools = convertGeoInstrumentToGeoToolForDisplay(instrumentRepo.findNotDeletedButUsedGeoInstruments());
+		
+		return !instrumentTools.get(instrumentTools.size() - 1).isColored();
 	}
 	
-	public void save(GeoInstrument instrument) {
-		instrumentRepo.save(instrument);
+	private List<GeoTool> convertUsableGeoInstrumentStoreToGeoToolStore(List<GeoInstrument> usableInstrumentStore){
+		List<GeoTool> usableToolStore = new ArrayList<>();
+		for (GeoInstrument instrument : usableInstrumentStore) {
+			GeoTool tool = new GeoTool();
+			tool.setId(instrument.getId());
+			tool.setToolName(instrument.getName());
+			if(instrument.getGeoworker() != null) {
+				tool.setToolUser(instrument.getGeoworker().getLastname() + ' ' + instrument.getGeoworker().getFirstname());
+			}
+			if(instrument.getPickUpDate() != null) {
+				tool.setPickUpDate(instrument.getPickUpDate());
+			}
+			if(instrument.getPickUpPlace() != null) {
+				tool.setPickUpPlace(instrument.getPickUpPlace());
+			}
+			if(instrument.getComment() != null) {
+				tool.setComment(instrument.getComment());
+			}
+			tool.setUsed(instrument.isUsed());
+			usableToolStore.add(tool);
+		}
+		
+		return usableToolStore;
 	}
 	
-	
-	public List<GeoInstrument> findNotDeletedInstrumentsByText(String text) {
-		
-		List<GeoInstrument> geoinstruments= new ArrayList<>();
-		
-		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
-			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+	private List<GeoTool> convertDeletedGeoInstrumentStoreToGeoToolStore(List<GeoInstrument> deletedInstrumentStore){
+		List<GeoTool> deletedTools = new ArrayList<>();
+		for (GeoInstrument instrument : deletedInstrumentStore) {
+			GeoTool tool = new GeoTool();
+			tool.setId(instrument.getId());
+			tool.setToolName(instrument.getName());
+			deletedTools.add(tool);
 		}
-		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
-			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
-		}
-		
-		geoinstruments = instrumentRepo.findNotDeletedInstrumentsByText(text);
-		
-		if(geoinstruments.isEmpty()) {
-		geoinstruments= instrumentRepo.findNotDeletedInstrumentsByText(text.toUpperCase());
-		}
-		if(geoinstruments.isEmpty()) {
-		geoinstruments.addAll(instrumentRepo.findNotDeletedInstrumentsByText(text.toLowerCase()));
-		}
-		
-		Collections.sort(geoinstruments);
-		
-		GeoInstrumentHighlighter highlighter = new GeoInstrumentHighlighter(geoinstruments);
-		highlighter.setSearchedExpression(text);
-		highlighter.createHighlightedGeoInstrumentStore();
-		
-		return highlighter.getHighlightedGeoIntsrumentStore();
-		
-	}
-	
-	public List<GeoInstrument> findDeletedInstrumentsByText(String text) {
-		
-		List<GeoInstrument> geoinstruments= new ArrayList<>();
-		
-		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
-			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
-		}
-		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
-			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
-		}
-		
-		geoinstruments = instrumentRepo.findDeletedInstrumentsByText(text);
-		
-		if(geoinstruments.isEmpty()) {
-		geoinstruments= instrumentRepo.findDeletedInstrumentsByText(text.toUpperCase());
-		}
-		if(geoinstruments.isEmpty()) {
-		geoinstruments.addAll(instrumentRepo.findDeletedInstrumentsByText(text.toLowerCase()));
-		}
-		
-		Collections.sort(geoinstruments);
-		
-		GeoInstrumentHighlighter highlighter = new GeoInstrumentHighlighter(geoinstruments);
-		highlighter.setSearchedExpression(text);
-		highlighter.createHighlightedGeoInstrumentStore();
-		
-		return highlighter.getHighlightedGeoIntsrumentStore();
-		
+		return deletedTools;
 	}
 }

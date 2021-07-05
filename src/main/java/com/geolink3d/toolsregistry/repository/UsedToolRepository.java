@@ -5,15 +5,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import com.geolink3d.toolsregistry.model.UsedTool;
+import com.geolink3d.toolsregistry.model.UsedGeoTool;
 
-public interface UsedToolRepository extends CrudRepository<UsedTool, Long> {
+public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
 
-	List<UsedTool> findAll();
+	List<UsedGeoTool> findAll();
 	@Query(value = "select * from used_tools"
 		+ " where "
 		+ "(pick_up_date >= :from and put_down_date <= :to)",
 		nativeQuery = true)
-	List<UsedTool> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
+	List<UsedGeoTool> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
 	
 }

@@ -1,5 +1,6 @@
 package com.geolink3d.toolsregistry.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -19,9 +20,14 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 	List<GeoInstrument> findNotDeletedButUsedGeoInstruments();
 	@Query(value = "select * from instruments where deleted = false and name like %:text%"
 			, nativeQuery = true)
-	List<GeoInstrument> findNotDeletedInstrumentsByText(@Param("text") String text);
+	List<GeoInstrument> findNotDeletedGeoInstrumentsByText(@Param("text") String text);
 	@Query(value = "select * from instruments where deleted = true and name like %:text%"
 			, nativeQuery = true)
-	List<GeoInstrument> findDeletedInstrumentsByText(@Param("text") String text);
+	List<GeoInstrument> findDeletedGeoInstrumentsByText(@Param("text") String text);
+	@Query(value = "select * from instruments"
+			+ " where "
+			+ "(deleted = false and used = true and pick_up_date >= :from and pick_up_date <= :to)"
+			,nativeQuery = true)
+		List<GeoInstrument> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
 	
 }

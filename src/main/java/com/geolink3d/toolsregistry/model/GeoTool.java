@@ -2,7 +2,7 @@ package com.geolink3d.toolsregistry.model;
 
 import java.util.Date;
 
-public class GeoTool {
+public class GeoTool implements Comparable<GeoTool> {
 
 	private Long id;
 	private String toolName;
@@ -12,6 +12,7 @@ public class GeoTool {
 	private String comment;
 	private boolean isColored;
 	private boolean isInstruction;
+	private boolean isUsed;
 	
 	
 	public Long getId() {
@@ -62,6 +63,23 @@ public class GeoTool {
 	}
 	public void setInstruction(boolean isInstruction) {
 		this.isInstruction = isInstruction;
+	}
+	public boolean isUsed() {
+		return isUsed;
+	}
+	public void setUsed(boolean isUsed) {
+		this.isUsed = isUsed;
+	}
+	@Override
+	public int compareTo(GeoTool o) {
+		
+		return this.toolName.compareTo(o.getToolName()) > 0 ? 1 : this.toolName.compareTo(o.getToolName()) < 0 ? -1 : 0;
+	}
+	@Override
+	public String toString() {
+		return "GeoTool [id=" + id + ", toolName=" + toolName + ", toolUser=" + toolUser + ", pickUpDate=" + pickUpDate
+				+ ", pickUpPlace=" + pickUpPlace + ", comment=" + comment + ", isColored=" + isColored
+				+ ", isInstruction=" + isInstruction + ", isUsed=" + isUsed + "]";
 	}
 	
 	

@@ -22,10 +22,6 @@ if(document.getElementById("alreadyUsed") != null){
 alert(document.getElementById("alreadyUsed").value);
 }
 
-if(document.getElementById("workerNotChosen") != null){	
-alert(document.getElementById("workerNotChosen").value);
-}
-
 function setup(){
 if(document.getElementById("search-value").value != null){
 var searchValue = document.getElementById("search-value").value;
@@ -55,6 +51,11 @@ function searchInstrument(){
 	location.href = location.origin + "/tools-registry/admin/search-instrument?text=" + str;
 }
 
+function searchAdditional(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/admin/search-additional?text=" + str;
+}
+
 function cancelRestoreInstrument(id){
 	
 	location.href = location.origin + "/tools-registry/admin/cancel-restore-instrument?id=" + id;
@@ -67,13 +68,47 @@ function cancelRestoreAdditional(id){
 
 function takeawayInstrument(id){
 	var workerid = document.getElementById(id+"worker").value;
+	if("-" === workerid){
+		alert("Nem választottál dolgozót az eszköz felvételéhez.");
+	}
+	else{
 	var place = document.getElementById(id+"place").value;
 	var comment = document.getElementById(id+"comment").value;
 	document.getElementById("from-instrument-id").value = id;
 	document.getElementById("from-worker-id").value = workerid;
 	document.getElementById("from-location").value = place;
 	document.getElementById("from-msg").value = comment;
-	document.getElementById("takeaway-form").submit();
+	document.getElementById("takeaway-instrument-form").submit();
+}
+}
+
+function takeawayAdditional(id){
+	var workerid = document.getElementById(id+"worker").value;
+	if("-" === workerid){
+		alert("Nem választottál dolgozót az eszköz felvételéhez.");
+		return;
+	}
+	var instrumentid = document.getElementById(id+"instrument").value;
+	var place = document.getElementById(id+"place").value;
+	var comment = document.getElementById(id+"comment").value;
+	if("-" === instrumentid){
+		if(confirm("Biztos, hogy műszer nélkül veszed fel a kiegészítőt?")){
+			sendData(id, instrumentid, workerid, place, comment);
+			return;
+		}
+	}
+	sendData(id, instrumentid, workerid, place, comment);
+}
+	
+function sendData(additionalId, instrumentId, workerId, place, comment){
+	
+	document.getElementById("from-additional-id").value = additionalId;
+	document.getElementById("from-instrument-id").value = instrumentId;
+	document.getElementById("from-worker-id").value = workerId;
+	document.getElementById("from-location").value = place;
+	document.getElementById("from-msg").value = comment;
+	document.getElementById("takeaway-additional-form").submit();
+	
 }
 
 function restoreInstrument(id){
@@ -133,10 +168,16 @@ function isValidInputText(text){
 	return true;
 }
 
-function getDate(){
+function getDate(page){
 	var from = document.getElementById("pickupdate").value;
 	var to = document.getElementById("putdowndate").value;
-	location.href = location.origin + "/tools-registry/admin/search-by-dates?from=" + from + "&to=" + to;
+	
+	if("tools-history" === page){
+	location.href = location.origin + "/tools-registry/admin/search-by-dates-in-tools-history?from=" + from + "&to=" + to;
+	}
+	else if("tools-in-use" === page){
+	location.href = location.origin + "/tools-registry/admin/search-by-dates-in-tools-in-use?from=" + from + "&to=" + to;
+	}
 }
 
-
+ 

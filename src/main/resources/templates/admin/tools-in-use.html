@@ -11,8 +11,8 @@
 
 <div layout:fragment="tools-in-use">
 <span id="add-options">
-<input type="date" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
-<input type="date"><a> - napig</a>&nbsp;&nbsp;&nbsp;
+<input type="date" id="pickupdate" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date" id="putdowndate" th:onchange="'getDate(\'' + tools-in-use + '\')'"><a> - napig</a>&nbsp;&nbsp;&nbsp;
 <input id="search-field" th:onkeyup="'searchUsedInstrument()'" type="text" th:placeholder="#{search}"/>
 </span>
 <br>

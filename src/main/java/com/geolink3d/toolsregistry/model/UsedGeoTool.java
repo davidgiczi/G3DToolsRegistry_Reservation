@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "used_tools")
-public class UsedTool implements Comparable<UsedTool> {
+public class UsedGeoTool implements Comparable<UsedGeoTool> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class UsedTool implements Comparable<UsedTool> {
 	@Column(length = 1000)
 	private String comment;
 	
-	public UsedTool() {
+	public UsedGeoTool() {
 	}
 	
 	public Long getId() {
@@ -81,7 +81,7 @@ public class UsedTool implements Comparable<UsedTool> {
 	}
 
 	@Override
-	public int compareTo(UsedTool o) {
+	public int compareTo(UsedGeoTool o) {
 		
 		return this.getPickUpDate().getTime() > o.getPickUpDate().getTime() ?  - 1 : o.getPickUpDate().getTime() < this.getPickUpDate().getTime() ? 1 : 0;
 	}

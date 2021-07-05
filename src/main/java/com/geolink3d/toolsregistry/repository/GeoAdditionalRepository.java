@@ -1,5 +1,6 @@
 package com.geolink3d.toolsregistry.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +19,16 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	List<GeoAdditional> findDeletedGeoAdditionals();
 	@Query(value = "select * from additionals where deleted = false and used = true" , nativeQuery = true)
 	List<GeoAdditional> findNotDeletedButUsedGeoAdditionals();
+	@Query(value = "select * from additionals where deleted = false and name like %:text%"
+			, nativeQuery = true)
+	List<GeoAdditional> findNotDeletedGeoAdditionalsByText(@Param("text") String text);
+	@Query(value = "select * from additionals where deleted = true and name like %:text%"
+			, nativeQuery = true)
+	List<GeoAdditional> findDeletedGeoAdditionalsByText(@Param("text") String text);
+	@Query(value = "select * from additionals"
+			+ " where "
+			+ "(deleted = false and used = true and pick_up_date >= :from and pick_up_date <= :to)"
+			,nativeQuery = true)
+		List<GeoAdditional> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
 	
 }

@@ -34,12 +34,12 @@
 	
 	<tr th:each="use : ${usable}">
 	<td th:utext="${useStat.count}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${use.name}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${use.toolName}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
 	<select th:if="${use.used}" class="selection_field" disabled="disabled">
-	<option th:if="${use.geoworker == worker}" th:each="worker : ${workers}" th:utext="${worker.lastname + ' ' + worker.firstname}" selected="selected"></option>
-	<option th:unless="${use.geoworker == worker}" th:each="worker : ${workers}" th:utext="${worker.lastname + ' ' + worker.firstname}"></option>
+	<option th:if="${use.toolUser == worker.lastname + ' ' + worker.firstname}" th:each="worker : ${workers}" th:utext="${use.toolUser}" selected="selected"></option>
+	<option th:unless="${use.toolUser == worker.lastname + ' ' + worker.firstname}" th:each="worker : ${workers}" th:utext="${use.toolUser}"></option>
 	</select>
 	
 	<select th:unless="${use.used}" class="selection_field" th:id="${use.id} + worker">
@@ -81,7 +81,7 @@
 	<tr th:each="del : ${deleted}">
 	<td th:utext="${delStat.count + useableSize}" th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"></td>
 	
-	<td th:utext="${del.name}" th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"></td>
+	<td th:utext="${del.toolName}" th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"></td>
 	
 	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">
 	<select class="selection_field" disabled="disabled">
@@ -108,7 +108,7 @@
 	
 </table>
 
-<form th:action="@{/tools-registry/admin/takeaway-instrument}" method="post" id="takeaway-form">
+<form th:action="@{/tools-registry/admin/takeaway-instrument}" method="post" id="takeaway-instrument-form">
 <input type="hidden" value="" name="instrument-id" id="from-instrument-id">
 <input type="hidden" value="" name="worker-id" id="from-worker-id">
 <input type="hidden" value="" name="from-location" id="from-location">
@@ -121,7 +121,6 @@
 <input type="hidden" th:value="#{new.location}" id="newLocationMsg">
 <input type="hidden" th:value="#{new.location.error}" id="newLocationError">
 <input type="hidden" th:if="${param.locSaved != null}" th:value="${param.locSaved}" id="locSaved">
-<input type="hidden" th:if="${param.workerNotChosen != null}" th:value="${param.workerNotChosen}" id="workerNotChosen">
 </div>
 
 

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.geolink3d.toolsregistry.model.UsedTool;
+import com.geolink3d.toolsregistry.model.UsedGeoTool;
 import com.geolink3d.toolsregistry.repository.UsedToolRepository;
 
 @Service
@@ -21,19 +21,19 @@ public class UsedToolService {
 		this.usedToolRepo = usedToolRepo;
 	}
 	
-	public List<UsedTool> findAll(){
-		List<UsedTool> used = usedToolRepo.findAll();
+	public List<UsedGeoTool> findAll(){
+		List<UsedGeoTool> used = usedToolRepo.findAll();
 		Collections.sort(used);
 		return used;
 	}
 	
-	public void save(UsedTool usedTool) {
+	public void save(UsedGeoTool usedTool) {
 		usedToolRepo.save(usedTool);
 	}
 	
-	public List<UsedTool> findBetweenDates(String date1, String date2) throws ParseException{
+	public List<UsedGeoTool> findBetweenDates(String date1, String date2) throws ParseException{
 		
-		List<UsedTool> tools;
+		List<UsedGeoTool> tools;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date inputDate1 = format.parse(date1);
 		Date inputDate2 = format.parse(date2);
@@ -46,7 +46,7 @@ public class UsedToolService {
 			inputDate1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date1 + " 24:00");
 			tools = usedToolRepo.findBetweenDates(inputDate2, inputDate1);
 		}
-		
+		Collections.sort(tools);
 		return tools;
 	}
 }

@@ -2,11 +2,11 @@ package com.geolink3d.toolsregistry.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.geolink3d.toolsregistry.model.GeoInstrument;
+import com.geolink3d.toolsregistry.model.GeoTool;
 
-public class GeoInstrumentHighlighter {
+public class GeoToolHighlighter {
 
-	private List<GeoInstrument> highlightedGeoIntsrumentStore;
+	private List<GeoTool> highlightedGeoToolStore;
 	private String searchedExpression;
 	private List<Integer> beginIndexStore;
 	private List<Integer> endIndexStore;
@@ -14,30 +14,28 @@ public class GeoInstrumentHighlighter {
 	private final String postTag = "</span>";
 
 
-	public GeoInstrumentHighlighter(List<GeoInstrument> inputInstruments) {
-		this.highlightedGeoIntsrumentStore = inputInstruments;
+	public GeoToolHighlighter(List<GeoTool> inputGeoTools) {
+		this.highlightedGeoToolStore = inputGeoTools;
 	}	
 	
-	
-	public List<GeoInstrument> getHighlightedGeoIntsrumentStore() {
-		return highlightedGeoIntsrumentStore;
+	public List<GeoTool> getHighlightedGeoToolStore() {
+		return highlightedGeoToolStore;
 	}
-
 
 	public void setSearchedExpression(String searchedExpression) {
 		this.searchedExpression = searchedExpression.toLowerCase();
 	}
 
 
-	public void createHighlightedGeoInstrumentStore() {
+	public void createHighlightedGeoToolStore() {
 		
 
-		for (int i = 0; i < highlightedGeoIntsrumentStore.size(); i++) {
+		for (int i = 0; i < highlightedGeoToolStore.size(); i++) {
 
-			if (highlightedGeoIntsrumentStore.get(i).getName().toLowerCase().contains(searchedExpression)) {
-				createBeginIndexStore(getHighlightedGeoIntsrumentStore().get(i).getName().toLowerCase());
+			if (highlightedGeoToolStore.get(i).getToolName().toLowerCase().contains(searchedExpression)) {
+				createBeginIndexStore(getHighlightedGeoToolStore().get(i).getToolName().toLowerCase());
 				createEndIndexStore();
-				highlightedGeoIntsrumentStore.get(i).setName(createHighlightedString(highlightedGeoIntsrumentStore.get(i).getName()));
+				highlightedGeoToolStore.get(i).setToolName(createHighlightedString(highlightedGeoToolStore.get(i).getToolName()));
 			}
 		}
 
