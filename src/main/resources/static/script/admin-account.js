@@ -22,6 +22,13 @@ if(document.getElementById("alreadyUsed") != null){
 alert(document.getElementById("alreadyUsed").value);
 }
 
+if(document.getElementById("otherUser") != null){	
+	if(confirm(document.getElementById("otherUser").value)){
+	
+	document.getElementById("cookies").submit();
+}
+}
+
 function setup(){
 if(document.getElementById("search-value").value != null){
 var searchValue = document.getElementById("search-value").value;

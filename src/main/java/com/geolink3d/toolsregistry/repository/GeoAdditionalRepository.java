@@ -17,8 +17,10 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	List<GeoAdditional> findNotDeletedGeoAdditionals();
 	@Query(value = "select * from additionals where deleted = true" , nativeQuery = true)
 	List<GeoAdditional> findDeletedGeoAdditionals();
-	@Query(value = "select * from additionals where deleted = false and used = true" , nativeQuery = true)
-	List<GeoAdditional> findNotDeletedButUsedGeoAdditionals();
+	@Query(value = "select * from additionals where deleted = false and used = true and instrument_id is null" , nativeQuery = true)
+	List<GeoAdditional> findSingleUsedGeoAdditionals();
+	@Query(value = "select * from additionals where deleted = false and used = true and instrument_id is not null" , nativeQuery = true)
+	List<GeoAdditional> findPairedUsedGeoAdditionals();
 	@Query(value = "select * from additionals where deleted = false and name like %:text%"
 			, nativeQuery = true)
 	List<GeoAdditional> findNotDeletedGeoAdditionalsByText(@Param("text") String text);

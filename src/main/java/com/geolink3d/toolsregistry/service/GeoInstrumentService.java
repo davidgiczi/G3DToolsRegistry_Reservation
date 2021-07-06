@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoTool;
@@ -40,22 +39,12 @@ public class GeoInstrumentService {
 	
 	public List<GeoTool> findUseableGeoTools(){
 		List<GeoInstrument> usable = instrumentRepo.findNotDeletedGeoInstruments();
-		Collections.sort(usable);
 		return convertUsableGeoInstrumentStoreToGeoToolStore(usable);
 	}
 	
 	public List<GeoTool> findDeletedGeoTools(){
 		List<GeoInstrument> deleted = instrumentRepo.findDeletedGeoInstruments();
-		Collections.sort(deleted);
 		return convertDeletedGeoInstrumentStoreToGeoToolStore(deleted);
-	}
-	
-	public List<GeoTool> findUsedGeoTools(){
-		
-		List<GeoInstrument> usedIntsruments= instrumentRepo.findNotDeletedButUsedGeoInstruments();
-		Collections.sort(usedIntsruments, new UsedGeoInstrumentComparator());
-
-		return convertGeoInstrumentToGeoToolForDisplay(usedIntsruments);
 	}
 	
 	public Optional<GeoInstrument> findById(Long id){
@@ -87,8 +76,6 @@ public class GeoInstrumentService {
 		geoinstruments.addAll(instrumentRepo.findNotDeletedGeoInstrumentsByText(text.toLowerCase()));
 		}
 		
-		Collections.sort(geoinstruments);
-
 		List<GeoTool> toolStore = convertUsableGeoInstrumentStoreToGeoToolStore(geoinstruments);
 		
 		GeoToolHighlighter highlighter = new GeoToolHighlighter(toolStore);
@@ -119,8 +106,6 @@ public class GeoInstrumentService {
 		geoinstruments.addAll(instrumentRepo.findDeletedGeoInstrumentsByText(text.toLowerCase()));
 		}
 		
-		Collections.sort(geoinstruments);
-		
 		List<GeoTool> toolStore = convertDeletedGeoInstrumentStoreToGeoToolStore(geoinstruments);
 		
 		GeoToolHighlighter highlighter = new GeoToolHighlighter(toolStore);
@@ -134,8 +119,11 @@ public class GeoInstrumentService {
 	public List<GeoTool> convertGeoInstrumentToGeoToolForDisplay(List<GeoInstrument> instrumentStore){
 		
 		List<GeoTool> toolStore = new ArrayList<>();
+		
 		boolean isColored = true;
+	
 		for (GeoInstrument geoInstrument : instrumentStore) {
+			
 			GeoTool instrumentTool = new GeoTool();
 			instrumentTool.setId(geoInstrument.getId());
 			instrumentTool.setToolName(geoInstrument.getName());
@@ -147,6 +135,7 @@ public class GeoInstrumentService {
 			instrumentTool.setInstruction(true);
 			toolStore.add(instrumentTool);
 			
+			
 			for (GeoAdditional geoAdditional : geoInstrument.getAdditionals()) {
 				GeoTool additionalTool = new GeoTool();
 				additionalTool.setId(geoAdditional.getId());
@@ -157,12 +146,11 @@ public class GeoInstrumentService {
 				additionalTool.setComment(geoAdditional.getComment());
 				additionalTool.setColored(isColored);
 				additionalTool.setInstruction(false);
-				toolStore.add(instrumentTool);
+				toolStore.add(additionalTool);
 			}
 			
 			isColored = !isColored;
 		}
-		
 		
 		return toolStore;
 	}
@@ -171,7 +159,11 @@ public class GeoInstrumentService {
 		
 		List<GeoTool> instrumentTools = convertGeoInstrumentToGeoToolForDisplay(instrumentRepo.findNotDeletedButUsedGeoInstruments());
 		
+		if(instrumentTools != null && !instrumentTools.isEmpty()) {
 		return !instrumentTools.get(instrumentTools.size() - 1).isColored();
+		}
+		
+		return true;
 	}
 	
 	private List<GeoTool> convertUsableGeoInstrumentStoreToGeoToolStore(List<GeoInstrument> usableInstrumentStore){
@@ -192,21 +184,25 @@ public class GeoInstrumentService {
 			if(instrument.getComment() != null) {
 				tool.setComment(instrument.getComment());
 			}
+			
 			tool.setUsed(instrument.isUsed());
 			usableToolStore.add(tool);
 		}
 		
+		Collections.sort(usableToolStore);
 		return usableToolStore;
 	}
 	
 	private List<GeoTool> convertDeletedGeoInstrumentStoreToGeoToolStore(List<GeoInstrument> deletedInstrumentStore){
-		List<GeoTool> deletedTools = new ArrayList<>();
+		List<GeoTool> deletedToolStore = new ArrayList<>();
 		for (GeoInstrument instrument : deletedInstrumentStore) {
 			GeoTool tool = new GeoTool();
 			tool.setId(instrument.getId());
 			tool.setToolName(instrument.getName());
-			deletedTools.add(tool);
+			deletedToolStore.add(tool);
 		}
-		return deletedTools;
+		
+		Collections.sort(deletedToolStore);
+		return deletedToolStore;
 	}
 }

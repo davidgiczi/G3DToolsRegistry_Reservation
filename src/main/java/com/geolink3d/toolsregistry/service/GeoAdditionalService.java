@@ -51,22 +51,20 @@ public class GeoAdditionalService {
 	
 	public List<GeoTool> findUseableGeoTools(){
 		List<GeoAdditional> usable = additionalRepo.findNotDeletedGeoAdditionals();
-		Collections.sort(usable);
 		return convertUsableAdditionalStoreToGeoToolStore(usable);
 	}
 	
 	public List<GeoTool> findDeletedGeoTools(){
 		List<GeoAdditional> deleted = additionalRepo.findDeletedGeoAdditionals();
-		Collections.sort(deleted);
 		return convertDeletedGeoAdditionalStoreToGeoToolStore(deleted);
 	}
 	
-	public List<GeoTool> findUsedGeoTools(){
+	public List<GeoTool> findSingleAdditionalAsGeoTools(){
 		
-		List<GeoAdditional> usedAdditionals= additionalRepo.findNotDeletedButUsedGeoAdditionals();
-		Collections.sort(usedAdditionals, new UsedGeoAdditionalComparator());
+		List<GeoAdditional> singleUsedAdditionals= additionalRepo.findSingleUsedGeoAdditionals();
+		Collections.sort(singleUsedAdditionals, new GeoAdditionalComparator());
 
-		return convertGeoAdditionalToGeoToolForDisplay(usedAdditionals, instrumentService.isNextRowIsColored());
+		return convertGeoAdditionalToGeoToolForDisplay(singleUsedAdditionals, instrumentService.isNextRowIsColored());
 	}
 	
 	
@@ -89,8 +87,6 @@ public class GeoAdditionalService {
 		if(geoAdditionals.isEmpty()) {
 		geoAdditionals.addAll(additionalRepo.findNotDeletedGeoAdditionalsByText(text.toLowerCase()));
 		}
-		
-		Collections.sort(geoAdditionals);
 		
 		List<GeoTool> toolStore = convertUsableAdditionalStoreToGeoToolStore(geoAdditionals);
 		
@@ -121,8 +117,6 @@ public class GeoAdditionalService {
 		if(geoAdditionals.isEmpty()) {
 		geoAdditionals.addAll(additionalRepo.findDeletedGeoAdditionalsByText(text.toLowerCase()));
 		}
-		
-		Collections.sort(geoAdditionals);
 		
 		List<GeoTool> toolStore = convertDeletedGeoAdditionalStoreToGeoToolStore(geoAdditionals);
 		
@@ -159,6 +153,7 @@ public class GeoAdditionalService {
 			GeoTool tool = new GeoTool();
 			tool.setId(additional.getId());
 			tool.setToolName(additional.getName());
+		
 			if(additional.getGeoworker() != null) {
 				tool.setToolUser(additional.getGeoworker().getLastname() + ' ' + additional.getGeoworker().getFirstname());
 			}
@@ -175,17 +170,22 @@ public class GeoAdditionalService {
 			usableToolStore.add(tool);
 		}
 		
+		Collections.sort(usableToolStore);
+		
 		return usableToolStore;
 	}
 	
 	private List<GeoTool> convertDeletedGeoAdditionalStoreToGeoToolStore(List<GeoAdditional> deletedAdditionalStore){
-		List<GeoTool> deletedTools = new ArrayList<>();
+		List<GeoTool> deletedToolStore = new ArrayList<>();
 		for (GeoAdditional additional : deletedAdditionalStore) {
 			GeoTool tool = new GeoTool();
 			tool.setId(additional.getId());
 			tool.setToolName(additional.getName());
-			deletedTools.add(tool);
+			deletedToolStore.add(tool);
 		}
-		return deletedTools;
+		
+		Collections.sort(deletedToolStore);
+		
+		return deletedToolStore;
 	}
 }

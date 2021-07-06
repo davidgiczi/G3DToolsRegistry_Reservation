@@ -2,6 +2,7 @@ package com.geolink3d.toolsregistry.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import com.geolink3d.toolsregistry.repository.GeoAdditionalRepository;
 import com.geolink3d.toolsregistry.repository.GeoInstrumentRepository;
 
 @Service
-public class ToolInUseService {
+public class GeoToolInUseService {
 
 	
 	private GeoInstrumentRepository instrumentRepo;
@@ -66,13 +67,18 @@ public class ToolInUseService {
 	
 	public List<GeoTool> findUsedGeoTools(){
 		
-		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instrumentRepo.findNotDeletedButUsedGeoInstruments());
+		List<GeoInstrument> instruments = instrumentRepo.findNotDeletedButUsedGeoInstruments();
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		List<GeoTool> tools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
+		List<GeoAdditional> additionals = additionalRepo.findSingleUsedGeoAdditionals();
+		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
-				.convertGeoAdditionalToGeoToolForDisplay(additionalRepo.findNotDeletedButUsedGeoAdditionals(), instrumentService.isNextRowIsColored());
+				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored());
 		
-		instrumentTools.addAll(additionalTools);
-		return instrumentTools;
+		tools.addAll(additionalTools);
+		
+		return tools;
 	}
 	
 }

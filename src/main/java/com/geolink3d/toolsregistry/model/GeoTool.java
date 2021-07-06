@@ -51,7 +51,6 @@ public class GeoTool implements Comparable<GeoTool> {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
 	public boolean isColored() {
 		return isColored;
 	}
@@ -70,6 +69,7 @@ public class GeoTool implements Comparable<GeoTool> {
 	public void setUsed(boolean isUsed) {
 		this.isUsed = isUsed;
 	}
+
 	@Override
 	public int compareTo(GeoTool o) {
 		

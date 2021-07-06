@@ -127,17 +127,20 @@
 
 </table>
 
-<form th:action="@{/tools-registry/admin/takeaway-additional}" method="post" id="takeaway-additional-form">
+<form th:action="@{/tools-registry/admin/validate-for-takeaway-additional}" method="post" id="takeaway-additional-form">
 <input type="hidden" value="" name="additional-id" id="from-additional-id">
 <input type="hidden" value="" name="instrument-id" id="from-instrument-id">
 <input type="hidden" value="" name="worker-id" id="from-worker-id">
 <input type="hidden" value="" name="from-location" id="from-location">
 <input type="hidden" value="" name="comment" id="from-msg">
-</form> 
+</form>
+
+<form th:action="@{/tools-registry/admin/takeaway-additional}" method="post" id="cookies"></form> 
 
 <input type="hidden" th:value="#{new.additional}" id="newAdditionalMsg">
 <input type="hidden" th:value="#{new.additional.error}" id="newAdditionalError">
 <input type="hidden" th:if="${param.additionalSaved != null}" th:value="${param.additionalSaved}" id="additionalSaved">
+<input type="hidden" th:if="${param.otherUser != null}" th:value="${param.otherUser}" id="otherUser">
 </div>
 
 </body>

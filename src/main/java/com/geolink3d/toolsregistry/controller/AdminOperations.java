@@ -1,11 +1,17 @@
 package com.geolink3d.toolsregistry.controller;
 
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,11 +21,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoTool;
@@ -32,7 +38,7 @@ import com.geolink3d.toolsregistry.service.GeoInstrumentService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
 import com.geolink3d.toolsregistry.service.LocationService;
 import com.geolink3d.toolsregistry.service.RoleService;
-import com.geolink3d.toolsregistry.service.ToolInUseService;
+import com.geolink3d.toolsregistry.service.GeoToolInUseService;
 import com.geolink3d.toolsregistry.service.UsedToolService;
 
 @Controller
@@ -46,7 +52,7 @@ public class AdminOperations {
 	private LocationService locationService;
 	private UsedToolService usedToolService;
 	private GeoAdditionalService additionalService;
-	private ToolInUseService toolInUseService;
+	private GeoToolInUseService toolInUseService;
  	
 	@Autowired
 	public void setWorkerService(GeoWorkerService workerService) {
@@ -79,7 +85,7 @@ public class AdminOperations {
 	}
 
 	@Autowired
-	public void setToolInUseService(ToolInUseService toolInUseService) {
+	public void setToolInUseService(GeoToolInUseService toolInUseService) {
 		this.toolInUseService = toolInUseService;
 	}
 
@@ -124,8 +130,8 @@ public class AdminOperations {
 		List<Location> locations = locationService.findAll();
 		model.addAttribute("workers", workers);
 		model.addAttribute("usable", usableAdditionalTools);
-		model.addAttribute("deleted", deletedAdditionalTools);
 		model.addAttribute("instruments", usableInstrumentTools);
+		model.addAttribute("deleted", deletedAdditionalTools);
 		model.addAttribute("locations", locations);
 		model.addAttribute("useableSize", usableAdditionalTools.size());
 		
@@ -448,22 +454,107 @@ public class AdminOperations {
 		usedToolService.save(used);
 	}
 	
-	@PostMapping("/takeaway-additional")
-	public String takeawayAdditional(HttpServletRequest request, RedirectAttributes rdAttr) {
+	@PostMapping("/validate-for-takeaway-additional")
+	public String validateForTakeawayAdditional(HttpServletRequest request, HttpServletResponse response, RedirectAttributes rdAttr) throws UnsupportedEncodingException {
 		
-		Optional<GeoAdditional> additional = additionalService.findById(Long.valueOf(request.getParameter("additional-id")));
+		String additionalId = request.getParameter("additional-id");
+		Optional<GeoAdditional> additional = additionalService.findById(Long.valueOf(additionalId));
 		if(additional.get().isUsed()) {
 			rdAttr.addAttribute("alreadyUsed", "A kiegészítő nem vehető fel mivel már használatban van. Lásd \"Felvett eszközök\" oldalon.");
 			return "redirect:/tools-registry/admin/tools-in-use";
 		}
+		String instrumentId = request.getParameter("instrument-id");
+		String workerId = request.getParameter("worker-id");
+		String pickUpPlace = request.getParameter("from-location");
+		String comment = request.getParameter("comment");
 		
-	
-//		System.out.println("instrument id: " + request.getParameter("instrument-id"));
-//		System.out.println("worker id: " + request.getParameter("worker-id"));
-//		System.out.println("pick up place: " + request.getParameter("from-location"));
-//		System.out.println("comment: " + request.getParameter("comment"));
+		if("-".equals(instrumentId)) {
+			
+		takeawaySingleAdditionalProcess(Long.valueOf(additionalId), Long.valueOf(workerId), pickUpPlace, comment);
+		
+		}
+		else {
+		
+		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(instrumentId));
+		Optional<GeoWorker> worker = workerService.findById(Long.valueOf(workerId));
+		
+		
+		if(instrument.get().getGeoworker() != null && !instrument.get().getGeoworker().getUsername().equals(worker.get().getUsername())) {
+			
+			Cookie c1 = new Cookie("additionalId",  additionalId);
+			Cookie c2 = new Cookie("instrumentId", instrumentId);
+			Cookie c3 = new Cookie("workerId", workerId);
+			Cookie c4 = new Cookie("pickUpPlace", URLEncoder.encode(pickUpPlace, "UTF-8"));
+			Cookie c5 = new Cookie("comment", URLEncoder.encode(comment, "UTF-8"));
+			
+			response.addCookie(c1);
+			response.addCookie(c2);
+			response.addCookie(c3);
+			response.addCookie(c4);
+			response.addCookie(c5);
+			
+			rdAttr.addAttribute("otherUser", "A kiegészítőhöz választott műszert már más használja. Biztos, hogy ehhez a műszerhez veszed fel a kiegészítőt?");
+			return "redirect:/tools-registry/admin/additionals";
+		}
+		
+		takeawayAdditionalProcess(Long.valueOf(additionalId), Long.valueOf(instrumentId), Long.valueOf(workerId), pickUpPlace, comment);
+		
+	}
 		
 		return "redirect:/tools-registry/admin/tools-in-use";
+	}
+	
+	@RequestMapping("/takeaway-additional")
+	public String takeawayAdditional(@CookieValue(value="additionalId") Long additionalId,
+									 @CookieValue(value="instrumentId")Long instrumentId,
+									 @CookieValue(value="workerId")Long workerId,
+									 @CookieValue(value="pickUpPlace")String pickUpPlace,
+									 @CookieValue(value="comment")String comment) throws UnsupportedEncodingException{
+		
+		
+		takeawayAdditionalProcess(additionalId, instrumentId, workerId,
+				URLDecoder.decode(pickUpPlace, "UTF-8").toString(),
+				URLDecoder.decode(comment, "UTF-8").toString());
+		
+		
+		return "redirect:/tools-registry/admin/tools-in-use";
+	}
+	
+	
+	private void takeawaySingleAdditionalProcess(Long additionalId, Long workerId, String pickUpPlace, String comment) {
+		
+		Optional<GeoAdditional> additional = additionalService.findById(additionalId);
+		Optional<GeoWorker> worker = workerService.findById(workerId);
+		
+		additional.get().setUsed(true);
+		additional.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		additional.get().setPickUpPlace(pickUpPlace);
+		additional.get().setComment(comment);
+		additional.get().setGeoworker(worker.get());
+		additionalService.save(additional.get());
+		
+	}
+	
+	private void takeawayAdditionalProcess(Long additionalId, Long instrumentId, Long workerId, String pickUpPlace, String comment) {
+		
+		Optional<GeoAdditional> additional = additionalService.findById(additionalId);
+		Optional<GeoInstrument> instrument = instrumentService.findById(instrumentId);
+		Optional<GeoWorker> worker = workerService.findById(workerId);
+		
+		additional.get().setUsed(true);
+		additional.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		additional.get().setPickUpPlace(pickUpPlace);
+		additional.get().setComment(comment);
+		additional.get().setGeoworker(worker.get());
+		if(!instrument.get().isUsed()) {
+			instrument.get().setUsed(true);
+			instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
+			instrument.get().setPickUpPlace(pickUpPlace);
+			instrument.get().setGeoworker(worker.get());
+		}
+		additional.get().setInstrument(instrument.get());
+		additionalService.save(additional.get());
+		instrumentService.save(instrument.get());
 	}
 	
 	@RequestMapping("/search-by-dates-in-tools-in-use")

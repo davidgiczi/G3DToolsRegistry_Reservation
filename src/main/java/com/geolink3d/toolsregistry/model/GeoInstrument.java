@@ -141,7 +141,7 @@ public class GeoInstrument implements Comparable<GeoInstrument> {
 	public String toString() {
 		return "GeoInstrument [id=" + id + ", name=" + name + ", pickUpDate=" + pickUpDate + ", pickUpPlace="
 				+ pickUpPlace + ", putDownDate=" + putDownDate + ", putDownPlace=" + putDownPlace + ", comment="
-				+ comment + ", additionals=" + additionals + ", deleted=" + deleted
+				+ comment + ", deleted=" + deleted
 				+ ", used=" + used + "]";
 	}
 
