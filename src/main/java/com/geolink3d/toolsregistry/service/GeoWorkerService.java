@@ -10,6 +10,7 @@ public interface GeoWorkerService {
 	boolean registerGeoWorker(GeoWorker workerToRegister);
 	GeoWorker findGeoWorkerByUserName(String username);
 	List<GeoWorker> findAll();
+	List<GeoWorker> findAllIfEnabled();
 	Optional<GeoWorker> findById(Long id);
 	void save(GeoWorker worker);
 	void delete(GeoWorker worker);

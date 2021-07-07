@@ -63,6 +63,16 @@ function searchAdditional(){
 	location.href = location.origin + "/tools-registry/admin/search-additional?text=" + str;
 }
 
+function searchInToolHistory(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/admin/search-in-tool-history?text=" + str;
+}
+
+function searchInToolsInUse(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/admin/search-in-tools-in-use?text=" + str;
+}
+
 function cancelRestoreInstrument(id){
 	
 	location.href = location.origin + "/tools-registry/admin/cancel-restore-instrument?id=" + id;
@@ -100,14 +110,15 @@ function takeawayAdditional(id){
 	var comment = document.getElementById(id+"comment").value;
 	if("-" === instrumentid){
 		if(confirm("Biztos, hogy műszer nélkül veszed fel a kiegészítőt?")){
-			sendData(id, instrumentid, workerid, place, comment);
+			sendDataForTakeAway(id, instrumentid, workerid, place, comment);
 			return;
 		}
+		return;
 	}
-	sendData(id, instrumentid, workerid, place, comment);
+	sendDataForTakeAway(id, instrumentid, workerid, place, comment);
 }
 	
-function sendData(additionalId, instrumentId, workerId, place, comment){
+function sendDataForTakeAway(additionalId, instrumentId, workerId, place, comment){
 	
 	document.getElementById("from-additional-id").value = additionalId;
 	document.getElementById("from-instrument-id").value = instrumentId;
@@ -118,13 +129,38 @@ function sendData(additionalId, instrumentId, workerId, place, comment){
 	
 }
 
-function restoreInstrument(id){
-	var place = document.getElementById(id+"place").value;
-	var comment = document.getElementById(id+"comment").value;
-	document.getElementById("back-instrument-id").value = id;
+function restoreTool(id, isInstrument){
+	
+	var place = document.getElementById(id+isInstrument+"place").value;
+	var comment = document.getElementById(id+isInstrument+"comment").value;
+	
+	if("true" === isInstrument){
+		
+		if(confirm("Biztos, hogy leadod a műszert minden kiegészítőjével együtt?")){
+			
+			sendDataForRestore(id, isInstrument, place, comment);
+			
+		}
+		
+	}
+	else if("false" === isInstrument){
+		
+		if(confirm("Ha a kiegészítő műszerrel lett felvéve, akkor biztos, hogy csak a kiegészítőt adod le?")){
+			
+			sendDataForRestore(id, isInstrument, place, comment);
+		}
+		
+	}
+	
+}
+
+function sendDataForRestore(id, isInstrument, place, comment){
+
+	document.getElementById("back-tool-id").value = id;
+	document.getElementById("is-instrument").value = isInstrument;
 	document.getElementById("back-location").value = place;
 	document.getElementById("back-msg").value = comment;
-	document.getElementById("instrument-restore-form").submit();
+	document.getElementById("tool-restore-form").submit();
 }
 
  function addInstrument(){

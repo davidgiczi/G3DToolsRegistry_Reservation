@@ -39,11 +39,13 @@ public class GeoInstrumentService {
 	
 	public List<GeoTool> findUseableGeoTools(){
 		List<GeoInstrument> usable = instrumentRepo.findNotDeletedGeoInstruments();
+		Collections.sort(usable);
 		return convertUsableGeoInstrumentStoreToGeoToolStore(usable);
 	}
 	
 	public List<GeoTool> findDeletedGeoTools(){
 		List<GeoInstrument> deleted = instrumentRepo.findDeletedGeoInstruments();
+		Collections.sort(deleted);
 		return convertDeletedGeoInstrumentStoreToGeoToolStore(deleted);
 	}
 	
@@ -76,6 +78,7 @@ public class GeoInstrumentService {
 		geoinstruments.addAll(instrumentRepo.findNotDeletedGeoInstrumentsByText(text.toLowerCase()));
 		}
 		
+		Collections.sort(geoinstruments);
 		List<GeoTool> toolStore = convertUsableGeoInstrumentStoreToGeoToolStore(geoinstruments);
 		
 		GeoToolHighlighter highlighter = new GeoToolHighlighter(toolStore);
@@ -106,6 +109,7 @@ public class GeoInstrumentService {
 		geoinstruments.addAll(instrumentRepo.findDeletedGeoInstrumentsByText(text.toLowerCase()));
 		}
 		
+		Collections.sort(geoinstruments);
 		List<GeoTool> toolStore = convertDeletedGeoInstrumentStoreToGeoToolStore(geoinstruments);
 		
 		GeoToolHighlighter highlighter = new GeoToolHighlighter(toolStore);
@@ -132,7 +136,7 @@ public class GeoInstrumentService {
 			instrumentTool.setPickUpPlace(geoInstrument.getPickUpPlace());
 			instrumentTool.setComment(geoInstrument.getComment());
 			instrumentTool.setColored(isColored);
-			instrumentTool.setInstruction(true);
+			instrumentTool.setInstrument(true);
 			toolStore.add(instrumentTool);
 			
 			
@@ -145,7 +149,7 @@ public class GeoInstrumentService {
 				additionalTool.setPickUpPlace(geoAdditional.getPickUpPlace());
 				additionalTool.setComment(geoAdditional.getComment());
 				additionalTool.setColored(isColored);
-				additionalTool.setInstruction(false);
+				additionalTool.setInstrument(false);
 				toolStore.add(additionalTool);
 			}
 			
@@ -189,7 +193,6 @@ public class GeoInstrumentService {
 			usableToolStore.add(tool);
 		}
 		
-		Collections.sort(usableToolStore);
 		return usableToolStore;
 	}
 	
@@ -202,7 +205,6 @@ public class GeoInstrumentService {
 			deletedToolStore.add(tool);
 		}
 		
-		Collections.sort(deletedToolStore);
 		return deletedToolStore;
 	}
 }

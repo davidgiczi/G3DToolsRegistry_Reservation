@@ -19,8 +19,6 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	List<GeoAdditional> findDeletedGeoAdditionals();
 	@Query(value = "select * from additionals where deleted = false and used = true and instrument_id is null" , nativeQuery = true)
 	List<GeoAdditional> findSingleUsedGeoAdditionals();
-	@Query(value = "select * from additionals where deleted = false and used = true and instrument_id is not null" , nativeQuery = true)
-	List<GeoAdditional> findPairedUsedGeoAdditionals();
 	@Query(value = "select * from additionals where deleted = false and name like %:text%"
 			, nativeQuery = true)
 	List<GeoAdditional> findNotDeletedGeoAdditionalsByText(@Param("text") String text);
@@ -29,7 +27,14 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	List<GeoAdditional> findDeletedGeoAdditionalsByText(@Param("text") String text);
 	@Query(value = "select * from additionals"
 			+ " where "
-			+ "(deleted = false and used = true and pick_up_date >= :from and pick_up_date <= :to)"
+			+ "(deleted = false and used = true and instrument_id is null and name like %:text%)"
+			+ " or "
+			+ "(deleted = false and used = true and instrument_id is null and pick_up_place like %:text%)"
+			, nativeQuery = true)
+	List<GeoAdditional> findSingleGeoAdditionalsInUseByText(@Param("text") String text);
+	@Query(value = "select * from additionals"
+			+ " where "
+			+ "(deleted = false and used = true and instrument_id is null and pick_up_date >= :from and pick_up_date <= :to)"
 			,nativeQuery = true)
 		List<GeoAdditional> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
 	

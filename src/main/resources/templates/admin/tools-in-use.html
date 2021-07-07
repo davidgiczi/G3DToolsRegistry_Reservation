@@ -13,7 +13,7 @@
 <span id="add-options">
 <input type="date" id="pickupdate" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
 <input type="date" id="putdowndate" th:onchange="'getDate(\'' + tools-in-use + '\')'"><a> - napig</a>&nbsp;&nbsp;&nbsp;
-<input id="search-field" th:onkeyup="'searchUsedInstrument()'" type="text" th:placeholder="#{search}"/>
+<input id="search-field" th:onkeyup="'searchInToolsInUse()'" type="text" th:placeholder="#{search}"/>
 </span>
 <br>
 <h1 th:text="#{tools.in.use}"></h1>
@@ -53,26 +53,28 @@
 	
 	
 	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
-	<select class="selection_field" th:id="${tool.id} + place">
+	<select class="selection_field" th:id="${tool.id} + ${tool.isInstrument} + place">
 	<option th:if="${tool.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
 	<option th:unless="${tool.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
 	</select>
 	</td>
 	
 	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
-	<textarea id="comment" rows="3" cols="30" th:utext="${tool.comment}" th:id="${tool.id} + comment"></textarea>
+	<textarea id="comment" rows="3" cols="30" th:utext="${tool.comment}" th:id="${tool.id} + ${tool.isInstrument} + comment"></textarea>
 	</td>
 	
 	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
-	<Button th:onclick="'restoreInstrument(\'' + ${tool.id} + '\');'">Lead</button>
+	<Button th:onclick="'restoreTool(\'' + ${tool.id} + '\', \'' +  ${tool.isInstrument} + '\');'">Lead</button>
 	</td>
 	</tr>
 	
 	</table>
 	
-<form th:action="@{/tools-registry/admin/restore-instrument}" method="post" id="instrument-restore-form">
-<input type="hidden" value="" name="instrument-id" id="back-instrument-id">
+	
+<form th:action="@{/tools-registry/admin/restore-tool}" method="post" id="tool-restore-form">
+<input type="hidden" value="" name="tool-id" id="back-tool-id">
 <input type="hidden" value="" name="location" id="back-location">
+<input type="hidden" value="" name="isInstrument" id="is-instrument">
 <input type="hidden" value="" name="comment" id="back-msg">
 </form> 
 

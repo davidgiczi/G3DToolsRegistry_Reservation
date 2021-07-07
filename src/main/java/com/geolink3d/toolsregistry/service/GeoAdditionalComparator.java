@@ -8,7 +8,9 @@ public class GeoAdditionalComparator implements Comparator<GeoAdditional> {
 	@Override
 	public int compare(GeoAdditional o1, GeoAdditional o2) {
 		
-		return o1.getPickUpDate().getTime() > o2.getPickUpDate().getTime() ?   1 : o1.getPickUpDate().getTime() < o2.getPickUpDate().getTime() ? -1 : 0;
+		return o1.getPickUpDate().getTime() > o2.getPickUpDate().getTime() ?  1 : o1.getPickUpDate().getTime() < o2.getPickUpDate().getTime() ? -1 : 0;
 	}
+
+	
 
 }

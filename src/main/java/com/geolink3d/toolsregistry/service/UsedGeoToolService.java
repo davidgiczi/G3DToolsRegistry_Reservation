@@ -2,6 +2,7 @@ package com.geolink3d.toolsregistry.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +12,7 @@ import com.geolink3d.toolsregistry.model.UsedGeoTool;
 import com.geolink3d.toolsregistry.repository.UsedToolRepository;
 
 @Service
-public class UsedToolService {
+public class UsedGeoToolService {
 
 	
 	private UsedToolRepository usedToolRepo;
@@ -48,5 +49,35 @@ public class UsedToolService {
 		}
 		Collections.sort(tools);
 		return tools;
+	}
+	
+	
+	public List<UsedGeoTool> findUsedGeoToolsByText(String text){
+		
+		List<UsedGeoTool> usedGeoTools= new ArrayList<>();
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		usedGeoTools = usedToolRepo.findUsedToolsByText(text);
+		
+		if(usedGeoTools.isEmpty()) {
+		usedGeoTools= usedToolRepo.findUsedToolsByText(text.toUpperCase());
+		}
+		if(usedGeoTools.isEmpty()) {
+		usedGeoTools= usedToolRepo.findUsedToolsByText(text.toLowerCase());
+		}
+		
+		Collections.sort(usedGeoTools);
+	
+		UsedGeoToolHighlighter highlighter = new UsedGeoToolHighlighter(usedGeoTools);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedUsedGeoToolStore();
+		
+		return highlighter.getHighlightedUsedGeoToolStore();
 	}
 }

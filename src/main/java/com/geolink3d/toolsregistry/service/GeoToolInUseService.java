@@ -40,6 +40,46 @@ public class GeoToolInUseService {
 	public void setAdditionalService(GeoAdditionalService additionalService) {
 		this.additionalService = additionalService;
 	}
+	
+	public List<GeoTool> findGeoToolsInUseByText(String text){
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		List<GeoInstrument> instruments = instrumentRepo.findGeoInstrumentsInUseByText(text);
+		List<GeoAdditional> additionals = additionalRepo.findSingleGeoAdditionalsInUseByText(text);
+		
+		if(instruments.isEmpty()) {
+		instruments = instrumentRepo.findGeoInstrumentsInUseByText(text.toUpperCase());
+		}
+		if(instruments.isEmpty()) {
+		instruments.addAll(instrumentRepo.findGeoInstrumentsInUseByText(text.toLowerCase()));
+		}
+		if(additionals.isEmpty()) {
+		additionals = additionalRepo.findSingleGeoAdditionalsInUseByText(text.toUpperCase());
+		}
+		if(additionals.isEmpty()) {
+			additionals = additionalRepo.findSingleGeoAdditionalsInUseByText(text.toLowerCase());
+		}
+		
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		Collections.sort(additionals, new GeoAdditionalComparator());
+		
+		List<GeoTool> toolsInUse = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
+		toolsInUse.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored()));
+		
+		GeoToolInUseHighlighter highlighter = new GeoToolInUseHighlighter(toolsInUse);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedGeoToolInUseStore();
+		
+		return highlighter.getHighlightedGeoToolInUseStore();
+	}
+	
+	
 	public List<GeoTool> findBetweenDates(String date1, String date2) throws ParseException{
 		
 		List<GeoInstrument> instruments;
@@ -59,6 +99,9 @@ public class GeoToolInUseService {
 			additionals = additionalRepo.findBetweenDates(inputDate2, inputDate1);
 			
 		}
+		
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		instrumentTools.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored()));
 		

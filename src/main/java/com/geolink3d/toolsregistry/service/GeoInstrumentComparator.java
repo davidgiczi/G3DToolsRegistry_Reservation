@@ -1,6 +1,7 @@
 package com.geolink3d.toolsregistry.service;
 
 import java.util.Comparator;
+
 import com.geolink3d.toolsregistry.model.GeoInstrument;
 
 public class GeoInstrumentComparator implements Comparator<GeoInstrument> {
@@ -12,4 +13,5 @@ public class GeoInstrumentComparator implements Comparator<GeoInstrument> {
 	}
 
 	
+
 }

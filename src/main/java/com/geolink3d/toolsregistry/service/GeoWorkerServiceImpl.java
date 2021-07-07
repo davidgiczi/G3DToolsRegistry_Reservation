@@ -78,7 +78,17 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 		Collections.sort(workers);
 		
 		return workers;
-	};
+	}
+	
+	@Override
+	public List<GeoWorker> findAllIfEnabled() {
+		
+		List<GeoWorker> workers = workerRepo.findAllIfEnabled();
+		workers.forEach(w -> w.setRole(roleService.getGeoWorkerRoleAsString(w.getRoles())));
+		Collections.sort(workers);
+		
+		return workers;
+	}
 
 	@Override
 	public Optional<GeoWorker> findById(Long id) {

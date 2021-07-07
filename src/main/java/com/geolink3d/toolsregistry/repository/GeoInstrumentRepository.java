@@ -26,6 +26,13 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 	List<GeoInstrument> findDeletedGeoInstrumentsByText(@Param("text") String text);
 	@Query(value = "select * from instruments"
 			+ " where "
+			+ "(deleted = false and used = true and name like %:text%)"
+			+ " or "
+			+ "(deleted = false and used = true and pick_up_place like %:text%)"
+			, nativeQuery = true)
+	List<GeoInstrument> findGeoInstrumentsInUseByText(@Param("text") String text);
+	@Query(value = "select * from instruments"
+			+ " where "
 			+ "(deleted = false and used = true and pick_up_date >= :from and pick_up_date <= :to)"
 			,nativeQuery = true)
 		List<GeoInstrument> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
