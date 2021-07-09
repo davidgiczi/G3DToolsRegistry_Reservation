@@ -24,11 +24,15 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 	@Query(value = "select * from instruments where deleted = true and name like %:text%"
 			, nativeQuery = true)
 	List<GeoInstrument> findDeletedGeoInstrumentsByText(@Param("text") String text);
-	@Query(value = "select * from instruments"
-			+ " where "
-			+ "(deleted = false and used = true and name like %:text%)"
+	@Query(value = "select * from instruments inner join geoworkers"
+			+ " on "
+			+ "(instruments.geoworker_id = geoworkers.id and instruments.deleted = false and instruments.used = true and geoworkers.firstname like %:text%)"
 			+ " or "
-			+ "(deleted = false and used = true and pick_up_place like %:text%)"
+			+ "(instruments.geoworker_id = geoworkers.id and instruments.deleted = false and instruments.used = true and geoworkers.lastname like %:text%)"
+			+ " or "
+			+ "(instruments.geoworker_id = geoworkers.id and instruments.deleted = false and instruments.used = true and instruments.pick_up_place like %:text%)"
+			+ " or "
+			+ "(instruments.geoworker_id = geoworkers.id and instruments.deleted = false and instruments.used = true and instruments.name like %:text%)"
 			, nativeQuery = true)
 	List<GeoInstrument> findGeoInstrumentsInUseByText(@Param("text") String text);
 	@Query(value = "select * from instruments"
