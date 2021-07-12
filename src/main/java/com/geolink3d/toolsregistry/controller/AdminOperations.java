@@ -280,7 +280,7 @@ public class AdminOperations {
 			List<GeoTool> deleted= instrumentService.findDeletedGeoToolsByText(text);
 			model.addAttribute("usable", usable);
 			model.addAttribute("deleted", deleted);	
-			List<GeoWorker> workers = workerService.findAll();
+			List<GeoWorker> workers = workerService.findAllIfEnabled();
 			List<Location> locations = locationService.findAll();
 			model.addAttribute("workers", workers);
 			model.addAttribute("locations", locations);
@@ -300,10 +300,12 @@ public class AdminOperations {
 		}else {
 			List<GeoTool> usable = additionalService.findNotDeletedGeoToolsByText(text);
 			List<GeoTool> deleted= additionalService.findDeletedGeoToolsByText(text);
+			List<GeoTool> usableInstrumentTools = instrumentService.findUseableGeoTools();
 			model.addAttribute("usable", usable);
 			model.addAttribute("deleted", deleted);	
-			List<GeoWorker> workers = workerService.findAll();
+			List<GeoWorker> workers = workerService.findAllIfEnabled();
 			List<Location> locations = locationService.findAll();
+			model.addAttribute("instruments", usableInstrumentTools);
 			model.addAttribute("workers", workers);
 			model.addAttribute("locations", locations);
 			model.addAttribute("txt", text);
@@ -735,7 +737,9 @@ public class AdminOperations {
 		else {
 			
 			List<GeoTool> toolsInUse = toolInUseService.findGeoToolsInUseByText(text);
+			List<Location> locations = locationService.findAll();
 			model.addAttribute("toolsInUse", toolsInUse);
+			model.addAttribute("locations", locations);
 			model.addAttribute("txt", text);
 		}
 		

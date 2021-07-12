@@ -120,6 +120,32 @@ public class GeoInstrumentService {
 		
 	}
 	
+public List<GeoTool> convertGeoInstrumentToGeoToolForSearching(List<GeoInstrument> instrumentStore){
+		
+		List<GeoTool> toolStore = new ArrayList<>();
+		
+		boolean isColored = true;
+	
+		for (GeoInstrument geoInstrument : instrumentStore) {
+			
+			GeoTool instrumentTool = new GeoTool();
+			instrumentTool.setId(geoInstrument.getId());
+			instrumentTool.setToolName(geoInstrument.getName());
+			instrumentTool.setToolUser(geoInstrument.getGeoworker().getLastname() + " " + geoInstrument.getGeoworker().getFirstname());
+			instrumentTool.setPickUpDate(geoInstrument.getPickUpDate());
+			instrumentTool.setPickUpPlace(geoInstrument.getPickUpPlace());
+			instrumentTool.setComment(geoInstrument.getComment());
+			instrumentTool.setColored(isColored);
+			instrumentTool.setInstrument(true);
+			toolStore.add(instrumentTool);
+			
+			isColored = !isColored;
+		}
+
+		return toolStore;
+}
+			
+	
 	public List<GeoTool> convertGeoInstrumentToGeoToolForDisplay(List<GeoInstrument> instrumentStore){
 		
 		List<GeoTool> toolStore = new ArrayList<>();
@@ -159,9 +185,7 @@ public class GeoInstrumentService {
 		return toolStore;
 	}
 	
-	public boolean isNextRowIsColored() {
-		
-		List<GeoTool> instrumentTools = convertGeoInstrumentToGeoToolForDisplay(instrumentRepo.findNotDeletedButUsedGeoInstruments());
+	public boolean isNextRowIsColored(List<GeoTool> instrumentTools) {
 		
 		if(instrumentTools != null && !instrumentTools.isEmpty()) {
 		return !instrumentTools.get(instrumentTools.size() - 1).isColored();

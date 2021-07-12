@@ -27,15 +27,15 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	List<GeoAdditional> findDeletedGeoAdditionalsByText(@Param("text") String text);
 	@Query(value = "select * from additionals inner join geoworkers"
 			+ " on "
-			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and additionals.instrument_id is null and geoworkers.firstname like %:text%)"
+			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and geoworkers.firstname like %:text%)"
 			+ " or "
-			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and additionals.instrument_id is null and geoworkers.lastname like %:text%)"
+			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and geoworkers.lastname like %:text%)"
 			+ " or "
-			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and additionals.instrument_id is null and additionals.pick_up_place like %:text%)"
+			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and additionals.pick_up_place like %:text%)"
 			+ " or "
-			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and additionals.instrument_id is null and additionals.name like %:text%)"
+			+ "(additionals.geoworker_id = geoworkers.id and additionals.deleted = false and additionals.used = true and additionals.name like %:text%)"
 			, nativeQuery = true)
-	List<GeoAdditional> findSingleGeoAdditionalsInUseByText(@Param("text") String text);
+	List<GeoAdditional> findGeoAdditionalsInUseByText(@Param("text") String text);
 	@Query(value = "select * from additionals"
 			+ " where "
 			+ "(deleted = false and used = true and instrument_id is null and pick_up_date >= :from and pick_up_date <= :to)"

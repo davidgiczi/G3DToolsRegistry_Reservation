@@ -9,13 +9,15 @@ import org.springframework.stereotype.Service;
 import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoTool;
 import com.geolink3d.toolsregistry.repository.GeoAdditionalRepository;
+import com.geolink3d.toolsregistry.repository.GeoInstrumentRepository;
 
 @Service
 public class GeoAdditionalService {
 
 	
 	private GeoAdditionalRepository additionalRepo;
-	private GeoInstrumentService instrumentService;
+	private GeoInstrumentRepository instrumentRepo;
+ 	private GeoInstrumentService instrumentService;
 
 	@Autowired
 	public void setAdditionalRepo(GeoAdditionalRepository additionalRepo) {
@@ -25,6 +27,11 @@ public class GeoAdditionalService {
 	@Autowired
 	public void setInstrumentService(GeoInstrumentService instrumentService) {
 		this.instrumentService = instrumentService;
+	}
+
+	@Autowired
+	public void setInstrumentRepo(GeoInstrumentRepository instrumentRepo) {
+		this.instrumentRepo = instrumentRepo;
 	}
 
 	public boolean saveNewGeoAdditional(String name) {
@@ -65,8 +72,8 @@ public class GeoAdditionalService {
 		
 		List<GeoAdditional> singleUsedAdditionals= additionalRepo.findSingleUsedGeoAdditionals();
 		Collections.sort(singleUsedAdditionals, new GeoAdditionalComparator());
-
-		return convertGeoAdditionalToGeoToolForDisplay(singleUsedAdditionals, instrumentService.isNextRowIsColored());
+		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instrumentRepo.findNotDeletedButUsedGeoInstruments());
+		return convertGeoAdditionalToGeoToolForDisplay(singleUsedAdditionals, instrumentService.isNextRowIsColored(instrumentTools));
 	}
 	
 	

@@ -20,7 +20,7 @@
 
 <div id="empty" th:if="${#lists.isEmpty(toolsInUse)}" th:text="#{empty.using.instruments}"></div>
 
-<table th:if="${not #lists.isEmpty(toolsInUse)}">
+<table th:if="${not #lists.isEmpty(toolsInUse)}" style="width: 90%">
 	<tr>
 	<th th:text="#{number}"></th>
 	<th th:text="#{instrument.additional.name}"></th>

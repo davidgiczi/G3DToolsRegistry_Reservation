@@ -51,7 +51,7 @@ public class GeoToolInUseService {
 		}
 		
 		List<GeoInstrument> instruments = instrumentRepo.findGeoInstrumentsInUseByText(text);
-		List<GeoAdditional> additionals = additionalRepo.findSingleGeoAdditionalsInUseByText(text);
+		List<GeoAdditional> additionals = additionalRepo.findGeoAdditionalsInUseByText(text);
 		
 		if(instruments.isEmpty()) {
 		instruments = instrumentRepo.findGeoInstrumentsInUseByText(text.toUpperCase());
@@ -60,17 +60,17 @@ public class GeoToolInUseService {
 		instruments.addAll(instrumentRepo.findGeoInstrumentsInUseByText(text.toLowerCase()));
 		}
 		if(additionals.isEmpty()) {
-		additionals = additionalRepo.findSingleGeoAdditionalsInUseByText(text.toUpperCase());
+		additionals = additionalRepo.findGeoAdditionalsInUseByText(text.toUpperCase());
 		}
 		if(additionals.isEmpty()) {
-			additionals = additionalRepo.findSingleGeoAdditionalsInUseByText(text.toLowerCase());
+			additionals = additionalRepo.findGeoAdditionalsInUseByText(text.toLowerCase());
 		}
 		
 		Collections.sort(instruments, new GeoInstrumentComparator());
 		Collections.sort(additionals, new GeoAdditionalComparator());
 		
-		List<GeoTool> toolsInUse = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
-		toolsInUse.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored()));
+		List<GeoTool> toolsInUse = instrumentService.convertGeoInstrumentToGeoToolForSearching(instruments);
+		toolsInUse.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(toolsInUse)));
 		
 		GeoToolInUseHighlighter highlighter = new GeoToolInUseHighlighter(toolsInUse);
 		highlighter.setSearchedExpression(text);
@@ -103,7 +103,7 @@ public class GeoToolInUseService {
 		Collections.sort(instruments, new GeoInstrumentComparator());
 		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
-		instrumentTools.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored()));
+		instrumentTools.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools)));
 		
 		return instrumentTools;
 	}
@@ -112,16 +112,16 @@ public class GeoToolInUseService {
 		
 		List<GeoInstrument> instruments = instrumentRepo.findNotDeletedButUsedGeoInstruments();
 		Collections.sort(instruments, new GeoInstrumentComparator());
-		List<GeoTool> tools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
+		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
 		List<GeoAdditional> additionals = additionalRepo.findSingleUsedGeoAdditionals();
 		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
-				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored());
+				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));
 		
-		tools.addAll(additionalTools);
+		instrumentTools.addAll(additionalTools);
 		
-		return tools;
+		return instrumentTools;
 	}
 	
 }
