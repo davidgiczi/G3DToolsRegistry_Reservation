@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/user-account">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+
+<div layout:fragment="tools-in-use">
+<span id="add-options">
+<input type="date" id="pickupdate" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date" id="putdowndate" th:onchange="'getDate(\'' + tools-in-use + '\')'"><a> - napig</a>&nbsp;&nbsp;&nbsp;
+<input id="search-field" th:onkeyup="'searchInToolsInUse()'" type="text" th:placeholder="#{search}"/>
+</span>
+<br>
+<h1 th:text="#{tools.in.use}"></h1>
+
+<div id="empty" th:if="${#lists.isEmpty(toolsInUse)}" th:text="#{empty.using.instruments}"></div>
+
+<table th:if="${not #lists.isEmpty(toolsInUse)}" style="width: 90%">
+	<tr>
+	<th th:text="#{number}"></th>
+	<th th:text="#{instrument.additional.name}"></th>
+	<th th:text="#{tool.user}"></th>
+	<th th:text="#{tool.pickup.place}"></th>
+	<th th:text="#{tool.pickup.date}"></th>
+	<th th:text="#{tool.put.down.place}"></th>
+	<th th:text="#{tool.comment}"></th>
+	<th th:text="#{tool.put.down}"></th>
+	</tr>
+	
+	<tr th:each="tool : ${toolsInUse}">
+	<td th:utext="${toolStat.count}"  th:if=${tool.isColored} style="color: red" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${toolStat.count}"  th:unless=${tool.isColored} th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	
+	<td th:utext="${tool.toolName}" th:if=${tool.isColored} style="color: red" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.toolName}" th:unless=${tool.isColored} th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.toolUser}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.toolUser}" th:unless=${tool.isColored}></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.pickUpPlace}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.pickUpPlace}" th:unless=${tool.isColored}></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:unless=${tool.isColored}></td>
+	
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
+	<select class="selection_field" th:id="${tool.id} + ${tool.isInstrument} + place">
+	<option th:if="${tool.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}" selected="selected"></option>
+	<option th:unless="${tool.pickUpPlace == location.name}" th:each="location : ${locations}" th:utext="${location.name}"></option>
+	</select>
+	</td>
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
+	<textarea id="comment" rows="3" cols="30" th:utext="${tool.comment}" th:id="${tool.id} + ${tool.isInstrument} + comment"></textarea>
+	</td>
+	
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'">
+	<Button th:onclick="'restoreTool(\'' + ${tool.id} + '\', \'' +  ${tool.isInstrument} + '\');'">Lead</button>
+	</td>
+	</tr>
+	
+	</table>
+	
+	
+<form th:action="@{/tools-registry/user/restore-tool}" method="post" id="tool-restore-form">
+<input type="hidden" value="" name="tool-id" id="back-tool-id">
+<input type="hidden" value="" name="location" id="back-location">
+<input type="hidden" value="" name="isInstrument" id="is-instrument">
+<input type="hidden" value="" name="comment" id="back-msg">
+</form> 
+
+<input type="hidden" th:if="${param.alreadyUsed != null}" th:value="${param.alreadyUsed}" id="alreadyUsed">
+</div>
+
+
+
+
+</body>
+</html>

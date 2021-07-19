@@ -202,7 +202,7 @@ public class AdminOperations {
 	    
 		workerService.save(worker.get());
 				
-		return "redirect:/tools-registry/user/account";
+		return "redirect:/tools-registry/user/instruments";
 	}
 	
 	

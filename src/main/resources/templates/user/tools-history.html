@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layouts/user-account">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+
+<div layout:fragment="tools-history">
+<span id="add-options">
+<input type="date" id="pickupdate" th:value="2021-06-01"><a> - naptól</a>&nbsp;&nbsp;&nbsp;
+<input type="date" id="putdowndate" th:onchange="'getDate(\'' + tools-history + '\')'"><a> - napig</a>&nbsp;&nbsp;&nbsp;
+<input id="search-field" th:onkeyup="'searchInToolHistory()'" type="text" th:placeholder="#{search}"/>
+</span>
+<br>
+<h1 th:text="#{tools.history}"></h1>
+
+<div id="empty" th:if="${#lists.isEmpty(tools)}" th:text="#{empty.tools.history}"></div>
+
+<table th:if="${not #lists.isEmpty(tools)}">
+	<tr>
+	<th th:text="#{number}"></th>
+	<th th:text="#{instrument.name}"></th>
+	<th th:text="#{tool.user}"></th>
+	<th th:text="#{tool.pickup.place}"></th>
+	<th th:text="#{tool.pickup.date}"></th>
+	<th th:text="#{tool.put.down.place}"></th>
+	<th th:text="#{tool.put.down.date}"></th>
+	<th th:text="#{tool.comment}"></th>
+	</tr>
+	
+	<tr th:each="tool : ${tools}">
+	<td th:utext="${toolStat.count}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.toolname}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.workername}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.pickUpPlace}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.putDownPlace}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${#dates.format(tool.putDownDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${tool.comment}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	</tr>
+</table>
+
+
+</div>
+
+</body>
+</html>

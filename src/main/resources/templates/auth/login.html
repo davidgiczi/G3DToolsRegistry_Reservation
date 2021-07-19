@@ -32,6 +32,8 @@
 </form>
 </div>
 
+<input type="hidden" th:if="${param.changedPass != null}"  th:value="#{new.password.correct}" id="changePassMsg">
+
 <span th:switch="${activationIsNeeded}">
 <input th:case="true" type="hidden" id="activation-needs"  th:value="#{activation.needed}"/> 
 </span>

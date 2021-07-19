@@ -64,7 +64,7 @@ public class LoginAndRegistrationOperations {
 			return "redirect:/tools-registry/admin/instruments";
 		}
 		
-		return "redirect:/tools-registry/user/account";
+		return "redirect:/tools-registry/user/instruments";
 	}
 	
 	@PostMapping("/registration")

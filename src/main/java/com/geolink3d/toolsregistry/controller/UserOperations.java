@@ -1,17 +1,39 @@
 package com.geolink3d.toolsregistry.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.geolink3d.toolsregistry.model.GeoAdditional;
+import com.geolink3d.toolsregistry.model.GeoInstrument;
+import com.geolink3d.toolsregistry.model.GeoTool;
 import com.geolink3d.toolsregistry.model.GeoWorker;
+import com.geolink3d.toolsregistry.model.Location;
+import com.geolink3d.toolsregistry.model.UsedGeoTool;
 import com.geolink3d.toolsregistry.service.EncoderService;
+import com.geolink3d.toolsregistry.service.GeoAdditionalService;
+import com.geolink3d.toolsregistry.service.GeoInstrumentService;
+import com.geolink3d.toolsregistry.service.GeoToolInUseService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
+import com.geolink3d.toolsregistry.service.LocationService;
+import com.geolink3d.toolsregistry.service.UsedGeoToolService;
 
 @Controller
 @RequestMapping("/tools-registry/user")
@@ -19,12 +41,48 @@ public class UserOperations {
 
 	
 	private GeoWorkerService workerService;
+	private GeoInstrumentService instrumentService;
+	private GeoAdditionalService additionalService;
+	private GeoToolInUseService toolInUseService;
+	private UsedGeoToolService usedToolService;
+	private LocationService locationService; 
 	
 	@Autowired
 	public void setWorkerService(GeoWorkerService workerService) {
 		this.workerService = workerService;
 	}
 	
+	
+	@Autowired
+	public void setInstrumentService(GeoInstrumentService instrumentService) {
+		this.instrumentService = instrumentService;
+	}
+	
+	
+	@Autowired
+	public void setAdditionalService(GeoAdditionalService additionalService) {
+		this.additionalService = additionalService;
+	}
+	
+	
+	@Autowired
+	public void setToolInUseService(GeoToolInUseService toolInUseService) {
+		this.toolInUseService = toolInUseService;
+	}
+	
+	
+	@Autowired
+	public void setUsedToolService(UsedGeoToolService usedToolService) {
+		this.usedToolService = usedToolService;
+	}
+
+
+	@Autowired
+	public void setLocationService(LocationService locationService) {
+		this.locationService = locationService;
+	}
+
+
 
 	@RequestMapping("/account")
 	public String goUserAccount() {
@@ -33,16 +91,310 @@ public class UserOperations {
 		return "layouts/user-account";
 	}
 	
+	@RequestMapping("/instruments")
+	public String goInstrumentsPage(Model model) {
+		
+		List<GeoTool> usableInstrumentTools = instrumentService.findUseableGeoTools();
+		List<GeoTool> deletedInstrumentTools = instrumentService.findDeletedGeoTools();
+		List<Location> locations = locationService.findAll();
+		model.addAttribute("usable", usableInstrumentTools);
+		model.addAttribute("deleted", deletedInstrumentTools);
+		model.addAttribute("locations", locations);
+		model.addAttribute("useableSize", usableInstrumentTools.size());
+		
+		return "user/instruments";
+	}
+	
+	@RequestMapping("/additionals")
+	public String goAdditionalsPage(Model model) {
+		
+		List<GeoTool> usableAdditionalTools = additionalService.findUseableGeoTools();
+		List<GeoTool> deletedAdditionalTools = additionalService.findDeletedGeoTools();
+		List<GeoTool> usableInstrumentTools = instrumentService.findUseableGeoTools();
+		List<Location> locations = locationService.findAll();
+		model.addAttribute("usable", usableAdditionalTools);
+		model.addAttribute("instruments", usableInstrumentTools);
+		model.addAttribute("deleted", deletedAdditionalTools);
+		model.addAttribute("locations", locations);
+		model.addAttribute("useableSize", usableAdditionalTools.size());
+		
+		return "user/additionals";
+	}
+	
+	@RequestMapping("/tools-in-use")
+	public String goToolsInUsePage(Model model) {
+		
+		List<GeoTool> toolsInUse = toolInUseService.findUsedGeoTools();
+		List<Location> locations = locationService.findAll();
+		model.addAttribute("locations", locations);
+		model.addAttribute("toolsInUse", toolsInUse);
+		
+		return "user/tools-in-use";
+	}
+	
+	@RequestMapping("/tools-history")
+	public String goToolsHistoryPage(Model model) {
+		
+		List<UsedGeoTool> used = usedToolService.findAll();
+		model.addAttribute("tools", used);
+		
+		return "user/tools-history";
+	}
+	
 	
 	@PostMapping("/change-password")
-	public String changePassword(HttpServletRequest request, Model model) {
+	public String changePassword(HttpServletRequest request, RedirectAttributes rdAttr) {
 		
 		GeoWorker worker = workerService.findGeoWorkerByUserName(getAuthUser());
 		worker.setPassword(EncoderService.encodeByBase64(request.getParameter("pass")));
 		workerService.save(worker);
-		model.addAttribute("changedPass", true);
+		rdAttr.addAttribute("changedPass", true);
 		
-		return "layouts/user-account";
+		return "redirect:/tools-registry/login";
+	}
+	
+	@PostMapping("/takeaway-instrument")
+	public String takeawayInstrument(HttpServletRequest request, RedirectAttributes rdAttr) {
+		
+		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
+		
+		if(instrument.get().isUsed()) {
+			rdAttr.addAttribute("alreadyUsed", "Az eszköz nem vehető fel mivel már használatban van. Lásd \"Felvett eszközök\" oldalon.");
+			return "redirect:/tools-registry/user/tools-in-use";
+		}
+		
+		instrument.get().setUsed(true);
+		instrument.get().setGeoworker(workerService.findGeoWorkerByUserName(getAuthUser()));
+		instrument.get().setPickUpPlace(request.getParameter("from-location"));
+		instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		String comment = request.getParameter("comment");
+		if(comment.length() > 999) {
+		instrument.get().setComment(comment.substring(999));
+		}
+		else {
+			instrument.get().setComment(comment);
+		}
+		instrumentService.save(instrument.get());
+		
+		return "redirect:/tools-registry/user/tools-in-use";
+	}
+	
+	@PostMapping("/validate-for-takeaway-additional")
+	public String validateForTakeawayAdditional(HttpServletRequest request, HttpServletResponse response, RedirectAttributes rdAttr) throws UnsupportedEncodingException {
+		
+		String additionalId = request.getParameter("additional-id");
+		Optional<GeoAdditional> additional = additionalService.findById(Long.valueOf(additionalId));
+		if(additional.get().isUsed()) {
+			rdAttr.addAttribute("alreadyUsed", "A kiegészítő nem vehető fel mivel már használatban van. Lásd \"Felvett eszközök\" oldalon.");
+			return "redirect:/tools-registry/user/tools-in-use";
+		}
+		String instrumentId = request.getParameter("instrument-id");
+		String pickUpPlace = request.getParameter("from-location");
+		String comment = request.getParameter("comment");
+		
+		if("-".equals(instrumentId)) {
+			
+		takeawaySingleAdditionalProcess(Long.valueOf(additionalId), getAuthUser(), pickUpPlace, comment);
+		
+		}
+		else {
+		
+		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(instrumentId));
+		
+		if(instrument.get().getGeoworker() != null && !instrument.get().getGeoworker().getUsername().equals(getAuthUser())) {
+			
+			Cookie c1 = new Cookie("additionalId",  additionalId);
+			Cookie c2 = new Cookie("instrumentId", instrumentId);
+			Cookie c3 = new Cookie("pickUpPlace", URLEncoder.encode(pickUpPlace, "UTF-8"));
+			Cookie c4 = new Cookie("comment", URLEncoder.encode(comment, "UTF-8"));
+			
+			response.addCookie(c1);
+			response.addCookie(c2);
+			response.addCookie(c3);
+			response.addCookie(c4);
+			
+			rdAttr.addAttribute("otherUser", "A kiegészítőhöz választott műszert már más használja. Biztos, hogy ehhez a műszerhez veszed fel a kiegészítőt?");
+			return "redirect:/tools-registry/user/additionals";
+		}
+		
+		takeawayAdditionalProcess(Long.valueOf(additionalId), Long.valueOf(instrumentId), getAuthUser(), pickUpPlace, comment);
+		
+	}
+		
+		return "redirect:/tools-registry/user/tools-in-use";
+	}
+	
+	@RequestMapping("/takeaway-additional")
+	public String takeawayAdditional(@CookieValue(value="additionalId") Long additionalId,
+									 @CookieValue(value="instrumentId")Long instrumentId,
+									 @CookieValue(value="pickUpPlace")String pickUpPlace,
+									 @CookieValue(value="comment")String comment, HttpServletResponse response) throws UnsupportedEncodingException{
+		
+		
+		takeawayAdditionalProcess(additionalId, instrumentId, getAuthUser(),
+				URLDecoder.decode(pickUpPlace, "UTF-8").toString(),
+				URLDecoder.decode(comment, "UTF-8").toString());
+		
+		Cookie c1 = new Cookie("additionalId",  null);
+		Cookie c2 = new Cookie("instrumentId", null);
+		Cookie c3 = new Cookie("pickUpPlace", null);
+		Cookie c4 = new Cookie("comment", null);
+		c1.setMaxAge(0);
+		c2.setMaxAge(0);
+		c3.setMaxAge(0);
+		c4.setMaxAge(0);
+		response.addCookie(c1);
+		response.addCookie(c2);
+		response.addCookie(c3);
+		response.addCookie(c4);
+		
+		return "redirect:/tools-registry/admin/tools-in-use";
+	}
+	
+	
+	private void takeawaySingleAdditionalProcess(Long additionalId, String username, String pickUpPlace, String comment) {
+		
+		Optional<GeoAdditional> additional = additionalService.findById(additionalId);
+		GeoWorker worker = workerService.findGeoWorkerByUserName(username);
+		
+		additional.get().setUsed(true);
+		additional.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		additional.get().setPickUpPlace(pickUpPlace);
+		additional.get().setComment(comment);
+		additional.get().setGeoworker(worker);
+		additionalService.save(additional.get());
+		
+	}
+	
+	private void takeawayAdditionalProcess(Long additionalId, Long instrumentId, String username, String pickUpPlace, String comment) {
+		
+		Optional<GeoAdditional> additional = additionalService.findById(additionalId);
+		Optional<GeoInstrument> instrument = instrumentService.findById(instrumentId);
+		GeoWorker worker = workerService.findGeoWorkerByUserName(username);
+		
+		additional.get().setUsed(true);
+		additional.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		additional.get().setPickUpPlace(pickUpPlace);
+		additional.get().setComment(comment);
+		additional.get().setGeoworker(worker);
+		if(!instrument.get().isUsed()) {
+			instrument.get().setUsed(true);
+			instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
+			instrument.get().setPickUpPlace(pickUpPlace);
+			instrument.get().setGeoworker(worker);
+		}
+		additional.get().setInstrument(instrument.get());
+		additionalService.save(additional.get());
+		instrumentService.save(instrument.get());
+	}
+	
+	@PostMapping("/restore-tool")
+	public String restoreGeoTool(HttpServletRequest request) {
+		
+		Long toolId = Long.parseLong(request.getParameter("tool-id"));
+		String place = request.getParameter("location");
+		boolean isInstrument = Boolean.parseBoolean(request.getParameter("isInstrument"));
+		String comment = request.getParameter("comment");
+		
+		if(isInstrument) {
+			
+			Optional<GeoInstrument> instrument = instrumentService.findById(toolId);
+			instrument.get().setUsed(false);
+			instrument.get().setPutDownDate(new Date(System.currentTimeMillis()));
+			instrument.get().setPutDownPlace(place);
+			instrument.get().setComment(comment);
+			
+			UsedGeoTool usedInstrument = new UsedGeoTool();
+			usedInstrument.setToolname(instrument.get().getName());
+			usedInstrument.setWorkername(instrument.get().getGeoworker().getLastname() + " " + instrument.get().getGeoworker().getFirstname());
+			usedInstrument.setPickUpDate(instrument.get().getPickUpDate());
+			usedInstrument.setPickUpPlace(instrument.get().getPickUpPlace());
+			usedInstrument.setPutDownDate(instrument.get().getPutDownDate());
+			usedInstrument.setPutDownPlace(instrument.get().getPutDownPlace());
+			usedInstrument.setComment(instrument.get().getComment());
+			usedToolService.save(usedInstrument);
+			
+			instrument.get().setGeoworker(null);
+			instrument.get().setPickUpPlace(instrument.get().getPutDownPlace());
+			instrumentService.save(instrument.get());
+			
+			for (GeoAdditional additional : instrument.get().getAdditionals()) {
+				
+				additional.setUsed(false);
+				additional.setPutDownDate(new Date(System.currentTimeMillis()));
+				additional.setPutDownPlace(place);
+				additional.setComment(comment);
+				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setToolname(additional.getName());
+				usedAdditional.setWorkername(additional.getGeoworker().getLastname() + " " + additional.getGeoworker().getFirstname());
+				usedAdditional.setPickUpDate(additional.getPickUpDate());
+				usedAdditional.setPickUpPlace(additional.getPickUpPlace());
+				usedAdditional.setPutDownDate(additional.getPutDownDate());
+				usedAdditional.setPutDownPlace(additional.getPutDownPlace());
+				usedAdditional.setComment(additional.getComment());
+				usedToolService.save(usedAdditional);
+				
+				additional.setGeoworker(null);
+				additional.setInstrument(null);
+				additional.setPickUpPlace(additional.getPutDownPlace());
+				additionalService.save(additional);
+			}
+			
+		}
+		else {
+			
+			Optional<GeoAdditional> additional = additionalService.findById(toolId); 
+			GeoInstrument instrument = additional.get().getInstrument();
+			
+			if(instrument != null) {
+				
+				additional.get().setUsed(false);
+				additional.get().setPutDownDate(new Date(System.currentTimeMillis()));
+				additional.get().setPutDownPlace(place);
+				additional.get().setComment(comment);
+				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setToolname(additional.get().getName());
+				usedAdditional.setWorkername(additional.get().getGeoworker().getLastname() + " " + additional.get().getGeoworker().getFirstname());
+				usedAdditional.setPickUpDate(additional.get().getPickUpDate());
+				usedAdditional.setPickUpPlace(additional.get().getPickUpPlace());
+				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
+				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
+				usedAdditional.setComment(additional.get().getComment());
+				usedToolService.save(usedAdditional);
+				
+				additional.get().setGeoworker(null);
+				additional.get().setInstrument(null);
+				additional.get().setPickUpPlace(additional.get().getPutDownPlace());
+				additionalService.save(additional.get());
+				
+			}
+			else {
+				
+				additional.get().setUsed(false);
+				additional.get().setPutDownDate(new Date(System.currentTimeMillis()));
+				additional.get().setPutDownPlace(place);
+				additional.get().setComment(comment);
+				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setToolname(additional.get().getName());
+				usedAdditional.setWorkername(additional.get().getGeoworker().getLastname() + " " + additional.get().getGeoworker().getFirstname());
+				usedAdditional.setPickUpDate(additional.get().getPickUpDate());
+				usedAdditional.setPickUpPlace(additional.get().getPickUpPlace());
+				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
+				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
+				usedAdditional.setComment(additional.get().getComment());
+				usedToolService.save(usedAdditional);
+				
+				additional.get().setGeoworker(null);
+				additional.get().setPickUpPlace(additional.get().getPutDownPlace());
+				additionalService.save(additional.get());
+
+			}
+			
+		}
+		return "redirect:/tools-registry/user/tools-in-use";
 	}
 	
 	private String getAuthUser() {

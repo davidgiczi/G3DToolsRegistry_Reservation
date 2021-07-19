@@ -32,9 +32,10 @@
 <input type="hidden" name="pass" id="changePass"/>
 </form>
 
-<input type="hidden" th:if="${changedPass}"  th:value="#{new.password.correct}" id="changePassMsg">
-
-<h1>Üdvözlet a felhasználó fiókjában!</h1>
+<div layout:fragment="instruments"></div>
+<div layout:fragment="additionals"></div>
+<div layout:fragment="tools-in-use"></div>
+<div layout:fragment="tools-history"></div>
 
 </body>
 
