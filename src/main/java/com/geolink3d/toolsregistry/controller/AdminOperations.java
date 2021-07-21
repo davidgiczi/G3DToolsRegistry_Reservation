@@ -199,7 +199,7 @@ public class AdminOperations {
 		Authentication auth = authenticationProvider.authenticate(token);
 		
 	    SecurityContextHolder.getContext().setAuthentication(auth);	
-	    
+	
 		workerService.save(worker.get());
 				
 		return "redirect:/tools-registry/user/instruments";

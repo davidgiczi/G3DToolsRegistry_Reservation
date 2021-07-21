@@ -3,6 +3,7 @@ package com.geolink3d.toolsregistry.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.geolink3d.toolsregistry.model.GeoAdditional;
@@ -395,6 +397,115 @@ public class UserOperations {
 			
 		}
 		return "redirect:/tools-registry/user/tools-in-use";
+	}
+	
+	@RequestMapping("/search-instrument")
+	public String searchGeoInstrument(@RequestParam(value = "text") String text, Model model) {
+		
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/user/instruments";
+		}else {
+			List<GeoTool> usable = instrumentService.findNotDeletedGeoToolsByText(text);
+			List<GeoTool> deleted= instrumentService.findDeletedGeoToolsByText(text);
+			model.addAttribute("usable", usable);
+			model.addAttribute("deleted", deleted);	
+			List<GeoWorker> workers = workerService.findAllIfEnabled();
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("workers", workers);
+			model.addAttribute("locations", locations);
+			model.addAttribute("txt", text);
+			model.addAttribute("useableSize", usable.size());
+		}
+		
+		return "user/instruments";
+	}
+	
+	@RequestMapping("/search-additional")
+	public String searchGeoAdditional(@RequestParam(value = "text") String text, Model model) {
+		
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/user/additionals";
+		}else {
+			List<GeoTool> usable = additionalService.findNotDeletedGeoToolsByText(text);
+			List<GeoTool> deleted= additionalService.findDeletedGeoToolsByText(text);
+			List<GeoTool> usableInstrumentTools = instrumentService.findUseableGeoTools();
+			model.addAttribute("usable", usable);
+			model.addAttribute("deleted", deleted);	
+			List<GeoWorker> workers = workerService.findAllIfEnabled();
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("instruments", usableInstrumentTools);
+			model.addAttribute("workers", workers);
+			model.addAttribute("locations", locations);
+			model.addAttribute("txt", text);
+			model.addAttribute("useableSize", usable.size());
+		}
+		
+		return "user/additionals";
+	}
+	
+	@RequestMapping("/search-in-tools-in-use")
+	public String searchInToolsInUse(@RequestParam(value = "text") String text, Model model) {
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/user/tools-in-use";
+		}
+		else {
+			
+			List<GeoTool> toolsInUse = toolInUseService.findGeoToolsInUseByText(text);
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("toolsInUse", toolsInUse);
+			model.addAttribute("locations", locations);
+			model.addAttribute("txt", text);
+		}
+		
+		return "user/tools-in-use";
+	}
+	
+	@RequestMapping("/search-in-tool-history")
+	public String searchInToolHistory(@RequestParam(value = "text") String text, Model model) {
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/user/tools-history";
+		}
+		else {
+			
+			List<UsedGeoTool> used = usedToolService.findUsedGeoToolsByText(text);
+			model.addAttribute("tools", used);
+			model.addAttribute("txt", text);
+		}
+		
+		return "user/tools-history";
+	}
+	
+	@RequestMapping("/search-by-dates-in-tools-in-use")
+	public String searchByDatesInToolsInUse(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to, Model model) {
+	
+		try {
+			List<GeoTool> usedToolStore = toolInUseService.findBetweenDates(from, to);
+			model.addAttribute("toolsInUse", usedToolStore);
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("locations", locations);
+		} catch (ParseException e) {
+			System.out.println("BAD DATE FORMAT: " + from +", " + to);
+		}
+		
+		return "user/tools-in-use";
+	}
+	
+	
+	@RequestMapping("/search-by-dates-in-tools-history")
+	public String searchByDatesInToolHistory(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to, Model model) {
+	
+		try {
+			List<UsedGeoTool> usedToolStore = usedToolService.findBetweenDates(from, to);
+			model.addAttribute("tools", usedToolStore);
+		} catch (ParseException e) {
+			System.out.println("BAD DATE FORMAT: " + from +", " + to);
+		}
+		
+		return "user/tools-history";
 	}
 	
 	private String getAuthUser() {

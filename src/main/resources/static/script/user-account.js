@@ -1,7 +1,11 @@
 /**
  * 
  */
- 
+ if(document.getElementById("search-field") != null){	
+document.getElementById("search-field").addEventListener("focus", setup);
+document.getElementById("search-field").focus();
+}
+
  if(document.getElementById("changePassMsg") != null){
 	alert(document.getElementById("changePassMsg").value);
 }
@@ -106,3 +110,42 @@ function sendDataForRestore(id, isInstrument, place, comment){
 	document.getElementById("back-msg").value = comment;
 	document.getElementById("tool-restore-form").submit();
 }
+
+function searchInstrument(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/user/search-instrument?text=" + str;
+}
+
+function searchAdditional(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/user/search-additional?text=" + str;
+}
+
+function searchInToolsInUse(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/user/search-in-tools-in-use?text=" + str;
+}
+
+function searchInToolHistory(){
+	var str = document.getElementById("search-field").value;
+	location.href = location.origin + "/tools-registry/user/search-in-tool-history?text=" + str;
+}
+
+function getDate(page){
+	var from = document.getElementById("pickupdate").value;
+	var to = document.getElementById("putdowndate").value;
+	
+	if("tools-history" === page){
+	location.href = location.origin + "/tools-registry/user/search-by-dates-in-tools-history?from=" + from + "&to=" + to;
+	}
+	else if("tools-in-use" === page){
+	location.href = location.origin + "/tools-registry/user/search-by-dates-in-tools-in-use?from=" + from + "&to=" + to;
+	}
+}
+
+function setup(){
+if(document.getElementById("search-value").value != null){
+var searchValue = document.getElementById("search-value").value;
+document.getElementById("search-field").value = searchValue;
+}
+} 

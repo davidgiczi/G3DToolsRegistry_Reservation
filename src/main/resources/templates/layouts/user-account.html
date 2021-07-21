@@ -9,7 +9,7 @@
 <link rel="stylesheet" th:href="@{/css/registry.css}">
 </head>
 <body>
-
+<input id="search-value" type="hidden" th:value="${txt}">
 <br>
 <a id="signout" sec:authorize="isAuthenticated()" th:href="@{/tools-registry/logout}" th:text="#{sign.out}"></a>
 <br><br><br>
