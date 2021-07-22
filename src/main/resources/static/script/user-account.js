@@ -126,11 +126,6 @@ function searchInToolsInUse(){
 	location.href = location.origin + "/tools-registry/user/search-in-tools-in-use?text=" + str;
 }
 
-function searchInToolHistory(){
-	var str = document.getElementById("search-field").value;
-	location.href = location.origin + "/tools-registry/user/search-in-tool-history?text=" + str;
-}
-
 function getDate(page){
 	var from = document.getElementById("pickupdate").value;
 	var to = document.getElementById("putdowndate").value;
@@ -142,6 +137,12 @@ function getDate(page){
 	location.href = location.origin + "/tools-registry/user/search-by-dates-in-tools-in-use?from=" + from + "&to=" + to;
 	}
 }
+
+function sendPickUpDateInToolsInUse(){
+	var date = document.getElementById("pickupdate").value;
+	location.href = location.origin + "/tools-registry/user/search-by-pick-up-date-in-tools-in-use?date=" + date;
+}
+
 
 function setup(){
 if(document.getElementById("search-value").value != null){

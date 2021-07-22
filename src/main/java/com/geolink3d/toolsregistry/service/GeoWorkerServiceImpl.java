@@ -147,6 +147,12 @@ public class GeoWorkerServiceImpl implements GeoWorkerService, UserDetailsServic
 		
 		return workerRepo.findByFullName(firstName, lastName);
 	}
+
+	@Override
+	public Long findIdByUsername(String username) {
+		return workerRepo.findIdByUsername(username);
+	}
+	
 	
 	
 }

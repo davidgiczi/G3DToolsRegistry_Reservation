@@ -223,4 +223,25 @@ function getDate(page){
 	}
 }
 
- 
+function sendPickUpDateInToolsInUse(){
+	var date = document.getElementById("pickupdate").value;
+	location.href = location.origin + "/tools-registry/admin/search-by-pick-up-date-in-tools-in-use?date=" + date;
+}
+
+function sendPickUpDateInToolHistory(){
+	var date = document.getElementById("pickupdate").value;
+	var opt = document.getElementById("search-selection").value;
+	location.href = location.origin + "/tools-registry/admin/search-by-pick-up-date-in-tools-history?date=" + date + "&option=" + opt;
+}
+
+function sendPutDownDateInToolHistory(){
+	var date = document.getElementById("putdowndate").value;
+	var opt = document.getElementById("search-selection").value;
+	location.href = location.origin + "/tools-registry/admin/search-by-put-down-date-in-tools-history?date=" + date + "&option=" + opt;
+}
+
+function searchInToolHistory(){
+	var str = document.getElementById("search-field").value;
+	var opt = document.getElementById("search-selection").value;
+	location.href = location.origin + "/tools-registry/admin/search-in-tool-history?text=" + str + "&option=" + opt;
+} 

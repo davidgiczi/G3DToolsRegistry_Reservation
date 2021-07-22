@@ -21,6 +21,7 @@ public class GeoToolInUseService {
 	private GeoAdditionalRepository additionalRepo;
 	private GeoInstrumentService instrumentService;
 	private GeoAdditionalService additionalService;
+	private GeoWorkerService workerService;
 	
 	@Autowired
 	public void setInstrumentRepo(GeoInstrumentRepository instrumentRepo) {
@@ -41,6 +42,10 @@ public class GeoToolInUseService {
 		this.additionalService = additionalService;
 	}
 	
+	@Autowired
+	public void setWorkerService(GeoWorkerService workerService) {
+		this.workerService = workerService;
+	}
 	public List<GeoTool> findGeoToolsInUseByText(String text){
 		
 		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
@@ -108,6 +113,21 @@ public class GeoToolInUseService {
 		return instrumentTools;
 	}
 	
+	public List<GeoTool> findByPickUpDate(String date) throws ParseException{
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date begin = format.parse(date);
+		Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " 24:00");
+		List<GeoInstrument> instruments = instrumentRepo.findByPickUpDate(begin, end);
+		List<GeoAdditional> additionals = additionalRepo.findByPickUpDate(begin, end);
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		Collections.sort(additionals, new GeoAdditionalComparator());
+		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
+		instrumentTools.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools)));
+		
+		return instrumentTools;
+	}
+	
 	public List<GeoTool> findUsedGeoTools(){
 		
 		List<GeoInstrument> instruments = instrumentRepo.findNotDeletedButUsedGeoInstruments();
@@ -115,6 +135,24 @@ public class GeoToolInUseService {
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
 		List<GeoAdditional> additionals = additionalRepo.findSingleUsedGeoAdditionals();
+		Collections.sort(additionals, new GeoAdditionalComparator());
+		List<GeoTool> additionalTools = additionalService
+				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));
+		
+		instrumentTools.addAll(additionalTools);
+		
+		return instrumentTools;
+	}
+	
+	public List<GeoTool> findUsedGeoToolsByUser(String authUser){
+		
+		Long workerId = workerService.findIdByUsername(authUser);
+		
+		List<GeoInstrument> instruments = instrumentRepo.findGeoInstrumentsByUserId(workerId);
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
+		
+		List<GeoAdditional> additionals = additionalRepo.findSingleGeoAdditionalsByUserId(workerId);
 		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
 				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));

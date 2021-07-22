@@ -31,9 +31,9 @@
 	
 	<tr th:each="worker : ${workers}">
 	<td th:utext="${workerStat.count}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${worker.lastname}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${worker.firstname}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${worker.username}" th:classappend="${workerStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${worker.lastname}" th:classappend="${workerStat.odd} ? '' : 'colored'" style="text-align: left"></td>
+	<td th:utext="${worker.firstname}" th:classappend="${workerStat.odd} ? '' : 'colored'" style="text-align: left"></td>
+	<td th:utext="${worker.username}" th:classappend="${workerStat.odd} ? '' : 'colored'" style="text-align: left"></td>
 	<td th:classappend="${workerStat.odd} ? '' : 'colored'"><a th:onclick="'enterWorkerAccount(\'' + ${worker.id} + '\');'" th:utext="${worker.password}"></a>
 	<td th:if="${worker.id == 1}" th:classappend="${workerStat.odd} ? '' : 'colored'">-</td>
 	

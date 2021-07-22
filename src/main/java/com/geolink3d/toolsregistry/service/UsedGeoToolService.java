@@ -52,6 +52,7 @@ public class UsedGeoToolService {
 	}
 	
 	
+	
 	public List<UsedGeoTool> findUsedGeoToolsByText(String text){
 		
 		List<UsedGeoTool> usedGeoTools= new ArrayList<>();
@@ -70,6 +71,64 @@ public class UsedGeoToolService {
 		}
 		if(usedGeoTools.isEmpty()) {
 		usedGeoTools= usedToolRepo.findUsedToolsByText(text.toLowerCase());
+		}
+		
+		Collections.sort(usedGeoTools);
+	
+		UsedGeoToolHighlighter highlighter = new UsedGeoToolHighlighter(usedGeoTools);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedUsedGeoToolStore();
+		
+		return highlighter.getHighlightedUsedGeoToolStore();
+	}
+	
+	public List<UsedGeoTool> findUsedGeoToolIntrumentsByText(String text){
+		
+		List<UsedGeoTool> usedGeoTools= new ArrayList<>();
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		usedGeoTools = usedToolRepo.findUsedToolIntrumentsByText(text);
+		
+		if(usedGeoTools.isEmpty()) {
+		usedGeoTools= usedToolRepo.findUsedToolIntrumentsByText(text.toUpperCase());
+		}
+		if(usedGeoTools.isEmpty()) {
+		usedGeoTools= usedToolRepo.findUsedToolIntrumentsByText(text.toLowerCase());
+		}
+		
+		Collections.sort(usedGeoTools);
+	
+		UsedGeoToolHighlighter highlighter = new UsedGeoToolHighlighter(usedGeoTools);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedUsedGeoToolStore();
+		
+		return highlighter.getHighlightedUsedGeoToolStore();
+	}
+	
+public List<UsedGeoTool> findUsedGeoToolAdditionalsByText(String text){
+		
+		List<UsedGeoTool> usedGeoTools= new ArrayList<>();
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		usedGeoTools = usedToolRepo.findUsedToolAdditionalsByText(text);
+		
+		if(usedGeoTools.isEmpty()) {
+		usedGeoTools= usedToolRepo.findUsedToolAdditionalsByText(text.toUpperCase());
+		}
+		if(usedGeoTools.isEmpty()) {
+		usedGeoTools= usedToolRepo.findUsedToolAdditionalsByText(text.toLowerCase());
 		}
 		
 		Collections.sort(usedGeoTools);

@@ -16,9 +16,9 @@
 </span><br>
 <h1 th:text="#{additionals}"></h1>
 
-<div id="empty" th:if="${#lists.isEmpty(usable) && #lists.isEmpty(deleted)}" th:text="#{empty.additionals}"></div>
+<div id="empty" th:if="${#lists.isEmpty(usable)}" th:text="#{empty.additionals}"></div>
 
-<table th:if="${not #lists.isEmpty(usable) || not #lists.isEmpty(deleted)}">
+<table th:if="${not #lists.isEmpty(usable)}">
 
 <tr>
 	<th th:text="#{number}"></th>
@@ -33,9 +33,9 @@
 	
 	<tr th:each="use : ${usable}">
 	<td th:utext="${useStat.count}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${use.toolName}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${use.toolName}" th:classappend="${useStat.odd} ? '' : 'colored'" style="text-align: left"></td>
 	
-	<td  th:if="${use.used}" th:text="${use.toolUser}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td  th:if="${use.used}" th:text="${use.toolUser}" th:classappend="${useStat.odd} ? '' : 'colored'" style="text-align: left"></td>
 	<td  th:unless="${use.used}" th:classappend="${useStat.odd} ? '' : 'colored'">-</td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
@@ -77,34 +77,6 @@
 	
 	</tr>
 	
-	<tr th:each="del : ${deleted}">
-	<td th:utext="${delStat.count + useableSize}" th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"></td>
-	
-	<td th:utext="${del.toolName}" th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"></td>
-	
-	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">-</td>
-	
-	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">
-	<select class="selection_field" disabled="disabled">
-	<option>-</option>
-	</select>
-	</td>
-	
-	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">
-	<select class="selection_field" disabled="disabled">
-	<option>-</option>
-	</select>
-	</td>
-	
-	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">-</td>
-	
-
-	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">
-	<textarea rows="3" cols="30" readonly="readonly"></textarea></td>
-	
-	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"><Button disabled="disabled">Felvesz</button></td>
-	</tr>
-
 </table>
 
 <form th:action="@{/tools-registry/user/validate-for-takeaway-additional}" method="post" id="takeaway-additional-form">

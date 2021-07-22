@@ -16,4 +16,5 @@ public interface GeoWorkerService {
 	void delete(GeoWorker worker);
 	List<GeoWorker> findByText(String text);
 	GeoWorker findByFullName(String fullName);
+	Long findIdByUsername(String username);
 }

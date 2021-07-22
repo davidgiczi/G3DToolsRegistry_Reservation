@@ -29,6 +29,8 @@ table, td{
 	height: 40px;
 }
 
+
+
 h1 {
 	color: #BA55D3;
 	text-align: center;
@@ -140,8 +142,15 @@ a {
 	background-color: #d2f8d2;
 }
 
-#search-field{
+#search-field {
 	float: right;
+	background-color: lightgray;
+	height: 20px;
+	width: 120px;
+	border-radius: 5px;
+	text-align: center;
+}
+#search-selection {
 	background-color: lightgray;
 	height: 20px;
 	width: 120px;

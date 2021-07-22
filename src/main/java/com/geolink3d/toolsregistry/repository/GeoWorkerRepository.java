@@ -26,4 +26,6 @@ public interface GeoWorkerRepository extends CrudRepository<GeoWorker, Long> {
 	List<GeoWorker> findByPassword(@Param("text") String text);
 	@Query(value = "select * from geoworkers where firstname like :first and lastname like :last", nativeQuery = true)
 	GeoWorker findByFullName(@Param("first") String firstName, @Param("last") String lastName);
+	@Query(value = "select id from geoworkers where username like :username", nativeQuery = true)
+	Long findIdByUsername(String username);
 }

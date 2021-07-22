@@ -40,5 +40,16 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 			+ "(deleted = false and used = true and pick_up_date >= :from and pick_up_date <= :to)"
 			,nativeQuery = true)
 		List<GeoInstrument> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
-	
+	@Query(value = "select * from instruments"
+			+ " where "
+			+ "(deleted = false and used = true and pick_up_date >= :begin and pick_up_date <= :end)"
+			,nativeQuery = true)
+		List<GeoInstrument> findByPickUpDate(@Param("begin") Date begin, @Param("end") Date end);
+	@Query(value = "select * from instruments"
+			+ " where "
+			+ "(deleted = false and used = true and put_down_date >= :begin and put_down_date <= :end)"
+			,nativeQuery = true)
+		List<GeoInstrument> findByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
+	@Query(value = "select * from instruments where instruments.geoworker_id = :id" , nativeQuery = true)
+	List<GeoInstrument> findGeoInstrumentsByUserId(@Param("id") Long id);
 }

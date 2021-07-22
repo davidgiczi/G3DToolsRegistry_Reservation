@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -405,7 +406,7 @@ public class AdminOperations {
 		instrument.get().setUsed(true);
 		instrument.get().setGeoworker(worker.get());
 		instrument.get().setPickUpPlace(request.getParameter("from-location"));
-		instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		instrument.get().setPickUpDate(getCurrentDateTime());
 		String comment = request.getParameter("comment");
 		if(comment.length() > 999) {
 		instrument.get().setComment(comment.substring(999));
@@ -424,7 +425,7 @@ public class AdminOperations {
 		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
 		
 		instrument.get().setUsed(false);
-		instrument.get().setPutDownDate(new Date(System.currentTimeMillis()));
+		instrument.get().setPutDownDate(getCurrentDateTime());
 		instrument.get().setPutDownPlace(request.getParameter("location"));
 			
 		String comment = request.getParameter("comment");
@@ -544,7 +545,7 @@ public class AdminOperations {
 		Optional<GeoWorker> worker = workerService.findById(workerId);
 		
 		additional.get().setUsed(true);
-		additional.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		additional.get().setPickUpDate(getCurrentDateTime());
 		additional.get().setPickUpPlace(pickUpPlace);
 		additional.get().setComment(comment);
 		additional.get().setGeoworker(worker.get());
@@ -559,13 +560,13 @@ public class AdminOperations {
 		Optional<GeoWorker> worker = workerService.findById(workerId);
 		
 		additional.get().setUsed(true);
-		additional.get().setPickUpDate(new Date(System.currentTimeMillis()));
+		additional.get().setPickUpDate(getCurrentDateTime());
 		additional.get().setPickUpPlace(pickUpPlace);
 		additional.get().setComment(comment);
 		additional.get().setGeoworker(worker.get());
 		if(!instrument.get().isUsed()) {
 			instrument.get().setUsed(true);
-			instrument.get().setPickUpDate(new Date(System.currentTimeMillis()));
+			instrument.get().setPickUpDate(getCurrentDateTime());
 			instrument.get().setPickUpPlace(pickUpPlace);
 			instrument.get().setGeoworker(worker.get());
 		}
@@ -586,7 +587,7 @@ public class AdminOperations {
 			
 			Optional<GeoInstrument> instrument = instrumentService.findById(toolId);
 			instrument.get().setUsed(false);
-			instrument.get().setPutDownDate(new Date(System.currentTimeMillis()));
+			instrument.get().setPutDownDate(getCurrentDateTime());
 			instrument.get().setPutDownPlace(place);
 			instrument.get().setComment(comment);
 			
@@ -607,9 +608,9 @@ public class AdminOperations {
 			for (GeoAdditional additional : instrument.get().getAdditionals()) {
 				
 				additional.setUsed(false);
-				additional.setPutDownDate(new Date(System.currentTimeMillis()));
+				additional.setPutDownDate(getCurrentDateTime());
 				additional.setPutDownPlace(place);
-				additional.setComment(comment);
+				additional.setComment(additional.getComment());
 				
 				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.getName());
@@ -636,7 +637,7 @@ public class AdminOperations {
 			if(instrument != null) {
 				
 				additional.get().setUsed(false);
-				additional.get().setPutDownDate(new Date(System.currentTimeMillis()));
+				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
 				additional.get().setComment(comment);
 				
@@ -659,7 +660,7 @@ public class AdminOperations {
 			else {
 				
 				additional.get().setUsed(false);
-				additional.get().setPutDownDate(new Date(System.currentTimeMillis()));
+				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
 				additional.get().setComment(comment);
 				
@@ -681,6 +682,90 @@ public class AdminOperations {
 			
 		}
 		return "redirect:/tools-registry/admin/tools-in-use";
+	}
+	
+	@RequestMapping("/search-in-tool-history")
+	public String searchInToolHistory(@RequestParam(value = "text") String text,@RequestParam(value = "option") String option, Model model) {
+		
+		List<UsedGeoTool> used;
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/admin/tools-history";
+		}
+		else {
+			
+			switch (option) {
+		
+			case "instruments":
+				used = usedToolService.findUsedGeoToolIntrumentsByText(text);
+				break;
+			case "additionals":
+				used = usedToolService.findUsedGeoToolAdditionalsByText(text);
+				break;
+			default:
+				used = usedToolService.findUsedGeoToolsByText(text);
+			}
+			
+			model.addAttribute("option", option);
+			model.addAttribute("tools", used);
+			model.addAttribute("txt", text);
+		}
+		
+		return "admin/tools-history";
+	}
+	
+	@RequestMapping("/search-in-tools-in-use")
+	public String searchInToolsInUse(@RequestParam(value = "text") String text, Model model) {
+		
+		if(text.isEmpty()) {
+			return "redirect:/tools-registry/admin/tools-in-use";
+		}
+		else {
+			
+			List<GeoTool> toolsInUse = toolInUseService.findGeoToolsInUseByText(text);
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("toolsInUse", toolsInUse);
+			model.addAttribute("locations", locations);
+			model.addAttribute("txt", text);
+		}
+		
+		return "admin/tools-in-use";
+	}
+	
+	@RequestMapping("/search-by-pick-up-date-in-tools-in-use")
+	public String searchByPickUpDateInToolsInUse(@RequestParam(value = "date") String date, Model model) {
+	
+		try {
+			List<GeoTool> usedToolStore = toolInUseService.findByPickUpDate(date);
+			model.addAttribute("toolsInUse", usedToolStore);
+			List<Location> locations = locationService.findAll();
+			model.addAttribute("locations", locations);
+		} catch (ParseException e) {
+			System.out.println("BAD DATE FORMAT: " + date);
+		}
+		
+		return "admin/tools-in-use";
+	}
+	
+	@RequestMapping("/search-by-pick-up-date-in-tools-history")
+	public String searchByPickUpDateInToolHistory(@RequestParam(value = "date") String date, @RequestParam(value = "option") String option, Model model) {
+	
+		
+		
+		return "admin/tools-history";
+	}
+	
+	@RequestMapping("/search-by-put-down-date-in-tools-history")
+	public String searchByPutDownDateInToolHistory(@RequestParam(value = "date") String date, @RequestParam(value = "option") String option, Model model) {
+	
+		
+		
+		return "admin/tools-history";
+	}
+	
+	
+	private Date getCurrentDateTime() {
+		return Date.from(ZonedDateTime.now().toInstant());
 	}
 	
 	@RequestMapping("/search-by-dates-in-tools-in-use")
@@ -710,40 +795,6 @@ public class AdminOperations {
 		}
 		
 		return "admin/tools-history";
-	}
-	
-	@RequestMapping("/search-in-tool-history")
-	public String searchInToolHistory(@RequestParam(value = "text") String text, Model model) {
-		
-		if(text.isEmpty()) {
-			return "redirect:/tools-registry/admin/tools-history";
-		}
-		else {
-			
-			List<UsedGeoTool> used = usedToolService.findUsedGeoToolsByText(text);
-			model.addAttribute("tools", used);
-			model.addAttribute("txt", text);
-		}
-		
-		return "admin/tools-history";
-	}
-	
-	@RequestMapping("/search-in-tools-in-use")
-	public String searchInToolsInUse(@RequestParam(value = "text") String text, Model model) {
-		
-		if(text.isEmpty()) {
-			return "redirect:/tools-registry/admin/tools-in-use";
-		}
-		else {
-			
-			List<GeoTool> toolsInUse = toolInUseService.findGeoToolsInUseByText(text);
-			List<Location> locations = locationService.findAll();
-			model.addAttribute("toolsInUse", toolsInUse);
-			model.addAttribute("locations", locations);
-			model.addAttribute("txt", text);
-		}
-		
-		return "admin/tools-in-use";
 	}
 	
 }

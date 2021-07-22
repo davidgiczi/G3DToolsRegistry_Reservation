@@ -27,6 +27,7 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 	private String putDownPlace;
 	@Column(length = 1000)
 	private String comment;
+	private boolean isInstrument;
 	
 	public UsedGeoTool() {
 	}
@@ -80,17 +81,26 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 		this.comment = comment;
 	}
 
+	public boolean isInstrument() {
+		return isInstrument;
+	}
+
+	public void setInstrument(boolean isInstrument) {
+		this.isInstrument = isInstrument;
+	}
+
 	@Override
 	public int compareTo(UsedGeoTool o) {
 		
-		return this.getPickUpDate().getTime() > o.getPickUpDate().getTime() ?  - 1 : o.getPickUpDate().getTime() < this.getPickUpDate().getTime() ? 1 : 0;
+		return this.getPutDownDate().getTime() > o.getPutDownDate().getTime() ?  - 1 : o.getPutDownDate().getTime() < this.getPutDownDate().getTime() ? 1 : 0;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "UsedTool [id=" + id + ", workername=" + workername + ", toolname=" + toolname + ", pickUpDate="
+		return "UsedGeoTool [id=" + id + ", workername=" + workername + ", toolname=" + toolname + ", pickUpDate="
 				+ pickUpDate + ", pickUpPlace=" + pickUpPlace + ", putDownDate=" + putDownDate + ", putDownPlace="
-				+ putDownPlace + ", comment=" + comment + "]";
+				+ putDownPlace + ", comment=" + comment + ", isInstrument=" + isInstrument + "]";
 	}
+	
 		
 }
