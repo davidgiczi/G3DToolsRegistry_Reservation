@@ -139,4 +139,49 @@ public List<UsedGeoTool> findUsedGeoToolAdditionalsByText(String text){
 		
 		return highlighter.getHighlightedUsedGeoToolStore();
 	}
+
+	public List<UsedGeoTool> findUsedGeoToolByPickUpDate(String date, String option) throws ParseException{
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date begin = format.parse(date);
+		Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " 24:00");
+		List<UsedGeoTool> used;
+		
+		switch (option) {
+		case "instruments":
+			used = usedToolRepo.findInstrumentsByPickUpDate(begin, end);
+			break;
+		case "additionals":
+			used = usedToolRepo.findAdditionalsByPickUpDate(begin, end);
+			break;
+
+		default:
+			used = usedToolRepo.findByPickUpDate(begin, end);
+		}
+		
+		Collections.sort(used);
+		return used;
+	}
+	public List<UsedGeoTool> findUsedGeoToolByPutDownDate(String date, String option) throws ParseException{
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date begin = format.parse(date);
+		Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " 24:00");
+		List<UsedGeoTool> used;
+		
+		switch (option) {
+		case "instruments":
+			used = usedToolRepo.findInstrumentsByPutDownDate(begin, end);
+			break;
+		case "additionals":
+			used = usedToolRepo.findAdditionalsByPutDownDate(begin, end);
+			break;
+
+		default:
+			used = usedToolRepo.findByPutDownDate(begin, end);
+		}
+		
+		Collections.sort(used);
+		return used;
+	}
 }

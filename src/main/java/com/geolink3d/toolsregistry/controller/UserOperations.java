@@ -4,8 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
@@ -449,7 +450,7 @@ public class UserOperations {
 		}
 		else {
 			
-			List<GeoTool> toolsInUse = toolInUseService.findGeoToolsInUseByText(text);
+			List<GeoTool> toolsInUse = toolInUseService.findGeoToolsInUseByTextAndUserId(text, getAuthUser());
 			List<Location> locations = locationService.findAll();
 			model.addAttribute("toolsInUse", toolsInUse);
 			model.addAttribute("locations", locations);
@@ -463,10 +464,11 @@ public class UserOperations {
 	public String searchByPickUpDateInToolsInUse(@RequestParam(value = "date") String date, Model model) {
 	
 		try {
-			List<GeoTool> usedToolStore = toolInUseService.findByPickUpDate(date);
+			List<GeoTool> usedToolStore = toolInUseService.findByPickUpDateAndUserId(date, getAuthUser());
 			model.addAttribute("toolsInUse", usedToolStore);
 			List<Location> locations = locationService.findAll();
 			model.addAttribute("locations", locations);
+			model.addAttribute("date", date);
 		} catch (ParseException e) {
 			System.out.println("BAD DATE FORMAT: " + date);
 		}
@@ -477,10 +479,13 @@ public class UserOperations {
 	private String getAuthUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return authentication.getName();
-	}
+	} 
 	
-	private Date getCurrentDateTime() {
-		return Date.from(ZonedDateTime.now().toInstant());
+	private ZonedDateTime getCurrentDateTime() {
+		Instant now = Instant.now();
+		ZoneId hun = ZoneId.of("Europe/Budapest");
+		ZonedDateTime nowHun = ZonedDateTime.ofInstant(now, hun);
+		return nowHun;
 	}
 
 	@RequestMapping("/search-by-dates-in-tools-history")

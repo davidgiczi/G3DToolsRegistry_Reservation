@@ -15,36 +15,43 @@ public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
 		+ "(pick_up_date >= :from and put_down_date <= :to)",
 		nativeQuery = true)
 	List<UsedGeoTool> findBetweenDates(@Param("from") Date date1, @Param("to") Date date2);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(is_instrument = true and pick_up_date >= :begin and pick_up_date <= :end)",
 			nativeQuery = true)
 		List<UsedGeoTool> findInstrumentsByPickUpDate(@Param("begin") Date begin, @Param("end") Date end);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(is_instrument = false and pick_up_date >= :begin and pick_up_date <= :end)",
 			nativeQuery = true)
 		List<UsedGeoTool> findAdditionalsByPickUpDate(@Param("begin") Date begin, @Param("end") Date end);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(pick_up_date >= :begin and pick_up_date <= :end)",
 			nativeQuery = true)
 		List<UsedGeoTool> findByPickUpDate(@Param("begin") Date begin, @Param("end") Date end);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(is_instrument = true and put_down_date >= :begin and put_down_date <= :end)",
 			nativeQuery = true)
 		List<UsedGeoTool> findInstrumentsByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(is_instrument = false and put_down_date >= :begin and put_down_date <= :end)",
 			nativeQuery = true)
 		List<UsedGeoTool> findAdditionalsByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(put_down_date >= :begin and put_down_date <= :end)",
 			nativeQuery = true)
 		List<UsedGeoTool> findByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "toolname like %:text%"
@@ -58,6 +65,7 @@ public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
 			+ "comment like %:text%"
 			, nativeQuery = true)
 	List<UsedGeoTool> findUsedToolsByText(@Param("text") String text);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(is_instrument = true and toolname like %:text%)"
@@ -71,6 +79,7 @@ public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
 			+ "(is_instrument = true and comment like %:text%)"
 			, nativeQuery = true)
 	List<UsedGeoTool> findUsedToolIntrumentsByText(@Param("text") String text);
+	
 	@Query(value = "select * from used_tools"
 			+ " where "
 			+ "(is_instrument = false and toolname like %:text%)"

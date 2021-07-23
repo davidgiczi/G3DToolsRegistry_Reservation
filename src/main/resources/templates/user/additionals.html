@@ -62,7 +62,7 @@
 	</select>
 	</td>
 	
-	<td th:if="${use.used}" th:utext="${#dates.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:if="${use.used}" th:utext="${#temporals.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
 	<td th:unless="${use.used}" th:classappend="${useStat.odd} ? '' : 'colored'">-</td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">

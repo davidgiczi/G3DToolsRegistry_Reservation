@@ -84,6 +84,46 @@ public class GeoToolInUseService {
 		return highlighter.getHighlightedGeoToolInUseStore();
 	}
 	
+public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUser){
+		
+		Long workerId = workerService.findIdByUsername(authUser);
+		
+		if(Character.isLetter(text.charAt(0)) && Character.isUpperCase(text.charAt(0))) {
+			text = text.charAt(0) + text.substring(1, text.length()).toLowerCase();
+		}
+		else if(Character.isLetter(text.charAt(0)) && Character.isLowerCase(text.charAt(0))) {
+			text = String.valueOf(text.charAt(0)).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+		}
+		
+		List<GeoInstrument> instruments = instrumentRepo.findGeoInstrumentsInUseByTextAndUserId(text, workerId);
+		List<GeoAdditional> additionals = additionalRepo.findGeoAdditionalsInUseByTextAndUserId(text, workerId);
+		
+		if(instruments.isEmpty()) {
+		instruments = instrumentRepo.findGeoInstrumentsInUseByTextAndUserId(text.toUpperCase(), workerId);
+		}
+		if(instruments.isEmpty()) {
+		instruments.addAll(instrumentRepo.findGeoInstrumentsInUseByTextAndUserId(text.toLowerCase(), workerId));
+		}
+		if(additionals.isEmpty()) {
+		additionals = additionalRepo.findGeoAdditionalsInUseByTextAndUserId(text.toUpperCase(), workerId);
+		}
+		if(additionals.isEmpty()) {
+			additionals = additionalRepo.findGeoAdditionalsInUseByTextAndUserId(text.toLowerCase(), workerId);
+		}
+		
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		Collections.sort(additionals, new GeoAdditionalComparator());
+		
+		List<GeoTool> toolsInUse = instrumentService.convertGeoInstrumentToGeoToolForSearching(instruments);
+		toolsInUse.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(toolsInUse)));
+		
+		GeoToolInUseHighlighter highlighter = new GeoToolInUseHighlighter(toolsInUse);
+		highlighter.setSearchedExpression(text);
+		highlighter.createHighlightedGeoToolInUseStore();
+		
+		return highlighter.getHighlightedGeoToolInUseStore();
+	}
+	
 	
 	public List<GeoTool> findBetweenDates(String date1, String date2) throws ParseException{
 		
@@ -128,6 +168,23 @@ public class GeoToolInUseService {
 		return instrumentTools;
 	}
 	
+	public List<GeoTool> findByPickUpDateAndUserId(String date, String authUser) throws ParseException{
+		
+		Long workerId = workerService.findIdByUsername(authUser);
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date begin = format.parse(date);
+		Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " 24:00");
+		List<GeoInstrument> instruments = instrumentRepo.findByPickUpDateAndUserId(begin, end, workerId);
+		List<GeoAdditional> additionals = additionalRepo.findByPickUpDateAndUserId(begin, end, workerId);
+		Collections.sort(instruments, new GeoInstrumentComparator());
+		Collections.sort(additionals, new GeoAdditionalComparator());
+		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
+		instrumentTools.addAll(additionalService.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools)));
+		
+		return instrumentTools;
+	}
+	
 	public List<GeoTool> findUsedGeoTools(){
 		
 		List<GeoInstrument> instruments = instrumentRepo.findNotDeletedButUsedGeoInstruments();
@@ -152,7 +209,7 @@ public class GeoToolInUseService {
 		Collections.sort(instruments, new GeoInstrumentComparator());
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
-		List<GeoAdditional> additionals = additionalRepo.findSingleGeoAdditionalsByUserId(workerId);
+		List<GeoAdditional> additionals = additionalRepo.findGeoAdditionalsByUserId(workerId);
 		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
 				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));

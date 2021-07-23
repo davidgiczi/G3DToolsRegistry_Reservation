@@ -1,6 +1,6 @@
 package com.geolink3d.toolsregistry.model;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class GeoTool implements Comparable<GeoTool> {
 
@@ -8,7 +8,7 @@ public class GeoTool implements Comparable<GeoTool> {
 	private String toolName;
 	private String toolUser;
 	private String instrumentName;
-	private Date pickUpDate;
+	private ZonedDateTime pickUpDate;
 	private String pickUpPlace;
 	private String comment;
 	private boolean isColored;
@@ -41,10 +41,11 @@ public class GeoTool implements Comparable<GeoTool> {
 	public void setInstrumentName(String instrumentName) {
 		this.instrumentName = instrumentName;
 	}
-	public Date getPickUpDate() {
+	
+	public ZonedDateTime getPickUpDate() {
 		return pickUpDate;
 	}
-	public void setPickUpDate(Date pickUpDate) {
+	public void setPickUpDate(ZonedDateTime pickUpDate) {
 		this.pickUpDate = pickUpDate;
 	}
 	public String getPickUpPlace() {
@@ -82,7 +83,8 @@ public class GeoTool implements Comparable<GeoTool> {
 	@Override
 	public int compareTo(GeoTool o) {
 		
-		return this.getPickUpDate().getTime() > o.getPickUpDate().getTime() ?  1 : o.getPickUpDate().getTime() < this.getPickUpDate().getTime() ? -1 : 0;
+		return this.getPickUpDate().toEpochSecond() > o.getPickUpDate().toEpochSecond()
+				?  1 : o.getPickUpDate().toEpochSecond() < this.getPickUpDate().toEpochSecond() ? -1 : 0;
 	}
 	@Override
 	public String toString() {

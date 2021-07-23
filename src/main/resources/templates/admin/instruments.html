@@ -60,7 +60,7 @@
 	</select>
 	</td>
 	
-	<td th:if="${use.used}" th:utext="${#dates.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
+	<td th:if="${use.used}" th:utext="${#temporals.format(use.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${useStat.odd} ? '' : 'colored'"></td>
 	<td th:unless="${use.used}" th:classappend="${useStat.odd} ? '' : 'colored'">-</td>
 	
 	<td th:classappend="${useStat.odd} ? '' : 'colored'">
@@ -99,7 +99,7 @@
 	
 
 	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">
-	<textarea rows="3" cols="30" readonly="readonly"></textarea></td>
+	<textarea th:text="${del.comment}" rows="3" cols="30" readonly="readonly"></textarea></td>
 	
 	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'"><Button disabled="disabled">Felvesz</button></td>
 	<td th:classappend="${(delStat.count + useableSize) % 2 == 1} ? '' : 'colored'">

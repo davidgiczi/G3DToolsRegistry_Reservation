@@ -5,9 +5,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
@@ -684,8 +685,8 @@ public class AdminOperations {
 		return "redirect:/tools-registry/admin/tools-in-use";
 	}
 	
-	@RequestMapping("/search-in-tool-history")
-	public String searchInToolHistory(@RequestParam(value = "text") String text,@RequestParam(value = "option") String option, Model model) {
+	@RequestMapping("/search-in-tools-history")
+	public String searchInToolsHistory(@RequestParam(value = "text") String text,@RequestParam(value = "option") String option, Model model) {
 		
 		List<UsedGeoTool> used;
 		
@@ -740,6 +741,7 @@ public class AdminOperations {
 			model.addAttribute("toolsInUse", usedToolStore);
 			List<Location> locations = locationService.findAll();
 			model.addAttribute("locations", locations);
+			model.addAttribute("date", date);
 		} catch (ParseException e) {
 			System.out.println("BAD DATE FORMAT: " + date);
 		}
@@ -750,22 +752,44 @@ public class AdminOperations {
 	@RequestMapping("/search-by-pick-up-date-in-tools-history")
 	public String searchByPickUpDateInToolHistory(@RequestParam(value = "date") String date, @RequestParam(value = "option") String option, Model model) {
 	
-		
-		
+			List<UsedGeoTool> used;
+			
+			try {
+				used = usedToolService.findUsedGeoToolByPickUpDate(date, option);
+				model.addAttribute("date", date);
+				model.addAttribute("option", option);
+				model.addAttribute("tools", used);
+			} catch (ParseException e) {
+				System.out.println("BAD DATE FORMAT: " + date);
+			}
+			
 		return "admin/tools-history";
 	}
 	
 	@RequestMapping("/search-by-put-down-date-in-tools-history")
 	public String searchByPutDownDateInToolHistory(@RequestParam(value = "date") String date, @RequestParam(value = "option") String option, Model model) {
-	
+		
+		List<UsedGeoTool> used;
+		
+		try {
+			used = usedToolService.findUsedGeoToolByPutDownDate(date, option);
+			model.addAttribute("date", date);
+			model.addAttribute("option", option);
+			model.addAttribute("tools", used);
+		} catch (ParseException e) {
+			System.out.println("BAD DATE FORMAT: " + date);
+		}
 		
 		
 		return "admin/tools-history";
 	}
 	
 	
-	private Date getCurrentDateTime() {
-		return Date.from(ZonedDateTime.now().toInstant());
+	private ZonedDateTime getCurrentDateTime() {
+		Instant now = Instant.now();
+		ZoneId hun = ZoneId.of("Europe/Budapest");
+		ZonedDateTime nowHun = ZonedDateTime.ofInstant(now, hun);
+		return nowHun;
 	}
 	
 	@RequestMapping("/search-by-dates-in-tools-in-use")

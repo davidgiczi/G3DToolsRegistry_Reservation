@@ -49,9 +49,9 @@
 	<td th:utext="${tool.toolname}" th:classappend="${toolStat.odd} ? '' : 'colored'" style="text-align: left"></td>
 	<td th:utext="${tool.workername}" th:classappend="${toolStat.odd} ? '' : 'colored'" style="text-align: left"></td>
 	<td th:utext="${tool.pickUpPlace}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${#temporals.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
 	<td th:utext="${tool.putDownPlace}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
-	<td th:utext="${#dates.format(tool.putDownDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
+	<td th:utext="${#temporals.format(tool.putDownDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
 	<td th:utext="${tool.comment}" th:classappend="${toolStat.odd} ? '' : 'colored'"></td>
 	</tr>
 </table>

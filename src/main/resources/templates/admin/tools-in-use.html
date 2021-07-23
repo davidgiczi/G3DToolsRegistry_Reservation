@@ -11,7 +11,7 @@
 
 <div layout:fragment="tools-in-use">
 <span id="add-options">
-<a>Elvitel ideje:</a>&nbsp;<input type="date" id="pickupdate" th:value="2021-07-01" th:onchange="'sendPickUpDateInToolsInUse()'">
+<a>Elvitel ideje:</a>&nbsp;<input type="date" id="pickupdate" th:value="${date}" th:onchange="'sendPickUpDateInToolsInUse()'">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input id="search-field" th:onkeyup="'searchInToolsInUse()'" type="text" th:placeholder="#{search}"/>
 </span>
@@ -48,8 +48,8 @@
 	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${tool.pickUpPlace}" th:unless=${tool.isColored}></td>
 	
 	
-	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:if=${tool.isColored} style="color: red"></td>
-	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#dates.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:unless=${tool.isColored}></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#temporals.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:if=${tool.isColored} style="color: red"></td>
+	<td th:classappend="${toolStat.odd} ? '' : 'colored'" th:utext="${#temporals.format(tool.pickUpDate, 'yyyy-MM-dd HH:mm')}" th:unless=${tool.isColored}></td>
 	
 	
 	<td th:classappend="${toolStat.odd} ? '' : 'colored'">

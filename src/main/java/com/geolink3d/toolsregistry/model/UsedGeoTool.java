@@ -1,6 +1,6 @@
 package com.geolink3d.toolsregistry.model;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,10 +20,10 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 	private String workername;
 	private String toolname;
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private Date pickUpDate;
+	private ZonedDateTime pickUpDate;
 	private String pickUpPlace;
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private Date putDownDate;
+	private ZonedDateTime putDownDate;
 	private String putDownPlace;
 	@Column(length = 1000)
 	private String comment;
@@ -50,24 +50,30 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 	public void setToolname(String toolname) {
 		this.toolname = toolname;
 	}
-	public Date getPickUpDate() {
-		return pickUpDate;
-	}
-	public void setPickUpDate(Date pickUpDate) {
-		this.pickUpDate = pickUpDate;
-	}
+	
 	public String getPickUpPlace() {
 		return pickUpPlace;
 	}
 	public void setPickUpPlace(String pickUpPlace) {
 		this.pickUpPlace = pickUpPlace;
 	}
-	public Date getPutDownDate() {
+	
+	public ZonedDateTime getPickUpDate() {
+		return pickUpDate;
+	}
+
+	public void setPickUpDate(ZonedDateTime pickUpDate) {
+		this.pickUpDate = pickUpDate;
+	}
+
+	public ZonedDateTime getPutDownDate() {
 		return putDownDate;
 	}
-	public void setPutDownDate(Date putDownDate) {
+
+	public void setPutDownDate(ZonedDateTime putDownDate) {
 		this.putDownDate = putDownDate;
 	}
+
 	public String getPutDownPlace() {
 		return putDownPlace;
 	}
@@ -92,7 +98,8 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 	@Override
 	public int compareTo(UsedGeoTool o) {
 		
-		return this.getPutDownDate().getTime() > o.getPutDownDate().getTime() ?  - 1 : o.getPutDownDate().getTime() < this.getPutDownDate().getTime() ? 1 : 0;
+		return this.getPutDownDate().toEpochSecond() > o.getPutDownDate().toEpochSecond() ?
+				- 1 : o.getPutDownDate().toEpochSecond() < this.getPutDownDate().toEpochSecond() ? 1 : 0;
 	}
 
 	@Override

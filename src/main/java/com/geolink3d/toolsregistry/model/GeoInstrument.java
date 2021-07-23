@@ -2,7 +2,7 @@ package com.geolink3d.toolsregistry.model;
 
 
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,10 +24,10 @@ public class GeoInstrument implements Comparable<GeoInstrument> {
 	private Long id;
 	private String name;
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private Date pickUpDate;
+	private ZonedDateTime pickUpDate;
 	private String pickUpPlace;
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	private Date putDownDate;
+	private ZonedDateTime putDownDate;
 	private String putDownPlace;
 	@Column(length = 1000)
 	private String comment;
@@ -57,12 +57,20 @@ public class GeoInstrument implements Comparable<GeoInstrument> {
 		this.name = name;
 	}
 
-	public Date getPickUpDate() {
+	public ZonedDateTime getPickUpDate() {
 		return pickUpDate;
 	}
 
-	public void setPickUpDate(Date pickUpDate) {
+	public void setPickUpDate(ZonedDateTime pickUpDate) {
 		this.pickUpDate = pickUpDate;
+	}
+
+	public ZonedDateTime getPutDownDate() {
+		return putDownDate;
+	}
+
+	public void setPutDownDate(ZonedDateTime putDownDate) {
+		this.putDownDate = putDownDate;
 	}
 
 	public String getPickUpPlace() {
@@ -71,14 +79,6 @@ public class GeoInstrument implements Comparable<GeoInstrument> {
 
 	public void setPickUpPlace(String pickUpPlace) {
 		this.pickUpPlace = pickUpPlace;
-	}
-
-	public Date getPutDownDate() {
-		return putDownDate;
-	}
-
-	public void setPutDownDate(Date putDownDate) {
-		this.putDownDate = putDownDate;
 	}
 
 	public String getPutDownPlace() {
