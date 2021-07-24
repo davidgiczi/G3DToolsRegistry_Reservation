@@ -1,6 +1,5 @@
 package com.geolink3d.toolsregistry.model;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class GeoTool implements Comparable<GeoTool> {
@@ -44,9 +43,6 @@ public class GeoTool implements Comparable<GeoTool> {
 	}
 	
 	public ZonedDateTime getPickUpDate() {
-		if(pickUpDate != null) {
-		return pickUpDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
-		}
 		return pickUpDate;
 	}
 	public void setPickUpDate(ZonedDateTime pickUpDate) {
