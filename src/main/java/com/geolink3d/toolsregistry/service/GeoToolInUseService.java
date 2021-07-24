@@ -210,6 +210,17 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
 		List<GeoAdditional> additionals = additionalRepo.findGeoAdditionalsByUserId(workerId);
+		
+		for (int i = additionals.size() - 1 ; i >= 0 ; i-- ) {
+			for (GeoInstrument instrument : instruments) {
+				if(additionals.get(i).getInstrument() != null && instrument.getId() == additionals.get(i).getInstrument().getId()) {
+					additionals.remove(i);
+					
+				}
+			}
+			
+		}
+		
 		Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
 				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));

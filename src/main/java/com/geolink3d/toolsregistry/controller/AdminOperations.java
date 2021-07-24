@@ -455,6 +455,7 @@ public class AdminOperations {
 		used.setPutDownPlace(usedInstrument.getPutDownPlace());
 		used.setPutDownDate(usedInstrument.getPutDownDate());
 		used.setComment(usedInstrument.getComment());
+		used.setInstrument(true);
 		usedToolService.save(used);
 	}
 	

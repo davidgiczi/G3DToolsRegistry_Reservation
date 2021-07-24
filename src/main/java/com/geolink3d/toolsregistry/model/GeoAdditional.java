@@ -1,5 +1,6 @@
 package com.geolink3d.toolsregistry.model;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,9 @@ public class GeoAdditional implements Comparable<GeoAdditional> {
 	}
 
 	public ZonedDateTime getPickUpDate() {
+		if(pickUpDate != null) {
+		return pickUpDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
+		}
 		return pickUpDate;
 	}
 
@@ -62,6 +66,9 @@ public class GeoAdditional implements Comparable<GeoAdditional> {
 	}
 
 	public ZonedDateTime getPutDownDate() {
+		if(putDownDate != null) {
+		return putDownDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
+		}
 		return putDownDate;
 	}
 
@@ -76,8 +83,6 @@ public class GeoAdditional implements Comparable<GeoAdditional> {
 	public void setPickUpPlace(String pickUpPlace) {
 		this.pickUpPlace = pickUpPlace;
 	}
-
-	
 
 	public String getPutDownPlace() {
 		return putDownPlace;

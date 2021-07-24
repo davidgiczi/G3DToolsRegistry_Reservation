@@ -1,5 +1,6 @@
 package com.geolink3d.toolsregistry.model;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,6 +60,9 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 	}
 	
 	public ZonedDateTime getPickUpDate() {
+		if(pickUpDate != null) {
+		return pickUpDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
+		}
 		return pickUpDate;
 	}
 
@@ -67,6 +71,9 @@ public class UsedGeoTool implements Comparable<UsedGeoTool> {
 	}
 
 	public ZonedDateTime getPutDownDate() {
+		if(putDownDate != null) {
+		return putDownDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
+		}
 		return putDownDate;
 	}
 

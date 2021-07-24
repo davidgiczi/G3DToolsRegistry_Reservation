@@ -16,8 +16,8 @@
 <option th:unless="${option == 'all'}" value="all">Minden</option>
 <option th:if="${option == 'instruments'}" value="instruments" selected="selected">Csak műszerek</option>
 <option th:unless="${option == 'instruments'}" value="instruments">Csak műszerek</option>
-<option th:if="${option == 'additionals'}" value="additionals" selected="selected">Csak eszközök</option>
-<option th:unless="${option == 'additionals'}" value="additionals">Csak eszközök</option>
+<option th:if="${option == 'additionals'}" value="additionals" selected="selected">Csak kiegészítők</option>
+<option th:unless="${option == 'additionals'}" value="additionals">Csak kiegészítők</option>
 </select>&nbsp;&nbsp;&nbsp;
 
 <a>Elvitel ideje:</a>&nbsp;<input type="date" id="pickupdate" th:value="${date}" th:onchange="'sendPickUpDateInToolsHistory()'">&nbsp;&nbsp;&nbsp;

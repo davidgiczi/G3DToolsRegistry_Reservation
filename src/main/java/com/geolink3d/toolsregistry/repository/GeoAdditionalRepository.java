@@ -79,6 +79,6 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 			,nativeQuery = true)
 		List<GeoAdditional> findByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
 	
-	@Query(value = "select * from additionals where additionals.geoworker_id = :id" , nativeQuery = true)
+	@Query(value = "select * from additionals where geoworker_id = :id" , nativeQuery = true)
 	List<GeoAdditional> findGeoAdditionalsByUserId(@Param("id") Long id);
 } 
