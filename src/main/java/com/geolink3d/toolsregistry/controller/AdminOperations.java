@@ -601,6 +601,7 @@ public class AdminOperations {
 			usedInstrument.setPutDownDate(instrument.get().getPutDownDate());
 			usedInstrument.setPutDownPlace(instrument.get().getPutDownPlace());
 			usedInstrument.setComment(instrument.get().getComment());
+			usedInstrument.setInstrument(true);
 			usedToolService.save(usedInstrument);
 			
 			instrument.get().setGeoworker(null);
@@ -622,6 +623,7 @@ public class AdminOperations {
 				usedAdditional.setPutDownDate(additional.getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.getPutDownPlace());
 				usedAdditional.setComment(additional.getComment());
+				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
 				additional.setGeoworker(null);
@@ -651,6 +653,7 @@ public class AdminOperations {
 				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
 				usedAdditional.setComment(additional.get().getComment());
+				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
 				additional.get().setGeoworker(null);
@@ -674,6 +677,7 @@ public class AdminOperations {
 				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
 				usedAdditional.setComment(additional.get().getComment());
+				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
 				additional.get().setGeoworker(null);
