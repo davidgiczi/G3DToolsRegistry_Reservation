@@ -8,7 +8,9 @@ import com.geolink3d.toolsregistry.model.Role;
 public interface RoleRepository extends CrudRepository<Role, Long> {
 
 	Role findByRole(String roleName);
+	
 	void deleteById(Long id);
+	
 	List<Role> findAll();
 	
 }

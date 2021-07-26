@@ -11,5 +11,6 @@ public interface LocationRepositiry extends CrudRepository<Location, Long> {
 
 	@Query(value = "select * from locations where name like :name" , nativeQuery = true)
 	Location getLocationByName(@Param("name") String name);
+	
 	List<Location> findAll();
 }

@@ -211,9 +211,12 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 		
 		List<GeoAdditional> additionals = additionalRepo.findGeoAdditionalsByUserId(workerId);
 		
+		
 		for (int i = additionals.size() - 1 ; i >= 0 ; i-- ) {
 			for (GeoInstrument instrument : instruments) {
-				if(additionals.get(i).getInstrument() != null && instrument.getId() == additionals.get(i).getInstrument().getId()) {
+				if(!additionals.isEmpty() 
+						&& additionals.get(i).getInstrument() != null 
+							&& instrument.getId() == additionals.get(i).getInstrument().getId()) {
 					additionals.remove(i);
 					
 				}
