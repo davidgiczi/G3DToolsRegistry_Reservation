@@ -276,6 +276,7 @@ public class UserOperations {
 			instrument.get().setUsed(true);
 			instrument.get().setPickUpDate(getCurrentDateTime());
 			instrument.get().setPickUpPlace(pickUpPlace);
+			instrument.get().setComment(comment);
 			instrument.get().setGeoworker(worker);
 		}
 		additional.get().setInstrument(instrument.get());

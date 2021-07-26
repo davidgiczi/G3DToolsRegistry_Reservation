@@ -570,6 +570,7 @@ public class AdminOperations {
 			instrument.get().setUsed(true);
 			instrument.get().setPickUpDate(getCurrentDateTime());
 			instrument.get().setPickUpPlace(pickUpPlace);
+			instrument.get().setComment(comment);
 			instrument.get().setGeoworker(worker.get());
 		}
 		additional.get().setInstrument(instrument.get());
