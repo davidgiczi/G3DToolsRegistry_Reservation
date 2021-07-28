@@ -2,6 +2,7 @@ package com.geolink3d.toolsregistry.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -159,6 +160,10 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 		Date begin = format.parse(date);
 		Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " 24:00");
 		List<GeoInstrument> instruments = instrumentRepo.findByPickUpDate(begin, end);
+		for (GeoInstrument instrument : instruments) {
+			instrument.setAdditionals(new ArrayList<>());
+		}
+		
 		List<GeoAdditional> additionals = additionalRepo.findByPickUpDate(begin, end);
 		Collections.sort(instruments, new GeoInstrumentComparator());
 		Collections.sort(additionals, new GeoAdditionalComparator());
@@ -176,6 +181,9 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 		Date begin = format.parse(date);
 		Date end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(date + " 24:00");
 		List<GeoInstrument> instruments = instrumentRepo.findByPickUpDateAndUserId(begin, end, workerId);
+		for (GeoInstrument instrument : instruments) {
+			instrument.setAdditionals(new ArrayList<>());
+		}
 		List<GeoAdditional> additionals = additionalRepo.findByPickUpDateAndUserId(begin, end, workerId);
 		Collections.sort(instruments, new GeoInstrumentComparator());
 		Collections.sort(additionals, new GeoAdditionalComparator());

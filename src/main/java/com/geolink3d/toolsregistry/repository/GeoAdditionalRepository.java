@@ -62,13 +62,13 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	
 	@Query(value = "select * from additionals"
 			+ " where "
-			+ "(deleted = false and used = true and instrument_id is null and pick_up_date >= :begin and pick_up_date <= :end)"
+			+ "(deleted = false and used = true and pick_up_date >= :begin and pick_up_date <= :end)"
 			,nativeQuery = true)
 		List<GeoAdditional> findByPickUpDate(@Param("begin") Date begin, @Param("end") Date end);
 	
 	@Query(value = "select * from additionals"
 			+ " where "
-			+ "(additionals.geoworker_id = :id and deleted = false and used = true and instrument_id is null and pick_up_date >= :begin and pick_up_date <= :end)"
+			+ "(additionals.geoworker_id = :id and deleted = false and used = true and pick_up_date >= :begin and pick_up_date <= :end)"
 			,nativeQuery = true)
 		List<GeoAdditional> findByPickUpDateAndUserId(@Param("begin") Date begin, @Param("end") Date end, @Param("id") Long id);
 	
