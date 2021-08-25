@@ -49,7 +49,7 @@ INSERT INTO locations (name) values ('Dunakeszi');
 INSERT INTO locations (name) values ('Debrecen');
 INSERT INTO locations (name) values ('Kecskemét');
 
-INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
+/*INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
 VALUES ('Drone', null, false, null, null,  null, null, false, null);
 INSERT INTO instruments (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id) 
 VALUES ('S7 Total Station', 'Hello World!', false, null, null,  null, null, false, null);
@@ -65,6 +65,6 @@ VALUES ('Trimble műszerállvány', 'Hello World!', false, null, null,  null, nu
 INSERT INTO additionals (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id, instrument_id) 
 VALUES ('FARO prizma', null, true, null, null, null, null, false, null, null);
 INSERT INTO additionals (name, comment, deleted, pick_up_date, pick_up_place, put_down_place, put_down_date, used, geoworker_id, instrument_id) 
-VALUES ('Leica prizma', null, true, null, null, null, null, false, null, null);
+VALUES ('Leica prizma', null, true, null, null, null, null, false, null, null);*/
 
 

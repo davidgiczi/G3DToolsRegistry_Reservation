@@ -21,9 +21,9 @@
 <br>
 <form th:action="@{/tools-registry/registration}" method="post" th:object="${worker}" id="regForm">
 <h4 th:text="#{lastname}"></h4>
-<input type="text" id="lname" name="lastname" th:field="*{lastname}" size="50"/><br>
+<input type="text" id="lname" name="lastname" th:field="*{lastname}" size="50" autofocus="autofocus"/><br>
 <h4 th:text="#{firstname}"></h4>
-<input type="text" id="fname" name="firstname" th:field="*{firstname}" size="50" autofocus="autofocus"/><br>
+<input type="text" id="fname" name="firstname" th:field="*{firstname}" size="50"/><br>
 <h4 th:text="#{username}"></h4>
 <input type="email" id="uname" name="username" size="50" th:field="*{username}" th:placeholder="#{email}"/>
 <div id="username-error"></div>
