@@ -10,7 +10,7 @@
 <link rel="stylesheet" th:href="@{/css/registry.css}">
 </head>
 <body>
-
+<img alt="g3d-logo" th:src="@{/images/G3D_logo1.png}"/>
 <h1 th:text="#{registration}"></h1>
 <a th:href="@{/tools-registry/login}" th:text="#{go.login}"></a>
 <hr>
@@ -53,7 +53,7 @@
 <input type="hidden" id="passwords-equal-msg" th:value="#{passwords.equal}"/>
 <input type="hidden" id="usrnameExists" th:if="${param.exists}" th:value="#{username.already.exists}"/>
 
-
+<img id="backdrop" alt="GeoLink3D logo watermark" th:src="@{/images/G3D_logo_back.png}">
 </body>
 <script type="text/javascript" th:src="@{/script/registry.js}"></script>
 </html>

@@ -1,8 +1,9 @@
 @charset "UTF-8";
 
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap');
+
 body{
-	background-color: #E6E6FA;
-	font-family: Helvetica;
+ 	font-family: 'Titillium Web', sans-serif;
 }
 
 table{
@@ -16,7 +17,7 @@ th{
 	border: none;
 	border-collapse: collapse;
 	text-align: center;
-	color:  #606060;
+	color: black;
 	height: 40px;
 }	
 	
@@ -32,33 +33,33 @@ table, td{
 
 
 h1 {
-	color: #BA55D3;
+	color: #FF7200;
 	text-align: center;
 }
 
- h4{
-	color: gray;
+h4{
+	color: black;
 	text-align: center;
 }
 
 #empty{
 	text-align: center;
-	color: #BA55D3;
+	color: gray;
 	font-style: italic;
 }
 
 #login, .error{
 	background-color: white;
 	text-align: center;
-	height: 260px;
+	height: 300px;
 	width: 300px;
 	margin: auto;
 	border-radius: 10px;
-	border: solid 1px lightgray;
+	border: solid 1px black;
 }
 #auth{
 	float: right;
-	color: #4B0082;
+	color: black;
 }
 
 #langSelect, #signout{
@@ -73,7 +74,7 @@ h1 {
 	text-align: center;
 	border-radius: 10px;
 	margin: auto;
- 	border: solid 1px lightgray;
+ 	border: solid 1px black;
 }
 #username-correct,
 #username-error,
@@ -98,8 +99,8 @@ h1 {
 	}
 hr{	
 	width: 50%;
-	background-color: lightgray;
-	border-color: lightgray;
+ 	background-color: black;
+	border-color: black;
 }
 .modify_field{
 	width: 65px;
@@ -126,9 +127,9 @@ input[type=date]{
 }
 
 a {
-	font-family: Helvetica;
+	font-family: 'Titillium Web', sans-serif;
 	font-size: 15px;
-	color:  #4B0082;
+	color:  black;
 	cursor: pointer;
 }
 .selection{
@@ -139,7 +140,7 @@ a {
 	background-color: lightgray;
 }
 .colored{
-	background-color: #d2f8d2;
+	background-color: #fff6ea;
 }
 
 #search-field {
@@ -166,9 +167,8 @@ button{
 }
 	
 font{
-	font-family: Helvetica;
+	font-family: 'Titillium Web', sans-serif;
 	font-size: 16px;
-	color: #4B0082;
 }
 
 span{
@@ -187,4 +187,16 @@ span{
 	background-color: white;
 	text-align-last: center;
 }
+img{
+	width: 417px;
+}
 
+#backdrop {
+	position: absolute;
+	width: 80%;
+	max-width: 800px;
+	left: -160px;
+	bottom: -160px;
+	z-index: -100;
+	opacity: 0.1;
+}

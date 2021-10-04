@@ -10,7 +10,7 @@
 <link rel="stylesheet" th:href="@{/css/registry.css}">
 </head>
 <body>
-
+<img alt="g3d-logo" th:src="@{/images/G3D_logo1.png}"/>
 <h1 th:text="#{login}"></h1>
 <hr>
 <br>
@@ -37,7 +37,7 @@
 <span th:switch="${activationIsNeeded}">
 <input th:case="true" type="hidden" id="activation-needs"  th:value="#{activation.needed}"/> 
 </span>
-
+<img id="backdrop" alt="GeoLink3D logo watermark" th:src="@{/images/G3D_logo_back.png}">
 </body>
 <script type="text/javascript" th:src="@{/script/registry.js}"></script>
 </html>

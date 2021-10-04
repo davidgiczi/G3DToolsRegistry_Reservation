@@ -9,6 +9,7 @@
 <link rel="stylesheet" th:href="@{/css/registry.css}">
 </head>
 <body>
+<img alt="g3d-logo" th:src="@{/images/G3D_logo2.png}"/>
 <input id="search-value" type="hidden" th:value="${txt}">
 <br>
 <a id="signout" sec:authorize="isAuthenticated()" th:href="@{/tools-registry/logout}" th:text="#{sign.out}"></a>
@@ -35,7 +36,7 @@
 <div layout:fragment="additionals"></div>
 <div layout:fragment="tools-in-use"></div>
 <div layout:fragment="tools-history"></div>
-
+<img id="backdrop" alt="GeoLink3D logo watermark" th:src="@{/images/G3D_logo_back.png}">
 </body>
 
 <script type="text/javascript" th:src="@{/script/user-account.js}"></script>
