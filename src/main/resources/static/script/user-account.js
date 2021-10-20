@@ -9,6 +9,13 @@ document.getElementById("search-field").focus();
  if(document.getElementById("changePassMsg") != null){
 	alert(document.getElementById("changePassMsg").value);
 }
+
+if(document.getElementById("otherUser") != null){	
+	if(confirm(document.getElementById("otherUser").value)){
+	
+	document.getElementById("cookies").submit();
+}
+}
  
  function changePassword(){
 	

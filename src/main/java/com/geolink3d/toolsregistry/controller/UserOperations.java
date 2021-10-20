@@ -243,7 +243,7 @@ public class UserOperations {
 		response.addCookie(c3);
 		response.addCookie(c4);
 		
-		return "redirect:/tools-registry/admin/tools-in-use";
+		return "redirect:/tools-registry/user/tools-in-use";
 	}
 	
 	

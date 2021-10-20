@@ -6,7 +6,7 @@ INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES
 INSERT INTO roles (id, role) VALUES (2, 'ROLE_USER');
 INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (2,2);
 INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('Dániel', 'Gáncs', 'gancsdaniel@geolink3d.hu', 'dXNlcg==', true);
-INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (3,2);
+INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (3,1);
 INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('Dávid', 'Giczi', 'giczidavid@geolink3d.hu', 'dXNlcg==', true);
 INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (4,2);
 INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('István', 'Halász', 'halaszistvan@geolink3d.hu', 'dXNlcg==', true);
@@ -17,7 +17,7 @@ INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES
 INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (7,2);
 INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('Bence', 'Kovács', 'kovacsbence@geolink3d.hu', 'dXNlcg==', true);
 INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (8,2);
-INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('Márton', 'Mészáros', 'mesz.marc@gmail.com', 'dXNlcg==', true);
+INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('Levente', 'Csirkés', 'csirkeslevente@geolink3d.hu', 'dXNlcg==', true);
 INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (9,2);
 INSERT INTO geoworkers (firstname, lastname, username, password, enabled) VALUES ('Ambrus', 'Mistéth', 'mistethambrus@geolink3d.hu', 'dXNlcg==', true);
 INSERT INTO geoworkers_roles (geoworker_id, role_id) VALUES (10,1);

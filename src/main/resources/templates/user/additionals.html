@@ -87,7 +87,7 @@
 </form>
 
 <form th:action="@{/tools-registry/user/takeaway-additional}" method="post" id="cookies"></form> 
-
+<input type="hidden" th:if="${param.otherUser != null}" th:value="${param.otherUser}" id="otherUser">
 </div>
 
 </body>
