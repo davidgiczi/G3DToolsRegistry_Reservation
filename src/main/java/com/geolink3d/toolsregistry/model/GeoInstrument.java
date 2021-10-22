@@ -38,6 +38,7 @@ public class GeoInstrument implements Comparable<GeoInstrument> {
 	private List<GeoAdditional> additionals;
 	private boolean deleted;
 	private boolean used;
+	private int frequency;
 	
 	public GeoInstrument() {
 	}
@@ -136,11 +137,28 @@ public class GeoInstrument implements Comparable<GeoInstrument> {
 		this.additionals = additionals;
 	}
 
-	
+	public int getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(int frequency) {
+		this.frequency = frequency;
+	}
+
 	@Override
 	public int compareTo(GeoInstrument o) {
 		
-		return  this.name.compareTo(o.getName()) > 0 ? 1 : this.name.compareTo(o.getName()) < 0 ? -1 : 0;
+		if(this.frequency < o.frequency) {
+			return 1;
+		}
+		else if(this.frequency == o.frequency) {
+			
+			return  this.name.compareTo(o.getName()) > 0 ? 1 : this.name.compareTo(o.getName()) < 0 ? -1 : 0;
+		}
+		else {
+			return -1;
+		}
+		
 	}
 	
 	

@@ -299,6 +299,7 @@ public class UserOperations {
 			instrument.get().setPutDownDate(getCurrentDateTime());
 			instrument.get().setPutDownPlace(place);
 			instrument.get().setComment(comment);
+			instrument.get().setFrequency(instrument.get().getFrequency() + 1);
 			
 			UsedGeoTool usedInstrument = new UsedGeoTool();
 			usedInstrument.setToolname(instrument.get().getName());
@@ -321,6 +322,7 @@ public class UserOperations {
 				additional.setPutDownDate(getCurrentDateTime());
 				additional.setPutDownPlace(place);
 				additional.setComment(additional.getComment());
+				additional.setFrequency(additional.getFrequency() + 1);
 				
 				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.getName());
@@ -351,6 +353,7 @@ public class UserOperations {
 				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
 				additional.get().setComment(comment);
+				additional.get().setFrequency(additional.get().getFrequency() + 1);
 				
 				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.get().getName());
@@ -375,6 +378,7 @@ public class UserOperations {
 				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
 				additional.get().setComment(comment);
+				additional.get().setFrequency(additional.get().getFrequency() + 1);
 				
 				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.get().getName());
