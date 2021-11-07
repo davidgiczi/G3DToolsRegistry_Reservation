@@ -93,4 +93,12 @@ public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
 			+ "(is_instrument = false and comment like %:text%)"
 			, nativeQuery = true)
 	List<UsedGeoTool> findUsedToolAdditionalsByText(@Param("text") String text);
+	
+	@Query(value = "select * from used_tools"
+			+ " order by "
+			+ "put_down_date desc"
+			+ " fetch first :usedGeoToolPcs row only",
+			nativeQuery = true)
+	List<UsedGeoTool> findFirstXUsedGeoToolsOrderByPutDownDateDesc(@Param("usedGeoToolPcs") String usedGeoToolsPsc);
+	
 }

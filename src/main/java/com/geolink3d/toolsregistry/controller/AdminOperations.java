@@ -151,8 +151,17 @@ public class AdminOperations {
 		return "admin/tools-in-use";
 	}
 	
-	@RequestMapping("/tools-history")
-	public String goToolsHistoryPage(Model model) {
+	@RequestMapping("/get-first-50-used-tools")
+	public String getFist50UsedTools(Model model) {
+		
+		List<UsedGeoTool> used = usedToolService.findFirstXPcsOrderByPutDownDateDesc("50");
+		model.addAttribute("tools", used);
+		
+		return "admin/tools-history";
+	}
+	
+	@RequestMapping("/get-all-used-tools")
+	public String getAllUsedTools(Model model) {
 		
 		List<UsedGeoTool> used = usedToolService.findAll();
 		model.addAttribute("tools", used);

@@ -200,3 +200,9 @@ img{
 	z-index: -100;
 	opacity: 0.1;
 }
+
+.sum-items{
+	width: 100px;
+	height: 20px;
+	background-color: lightgray;
+}

@@ -11,6 +11,7 @@
 
 <div layout:fragment="tools-history">
 <span id="add-options">
+<a th:href="@{/tools-registry/admin/get-all-used-tools}"><button th:text="#{sum.used.tools}" class="sum-items"></button></a>&nbsp;&nbsp;&nbsp;
 <select id="search-selection">
 <option th:if="${option == 'all'}" value="all" selected="selected">Minden</option>
 <option th:unless="${option == 'all'}" value="all">Minden</option>

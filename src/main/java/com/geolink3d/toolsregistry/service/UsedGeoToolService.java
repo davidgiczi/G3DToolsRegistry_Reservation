@@ -28,6 +28,10 @@ public class UsedGeoToolService {
 		return used;
 	}
 	
+	public List<UsedGeoTool> findFirstXPcsOrderByPutDownDateDesc(String pcs){
+		return usedToolRepo.findFirstXUsedGeoToolsOrderByPutDownDateDesc(pcs);
+	}
+	
 	public void save(UsedGeoTool usedTool) {
 		usedToolRepo.save(usedTool);
 	}
