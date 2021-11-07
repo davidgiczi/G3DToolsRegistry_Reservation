@@ -99,6 +99,6 @@ public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
 			+ "put_down_date desc"
 			+ " fetch first :usedGeoToolPcs row only",
 			nativeQuery = true)
-	List<UsedGeoTool> findFirstXUsedGeoToolsOrderByPutDownDateDesc(@Param("usedGeoToolPcs") String usedGeoToolsPsc);
+	List<UsedGeoTool> findFirstXUsedGeoToolsOrderByPutDownDateDesc(@Param("usedGeoToolPcs") int usedGeoToolsPsc);
 	
 }

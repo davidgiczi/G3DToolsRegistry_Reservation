@@ -154,7 +154,7 @@ public class AdminOperations {
 	@RequestMapping("/get-first-50-used-tools")
 	public String getFist50UsedTools(Model model) {
 		
-		List<UsedGeoTool> used = usedToolService.findFirstXPcsOrderByPutDownDateDesc("50");
+		List<UsedGeoTool> used = usedToolService.findFirstXPcsOrderByPutDownDateDesc(50);
 		model.addAttribute("tools", used);
 		
 		return "admin/tools-history";

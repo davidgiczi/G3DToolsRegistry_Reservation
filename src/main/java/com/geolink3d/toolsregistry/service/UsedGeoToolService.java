@@ -28,7 +28,7 @@ public class UsedGeoToolService {
 		return used;
 	}
 	
-	public List<UsedGeoTool> findFirstXPcsOrderByPutDownDateDesc(String pcs){
+	public List<UsedGeoTool> findFirstXPcsOrderByPutDownDateDesc(int pcs){
 		return usedToolRepo.findFirstXUsedGeoToolsOrderByPutDownDateDesc(pcs);
 	}
 	
