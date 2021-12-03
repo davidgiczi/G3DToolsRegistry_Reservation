@@ -11,9 +11,11 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoTool;
@@ -37,10 +40,10 @@ import com.geolink3d.toolsregistry.model.Role;
 import com.geolink3d.toolsregistry.model.UsedGeoTool;
 import com.geolink3d.toolsregistry.service.GeoAdditionalService;
 import com.geolink3d.toolsregistry.service.GeoInstrumentService;
+import com.geolink3d.toolsregistry.service.GeoToolInUseService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
 import com.geolink3d.toolsregistry.service.LocationService;
 import com.geolink3d.toolsregistry.service.RoleService;
-import com.geolink3d.toolsregistry.service.GeoToolInUseService;
 import com.geolink3d.toolsregistry.service.UsedGeoToolService;
 
 @Controller
@@ -417,57 +420,58 @@ public class AdminOperations {
 		instrument.get().setGeoworker(worker.get());
 		instrument.get().setPickUpPlace(request.getParameter("from-location"));
 		instrument.get().setPickUpDate(getCurrentDateTime());
-		String comment = request.getParameter("comment");
-		if(comment.length() > 999) {
-		instrument.get().setComment(comment.substring(999));
-		}
-		else {
-			instrument.get().setComment(comment);
-		}
+		String comment = cutLengthOfComment(request.getParameter("comment"));
+		instrument.get().setComment(comment);
+		
 		instrumentService.save(instrument.get());
 		
 		return "redirect:/tools-registry/admin/tools-in-use";
 	}
 	
-	@PostMapping("/restore-instrument")
-	public String restoreInstrument(HttpServletRequest request) {
-		
-		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
-		
-		instrument.get().setUsed(false);
-		instrument.get().setPutDownDate(getCurrentDateTime());
-		instrument.get().setPutDownPlace(request.getParameter("location"));
-		
-			
-		String comment = request.getParameter("comment");
-		if(comment.length() > 999) {
-		instrument.get().setComment(comment.substring(999));
-			}
-		else {
-			instrument.get().setComment(comment);
-			}
-
-		createAndSaveUsedTool(instrument.get());
-		instrument.get().setPickUpPlace(request.getParameter("location"));
-		instrument.get().setGeoworker(null);
-		instrumentService.save(instrument.get());
-		
-		return "redirect:/tools-registry/admin/instruments";
-	}
+//	@PostMapping("/restore-instrument")
+//	public String restoreInstrument(HttpServletRequest request) {
+//		
+//		Optional<GeoInstrument> instrument = instrumentService.findById(Long.valueOf(request.getParameter("instrument-id")));
+//		
+//		instrument.get().setUsed(false);
+//		instrument.get().setPutDownDate(getCurrentDateTime());
+//		instrument.get().setPutDownPlace(request.getParameter("location"));
+//		
+//		UsedGeoTool used = new UsedGeoTool();
+//		used.setComment(instrument.get().getComment());
+//		
+//		String comment = request.getParameter("comment");
+//		
+//		if(comment.equals(instrument.get().getComment())) {
+//			
+//		instrument.get().setComment(null);
+//			}
+//		else if(comment.length() <= 999 && !comment.equals(instrument.get().getComment())) {
+//			instrument.get().setComment(comment);
+//			}
+//		else if(comment.length() > 999 && !comment.equals(instrument.get().getComment())) {
+//			instrument.get().setComment(comment.substring(0, 999));
+//			}
+//
+//		createAndSaveUsedTool(instrument.get(), used);
+//		instrument.get().setPickUpPlace(request.getParameter("location"));
+//		instrument.get().setGeoworker(null);
+//		instrumentService.save(instrument.get());
+//		
+//		return "redirect:/tools-registry/admin/instruments";
+//	}
 	
-	private void createAndSaveUsedTool(GeoInstrument usedInstrument) {
-		
-		UsedGeoTool used = new UsedGeoTool();
-		used.setToolname(usedInstrument.getName());
-		used.setWorkername(usedInstrument.getGeoworker().getLastname() + " " + usedInstrument.getGeoworker().getFirstname());
-		used.setPickUpPlace(usedInstrument.getPickUpPlace());
-		used.setPickUpDate(usedInstrument.getPickUpDate());
-		used.setPutDownPlace(usedInstrument.getPutDownPlace());
-		used.setPutDownDate(usedInstrument.getPutDownDate());
-		used.setComment(usedInstrument.getComment());
-		used.setInstrument(true);
-		usedToolService.save(used);
-	}
+//	private void createAndSaveUsedTool(GeoInstrument usedInstrument, UsedGeoTool used) {
+//		
+//		used.setToolname(usedInstrument.getName());
+//		used.setWorkername(usedInstrument.getGeoworker().getLastname() + " " + usedInstrument.getGeoworker().getFirstname());
+//		used.setPickUpPlace(usedInstrument.getPickUpPlace());
+//		used.setPickUpDate(usedInstrument.getPickUpDate());
+//		used.setPutDownPlace(usedInstrument.getPutDownPlace());
+//		used.setPutDownDate(usedInstrument.getPutDownDate());
+//		used.setInstrument(true);
+//		usedToolService.save(used);
+//	}
 	
 	@PostMapping("/validate-for-takeaway-additional")
 	public String validateForTakeawayAdditional(HttpServletRequest request, HttpServletResponse response, RedirectAttributes rdAttr) throws UnsupportedEncodingException {
@@ -481,8 +485,8 @@ public class AdminOperations {
 		String instrumentId = request.getParameter("instrument-id");
 		String workerId = request.getParameter("worker-id");
 		String pickUpPlace = request.getParameter("from-location");
-		String comment = request.getParameter("comment");
-		
+		String comment = cutLengthOfComment(request.getParameter("comment"));
+			
 		if("-".equals(instrumentId)) {
 			
 		takeawaySingleAdditionalProcess(Long.valueOf(additionalId), Long.valueOf(workerId), pickUpPlace, comment);
@@ -595,24 +599,24 @@ public class AdminOperations {
 		String place = request.getParameter("location");
 		boolean isInstrument = Boolean.parseBoolean(request.getParameter("isInstrument"));
 		String comment = request.getParameter("comment");
-		
+			   
 		if(isInstrument) {
 			
 			Optional<GeoInstrument> instrument = instrumentService.findById(toolId);
+			UsedGeoTool usedInstrument = new UsedGeoTool();
+			usedInstrument.setComment(instrument.get().getComment());
 			instrument.get().setUsed(false);
 			instrument.get().setPutDownDate(getCurrentDateTime());
 			instrument.get().setPutDownPlace(place);
-			instrument.get().setComment(comment);
+			instrument.get().setComment(modifyInputComment(comment, instrument.get().getComment()));
 			instrument.get().setFrequency(instrument.get().getFrequency() + 1);
 			
-			UsedGeoTool usedInstrument = new UsedGeoTool();
 			usedInstrument.setToolname(instrument.get().getName());
 			usedInstrument.setWorkername(instrument.get().getGeoworker().getLastname() + " " + instrument.get().getGeoworker().getFirstname());
 			usedInstrument.setPickUpDate(instrument.get().getPickUpDate());
 			usedInstrument.setPickUpPlace(instrument.get().getPickUpPlace());
 			usedInstrument.setPutDownDate(instrument.get().getPutDownDate());
 			usedInstrument.setPutDownPlace(instrument.get().getPutDownPlace());
-			usedInstrument.setComment(instrument.get().getComment());
 			usedInstrument.setInstrument(true);
 			usedToolService.save(usedInstrument);
 			
@@ -622,20 +626,20 @@ public class AdminOperations {
 			
 			for (GeoAdditional additional : instrument.get().getAdditionals()) {
 				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setComment(additional.getComment());
 				additional.setUsed(false);
 				additional.setPutDownDate(getCurrentDateTime());
 				additional.setPutDownPlace(place);
-				additional.setComment(additional.getComment());
+				additional.setComment(null);
 				additional.setFrequency(additional.getFrequency() + 1);
 				
-				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.getName());
 				usedAdditional.setWorkername(additional.getGeoworker().getLastname() + " " + additional.getGeoworker().getFirstname());
 				usedAdditional.setPickUpDate(additional.getPickUpDate());
 				usedAdditional.setPickUpPlace(additional.getPickUpPlace());
 				usedAdditional.setPutDownDate(additional.getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.getPutDownPlace());
-				usedAdditional.setComment(additional.getComment());
 				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
@@ -653,20 +657,20 @@ public class AdminOperations {
 			
 			if(instrument != null) {
 				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setComment(additional.get().getComment());
 				additional.get().setUsed(false);
 				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
-				additional.get().setComment(comment);
+				additional.get().setComment(modifyInputComment(comment, additional.get().getComment()));
 				additional.get().setFrequency(additional.get().getFrequency() + 1);
 				
-				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.get().getName());
 				usedAdditional.setWorkername(additional.get().getGeoworker().getLastname() + " " + additional.get().getGeoworker().getFirstname());
 				usedAdditional.setPickUpDate(additional.get().getPickUpDate());
 				usedAdditional.setPickUpPlace(additional.get().getPickUpPlace());
 				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
-				usedAdditional.setComment(additional.get().getComment());
 				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
@@ -678,20 +682,20 @@ public class AdminOperations {
 			}
 			else {
 				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setComment(additional.get().getComment());
 				additional.get().setUsed(false);
 				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
-				additional.get().setComment(comment);
+				additional.get().setComment(modifyInputComment(comment, additional.get().getComment()));
 				additional.get().setFrequency(additional.get().getFrequency() + 1);
 				
-				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.get().getName());
 				usedAdditional.setWorkername(additional.get().getGeoworker().getLastname() + " " + additional.get().getGeoworker().getFirstname());
 				usedAdditional.setPickUpDate(additional.get().getPickUpDate());
 				usedAdditional.setPickUpPlace(additional.get().getPickUpPlace());
 				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
-				usedAdditional.setComment(additional.get().getComment());
 				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
@@ -705,13 +709,33 @@ public class AdminOperations {
 		return "redirect:/tools-registry/admin/tools-in-use";
 	}
 	
+	private String modifyInputComment(String inputComment, String savedComment) {
+		
+		inputComment = cutLengthOfComment(inputComment);
+		
+		if(inputComment.equals(savedComment)) {
+			return null;
+		}
+		
+		return inputComment;
+	}
+	
+	private String cutLengthOfComment(String comment) {
+		
+		if(comment.length() > 999) {
+			return comment.substring(0, 999);
+		}
+		
+		return comment;
+	}
+	
 	@RequestMapping("/search-in-tools-history")
 	public String searchInToolsHistory(@RequestParam(value = "text") String text,@RequestParam(value = "option") String option, Model model) {
 		
 		List<UsedGeoTool> used;
 		
-		if(text.isEmpty()) {
-			return "redirect:/tools-registry/admin/tools-history";
+		if(text.isBlank()) {
+			return "redirect:/tools-registry/admin/get-first-50-used-tools";
 		}
 		else {
 			

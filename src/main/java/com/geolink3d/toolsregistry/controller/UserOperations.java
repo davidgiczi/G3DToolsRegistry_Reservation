@@ -162,13 +162,9 @@ public class UserOperations {
 		instrument.get().setGeoworker(workerService.findGeoWorkerByUserName(getAuthUser()));
 		instrument.get().setPickUpPlace(request.getParameter("from-location"));
 		instrument.get().setPickUpDate(getCurrentDateTime());
-		String comment = request.getParameter("comment");
-		if(comment.length() > 999) {
-		instrument.get().setComment(comment.substring(999));
-		}
-		else {
-			instrument.get().setComment(comment);
-		}
+		String comment = cutLengthOfComment(request.getParameter("comment"));
+		instrument.get().setComment(comment);
+		
 		instrumentService.save(instrument.get());
 		
 		return "redirect:/tools-registry/user/tools-in-use";
@@ -185,7 +181,7 @@ public class UserOperations {
 		}
 		String instrumentId = request.getParameter("instrument-id");
 		String pickUpPlace = request.getParameter("from-location");
-		String comment = request.getParameter("comment");
+		String comment = cutLengthOfComment(request.getParameter("comment"));
 		
 		if("-".equals(instrumentId)) {
 			
@@ -295,20 +291,20 @@ public class UserOperations {
 		if(isInstrument) {
 			
 			Optional<GeoInstrument> instrument = instrumentService.findById(toolId);
+			UsedGeoTool usedInstrument = new UsedGeoTool();
+			usedInstrument.setComment(instrument.get().getComment());
 			instrument.get().setUsed(false);
 			instrument.get().setPutDownDate(getCurrentDateTime());
 			instrument.get().setPutDownPlace(place);
-			instrument.get().setComment(comment);
+			instrument.get().setComment(modifyInputComment(comment, instrument.get().getComment()));
 			instrument.get().setFrequency(instrument.get().getFrequency() + 1);
 			
-			UsedGeoTool usedInstrument = new UsedGeoTool();
 			usedInstrument.setToolname(instrument.get().getName());
 			usedInstrument.setWorkername(instrument.get().getGeoworker().getLastname() + " " + instrument.get().getGeoworker().getFirstname());
 			usedInstrument.setPickUpDate(instrument.get().getPickUpDate());
 			usedInstrument.setPickUpPlace(instrument.get().getPickUpPlace());
 			usedInstrument.setPutDownDate(instrument.get().getPutDownDate());
 			usedInstrument.setPutDownPlace(instrument.get().getPutDownPlace());
-			usedInstrument.setComment(instrument.get().getComment());
 			usedInstrument.setInstrument(true);
 			usedToolService.save(usedInstrument);
 			
@@ -318,20 +314,20 @@ public class UserOperations {
 			
 			for (GeoAdditional additional : instrument.get().getAdditionals()) {
 				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setComment(additional.getComment());
 				additional.setUsed(false);
 				additional.setPutDownDate(getCurrentDateTime());
 				additional.setPutDownPlace(place);
-				additional.setComment(additional.getComment());
+				additional.setComment(null);
 				additional.setFrequency(additional.getFrequency() + 1);
-				
-				UsedGeoTool usedAdditional = new UsedGeoTool();
+					
 				usedAdditional.setToolname(additional.getName());
 				usedAdditional.setWorkername(additional.getGeoworker().getLastname() + " " + additional.getGeoworker().getFirstname());
 				usedAdditional.setPickUpDate(additional.getPickUpDate());
 				usedAdditional.setPickUpPlace(additional.getPickUpPlace());
 				usedAdditional.setPutDownDate(additional.getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.getPutDownPlace());
-				usedAdditional.setComment(additional.getComment());
 				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
@@ -349,20 +345,20 @@ public class UserOperations {
 			
 			if(instrument != null) {
 				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setComment(additional.get().getComment());
 				additional.get().setUsed(false);
 				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
-				additional.get().setComment(comment);
+				additional.get().setComment(modifyInputComment(comment, additional.get().getComment()));
 				additional.get().setFrequency(additional.get().getFrequency() + 1);
 				
-				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.get().getName());
 				usedAdditional.setWorkername(additional.get().getGeoworker().getLastname() + " " + additional.get().getGeoworker().getFirstname());
 				usedAdditional.setPickUpDate(additional.get().getPickUpDate());
 				usedAdditional.setPickUpPlace(additional.get().getPickUpPlace());
 				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
-				usedAdditional.setComment(additional.get().getComment());
 				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
@@ -374,20 +370,20 @@ public class UserOperations {
 			}
 			else {
 				
+				UsedGeoTool usedAdditional = new UsedGeoTool();
+				usedAdditional.setComment(additional.get().getComment());
 				additional.get().setUsed(false);
 				additional.get().setPutDownDate(getCurrentDateTime());
 				additional.get().setPutDownPlace(place);
-				additional.get().setComment(comment);
+				additional.get().setComment(modifyInputComment(comment, additional.get().getComment()));
 				additional.get().setFrequency(additional.get().getFrequency() + 1);
 				
-				UsedGeoTool usedAdditional = new UsedGeoTool();
 				usedAdditional.setToolname(additional.get().getName());
 				usedAdditional.setWorkername(additional.get().getGeoworker().getLastname() + " " + additional.get().getGeoworker().getFirstname());
 				usedAdditional.setPickUpDate(additional.get().getPickUpDate());
 				usedAdditional.setPickUpPlace(additional.get().getPickUpPlace());
 				usedAdditional.setPutDownDate(additional.get().getPutDownDate());
 				usedAdditional.setPutDownPlace(additional.get().getPutDownPlace());
-				usedAdditional.setComment(additional.get().getComment());
 				usedAdditional.setInstrument(false);
 				usedToolService.save(usedAdditional);
 				
@@ -399,6 +395,26 @@ public class UserOperations {
 			
 		}
 		return "redirect:/tools-registry/user/tools-in-use";
+	}
+	
+	private String modifyInputComment(String inputComment, String savedComment) {
+		
+		inputComment = cutLengthOfComment(inputComment);
+		
+		if(inputComment.equals(savedComment)) {
+			return null;
+		}
+		
+		return inputComment;
+	}
+	
+	private String cutLengthOfComment(String comment) {
+		
+		if(comment.length() > 999) {
+			return comment.substring(0, 999);
+		}
+		
+		return comment;
 	}
 	
 	@RequestMapping("/search-instrument")

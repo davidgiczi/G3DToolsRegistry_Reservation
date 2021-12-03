@@ -19,7 +19,7 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 	@Query(value = "select * from additionals where deleted = true" , nativeQuery = true)
 	List<GeoAdditional> findDeletedGeoAdditionals();
 	
-	@Query(value = "select * from additionals where deleted = false and used = true and instrument_id is null" , nativeQuery = true)
+	@Query(value = "select * from additionals where deleted = false and used = true and instrument_id is null order by pick_up_date desc" , nativeQuery = true)
 	List<GeoAdditional> findSingleUsedGeoAdditionals();
 	
 	@Query(value = "select * from additionals where deleted = false and name like %:text%"
@@ -78,6 +78,6 @@ public interface GeoAdditionalRepository extends CrudRepository<GeoAdditional, L
 			,nativeQuery = true)
 		List<GeoAdditional> findByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
 	
-	@Query(value = "select * from additionals where geoworker_id = :id" , nativeQuery = true)
+	@Query(value = "select * from additionals where geoworker_id = :id order by pick_up_date desc" , nativeQuery = true)
 	List<GeoAdditional> findGeoAdditionalsByUserId(@Param("id") Long id);
 } 

@@ -63,10 +63,10 @@ function searchAdditional(){
 	location.href = location.origin + "/tools-registry/admin/search-additional?text=" + str;
 }
 
-function searchInToolHistory(){
-	var str = document.getElementById("search-field").value;
-	location.href = location.origin + "/tools-registry/admin/search-in-tool-history?text=" + str;
-}
+//function searchInToolHistory(){
+//	var str = document.getElementById("search-field").value;
+//	location.href = location.origin + "/tools-registry/admin/search-in-tools-history?text=" + str;
+//}
 
 function searchInToolsInUse(){
 	var str = document.getElementById("search-field").value;

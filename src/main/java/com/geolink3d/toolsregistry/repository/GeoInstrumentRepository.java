@@ -19,7 +19,7 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 	@Query(value = "select * from instruments where deleted = true" , nativeQuery = true)
 	List<GeoInstrument> findDeletedGeoInstruments();
 	
-	@Query(value = "select * from instruments where deleted = false and used = true" , nativeQuery = true)
+	@Query(value = "select * from instruments where deleted = false and used = true order by pick_up_date desc" , nativeQuery = true)
 	List<GeoInstrument> findNotDeletedButUsedGeoInstruments();
 	
 	@Query(value = "select * from instruments where deleted = false and name like %:text%"
@@ -78,6 +78,6 @@ public interface GeoInstrumentRepository extends CrudRepository<GeoInstrument, L
 			,nativeQuery = true)
 		List<GeoInstrument> findByPutDownDate(@Param("begin") Date begin, @Param("end") Date end);
 	
-	@Query(value = "select * from instruments where instruments.geoworker_id = :id" , nativeQuery = true)
+	@Query(value = "select * from instruments where instruments.geoworker_id = :id order by pick_up_date desc" , nativeQuery = true)
 	List<GeoInstrument> findGeoInstrumentsByUserId(@Param("id") Long id);
 }

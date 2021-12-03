@@ -8,7 +8,11 @@ import org.springframework.data.repository.query.Param;
 import com.geolink3d.toolsregistry.model.UsedGeoTool;
 
 public interface UsedToolRepository extends CrudRepository<UsedGeoTool, Long> {
-
+	
+	@Query(value = "select * from used_tools"
+			+ " order by "
+			+ "put_down_date desc",
+			nativeQuery = true)
 	List<UsedGeoTool> findAll();
 	@Query(value = "select * from used_tools"
 		+ " where "

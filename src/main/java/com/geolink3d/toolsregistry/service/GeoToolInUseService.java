@@ -196,11 +196,11 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 	public List<GeoTool> findUsedGeoTools(){
 		
 		List<GeoInstrument> instruments = instrumentRepo.findNotDeletedButUsedGeoInstruments();
-		Collections.sort(instruments, new GeoInstrumentComparator());
+		//Collections.sort(instruments, new GeoInstrumentComparator());
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
 		List<GeoAdditional> additionals = additionalRepo.findSingleUsedGeoAdditionals();
-		Collections.sort(additionals, new GeoAdditionalComparator());
+		//Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
 				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));
 		
@@ -214,7 +214,7 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 		Long workerId = workerService.findIdByUsername(authUser);
 		
 		List<GeoInstrument> instruments = instrumentRepo.findGeoInstrumentsByUserId(workerId);
-		Collections.sort(instruments, new GeoInstrumentComparator());
+		//Collections.sort(instruments, new GeoInstrumentComparator());
 		List<GeoTool> instrumentTools = instrumentService.convertGeoInstrumentToGeoToolForDisplay(instruments);
 		
 		List<GeoAdditional> additionals = additionalRepo.findGeoAdditionalsByUserId(workerId);
@@ -232,7 +232,7 @@ public List<GeoTool> findGeoToolsInUseByTextAndUserId(String text, String authUs
 			
 		}
 			}
-		Collections.sort(additionals, new GeoAdditionalComparator());
+		//Collections.sort(additionals, new GeoAdditionalComparator());
 		List<GeoTool> additionalTools = additionalService
 				.convertGeoAdditionalToGeoToolForDisplay(additionals, instrumentService.isNextRowIsColored(instrumentTools));
 		
