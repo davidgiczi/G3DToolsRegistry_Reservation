@@ -21,6 +21,7 @@
  <a th:href="@{/tools-registry/user/instruments}" th:text="#{instruments}"></a>&nbsp;&nbsp;&nbsp;
  <a th:href="@{/tools-registry/user/additionals}" th:text="#{additionals}"></a>&nbsp;&nbsp;&nbsp;
  <a th:href="@{/tools-registry/user/tools-in-use}" th:text="#{tools.in.use}"></a>&nbsp;&nbsp;&nbsp;
+ <a th:href="@{/tools-registry/user/reservation}" th:text="#{tools.reservation}"></a>&nbsp;&nbsp;&nbsp;
  <a th:onclick="changePassword()" th:text="#{change.password}"></a>
  <input type="hidden" th:value="#{change.password.msg}" id="newPwdMsg">
  <input type="hidden" th:value="#{new.password.error}" id="newPwdError">
@@ -35,6 +36,7 @@
 <div layout:fragment="instruments"></div>
 <div layout:fragment="additionals"></div>
 <div layout:fragment="tools-in-use"></div>
+<div layout:fragment="reservations"></div>
 <div layout:fragment="tools-history"></div>
 <img id="backdrop" alt="GeoLink3D logo watermark" th:src="@{/images/G3D_logo_back.png}">
 </body>
