@@ -119,11 +119,12 @@ input[type=button], input[type=submit]{
 }
 
 input[type=date]{
-	background-color: lightgray;
+	background-color: white;
 	height: 23px;
 	width: 150px;
 	border-radius: 5px;
 	text-align: center;
+	cursor: pointer;
 }
 
 a {

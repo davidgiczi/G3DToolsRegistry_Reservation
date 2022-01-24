@@ -12,7 +12,51 @@
 <body>
 
 <div layout:fragment="reservations">
-<h1 th:text="#{reservation}"></h1>
+<h1>Előjegyzés</h1>
+
+<table style="width: 50%">
+<tr>
+<th>Műszerek</th>
+<th>Kiegészítők</th>
+<th>Felvétel tervezett napja</th>
+<th>Leadás tervezett napja</th>
+<th>Előjegyzés</th>
+</tr>
+
+<tr>
+<td><select class="selection_field">
+<option>-</option>
+<option th:each="instrument : ${instruments}" th:utext="${instrument.toolName}">
+</select></td>
+<td><select class="selection_field">
+<option>-</option>
+<option th:each="additional : ${additionals}" th:utext="${additional.toolName}">
+</select></td>
+<td><input type="date" th:min="${actualDate}"></td>
+<td><input type="date" th:min="${actualDate}"></td>
+<td><button>Előjegyez</button></td>
+</tr>
+</table>
+
+
+
+<h1>Előjegyzett eszközök</h1>
+
+<div id="empty" th:if="${#lists.isEmpty(reservations)}">Nincs megjeleníthető előjegyzett eszköz</div>
+
+<table th:if="${not #lists.isEmpty(reservations)}" style="width: 90%">
+<tr>
+<th>Sorszám</th>
+<th>Eszköz neve</th>
+<th>Előjegyző neve</th>
+<th>Felvétel időpontja</th>
+<th>Leadás időpontja</th>
+<th>Státusz</th>
+<th>Előjegyzés törlése</th>
+</tr>
+</table>
+
+
 </div>
 
 
