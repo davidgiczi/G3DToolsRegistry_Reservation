@@ -1,6 +1,7 @@
 /**
  * 
  */
+ 
  if(document.getElementById("search-field") != null){	
 document.getElementById("search-field").addEventListener("focus", setup);
 document.getElementById("search-field").focus();

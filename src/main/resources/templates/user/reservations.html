@@ -24,20 +24,26 @@
 </tr>
 
 <tr>
-<td><select class="selection_field">
+<td><select class="selection_field" id="reserved-instrument">
 <option>-</option>
-<option th:each="instrument : ${instruments}" th:utext="${instrument.toolName}">
+<option th:each="instrument : ${instruments}" th:utext="${instrument.toolName}" th:value="${instrument.id}">
 </select></td>
-<td><select class="selection_field">
+<td><select class="selection_field" id="reserved-additional">
 <option>-</option>
-<option th:each="additional : ${additionals}" th:utext="${additional.toolName}">
+<option th:each="additional : ${additionals}" th:utext="${additional.toolName}" th:value="${additional.id}">
 </select></td>
-<td><input type="date" th:min="${actualDate}"></td>
-<td><input type="date" th:min="${actualDate}"></td>
-<td><button>Előjegyez</button></td>
+<td><input type="date" th:min="${actualDate}" id="start-date"></td>
+<td><input type="date" th:min="${actualDate}" id="end-date"></td>
+<td><button onclick="sendData()">Előjegyez</button></td>
 </tr>
 </table>
 
+<form th:action="@{/tools-registry/user/userReservation}" method="post" id="reservation-form">
+<input type="hidden" id="send-instrument" name="instrument">
+<input type="hidden" id="send-additional" name="additional">
+<input type="hidden" id="start-day" name="start-day">
+<input type="hidden" id="end-day" name="end-day">  
+</form>
 
 
 <h1>Előjegyzett eszközök</h1>
@@ -51,14 +57,14 @@
 <th>Előjegyző neve</th>
 <th>Felvétel időpontja</th>
 <th>Leadás időpontja</th>
-<th>Státusz</th>
 <th>Előjegyzés törlése</th>
 </tr>
 </table>
 
-
+<script type="text/javascript" th:src="@{/script/reservation.js}"></script>
 </div>
 
 
 </body>
+
 </html>

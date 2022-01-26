@@ -14,8 +14,8 @@ public interface GeoToolReservationRepository extends CrudRepository<GeoToolRese
 	@Query(value = "select * from reservations" , nativeQuery = true)
 	List<GeoToolReservation> findAll();
 	
-	@Query(value = "select * from reservations where tool = :toolId" , nativeQuery = true)
-	GeoToolReservation findGeoReservationByToolId(@Param("toolName") String toolName);
+	@Query(value = "select * from reservations where tool_id = :toolId and isActive = true" , nativeQuery = true)
+	GeoToolReservation findGeoReservationByToolId(@Param("toolId") Long toolId);
 	
 	
 }

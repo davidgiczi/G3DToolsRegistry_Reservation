@@ -1,10 +1,12 @@
 package com.geolink3d.toolsregistry.controller;
 
-
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.geolink3d.toolsregistry.model.GeoTool;
 import com.geolink3d.toolsregistry.service.GeoAdditionalService;
@@ -35,6 +37,21 @@ public class UserReservationOperations {
 		
 		return "user/reservations";
 	}
-	 
+	
+	@PostMapping("/userReservation")
+	public String getUserData(HttpServletRequest request) {
+		
+		String instrumentId = request.getParameter("instrument");
+		String additionalId = request.getParameter("additional");
+		String startDay = request.getParameter("start-day");
+		String endDay = request.getParameter("end-day");
+ 		
+		System.out.println("instrument: " + instrumentId);
+		System.out.println("additional: " + additionalId);
+		System.out.println("Start date: " + startDay);
+		System.out.println("End date: " + endDay);
+		
+		return "redirect:/tools-registry/user/reservation";
+	}
 	
 }
