@@ -2,6 +2,19 @@
  * 
  */
  
+ let noChosenTool = document.getElementById("noTool");
+ let invalidDates = document.getElementById("invalidDates");
+ let invalidReservation = document.getElementById("invalidReservation");;
+ 
+if(noChosenTool != null){
+	alert("Nem választottál eszközt az előjegyzéshez.");
+}
+if(invalidDates != null){
+	alert("Nem adtad meg az előjegyzés felvételének és/vagy leadásának napját.")
+}
+if(invalidReservation != null){
+	alert("A választott eszköz nem jegyezhető elő, mivel már előjegyzésre került a kért időszakra.")
+}
  
  function sendData(){
 	let instrumentId = document.getElementById("reserved-instrument").value;
