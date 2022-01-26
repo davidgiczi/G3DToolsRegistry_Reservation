@@ -28,6 +28,11 @@ public class GeoToolReservationService {
 		return dateFormat.format(new Date(System.currentTimeMillis()));
 	}
 	
+	public String getAuthUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName();
+	}
+	
 	public boolean isChosenGeoToolReservation(String instrumentId, String additionalId) {
 		
 		if("-".equals(instrumentId) && "-".equals(additionalId)) {
@@ -46,7 +51,8 @@ public class GeoToolReservationService {
 		return true;
 	}
 	
-	public boolean isRegistableGeoToolReservation(String instrumentId, String additionalId, String startDate, String endDate) {
+	public boolean isRegistableGeoToolReservation(String instrumentId, String additionalId, String startDate, String endDate) 
+			throws ParseException {
 		
 		List<GeoToolReservation> reservationStore = null;
 		
@@ -60,7 +66,20 @@ public class GeoToolReservationService {
 			reservationStore.addAll(reservationRepo.findGeoAdditionalReservationsByToolId(Long.parseLong(additionalId)));
 		}
 		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		ZonedDateTime startDay = format.parse(startDate).toInstant().atZone(ZoneId.of("Europe/Budapest"));
+		ZonedDateTime endDay = format.parse(endDate).toInstant().atZone(ZoneId.of("Europe/Budapest"));
 		
+		for (GeoToolReservation reservation : reservationStore) {
+			if(reservation.getTakeAwayDate().toEpochSecond() < startDay.toEpochSecond() && 
+					startDay.toEpochSecond() < reservation.getBringBackDate().toEpochSecond()) {
+				return false;
+			}
+			if(reservation.getTakeAwayDate().toEpochSecond() < endDay.toEpochSecond() && 
+					endDay.toEpochSecond() < reservation.getBringBackDate().toEpochSecond()) {
+				return false;
+			}
+		}
 		return true;
 	}
 	
@@ -68,7 +87,8 @@ public class GeoToolReservationService {
 		return reservationRepo.findAll();
 	}
 	
-	public void saveGeoToolReservation(String instrumentId, String additionalId, String startDate, String endDate) throws ParseException {
+	public void saveGeoToolReservation(String userName, String instrumentId, String additionalId, String startDate, String endDate) 
+			throws ParseException {
 		
 		GeoToolReservation instrumentReservation = null;
 		GeoToolReservation additionalReservation = null;
@@ -91,7 +111,7 @@ public class GeoToolReservationService {
 		additionalReservation.setToolId(Long.parseLong(additionalId));
 		additionalReservation.setInstrument(false);
 		}
-		Long userId = workerRepo.findIdByUsername( getAuthUser() );
+		Long userId = workerRepo.findIdByUsername(userName);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		ZonedDateTime startDay = format.parse(startDate).toInstant().atZone(ZoneId.of("Europe/Budapest"));
 		ZonedDateTime endDay = format.parse(endDate).toInstant().atZone(ZoneId.of("Europe/Budapest"));
@@ -128,11 +148,6 @@ public class GeoToolReservationService {
 			return true;
 		}
 		return false;
-	}
-	
-	private String getAuthUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return authentication.getName();
 	}
 	
 }

@@ -65,7 +65,8 @@ public class UserReservationOperations {
 			return "redirect:/tools-registry/user/reservation";
 		}
 		
-		reservationService.saveGeoToolReservation(instrumentId, additionalId, startDay, endDay);
+		reservationService.saveGeoToolReservation
+		(reservationService.getAuthUser(), instrumentId, additionalId, startDay, endDay);
 		
 		return "redirect:/tools-registry/user/reservation";
 	}
