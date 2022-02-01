@@ -13,7 +13,7 @@ if(invalidDates != null){
 	alert("Nem adtad meg az előjegyzés felvételének és/vagy leadásának napját.")
 }
 if(invalidReservation != null){
-	alert("A választott eszköz nem jegyezhető elő, mivel már előjegyzésre került a kért időszakra.")
+	alert("A választott eszköz nem jegyezhető elő az adott időszakra, mivel korábbi előjegyzés ideje érinti a megadott időszakot.")
 }
  
  function sendData(){
