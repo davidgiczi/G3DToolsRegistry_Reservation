@@ -4,15 +4,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.geolink3d.toolsregistry.dao.GeoToolReservationDAO;
 import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoToolReservation;
+import com.geolink3d.toolsregistry.model.GeoWorker;
 import com.geolink3d.toolsregistry.repository.GeoAdditionalRepository;
 import com.geolink3d.toolsregistry.repository.GeoInstrumentRepository;
 import com.geolink3d.toolsregistry.repository.GeoToolReservationRepository;
@@ -156,8 +160,24 @@ public class GeoToolReservationService {
 	}
 	
 	
-	public List<GeoToolReservation> findAllGeoReservations(){
-		return reservationRepo.findAll();
+	public List<GeoToolReservationDAO> findAllGeoReservationAsDAO(){
+		
+		List<GeoToolReservation> reservations = reservationRepo.findAll();
+		List<GeoToolReservationDAO> reservationDAOStore = new ArrayList<>();
+		
+		for (GeoToolReservation reservation : reservations) {
+			GeoToolReservationDAO dao = new GeoToolReservationDAO();
+			dao.setUserId(reservation.getUserId());
+			GeoInstrument instrument = instrumentRepo.findById(reservation.getId()).get();
+			dao.setToolName(instrument.getName());
+			GeoWorker user = workerRepo.findById(reservation.getUserId()).get();
+			dao.setUserName(user.getLastname() + " " + user.getFirstname());
+			dao.setTakeAwayDate(reservation.getTakeAwayDate());
+			dao.setBringBackDate(reservation.getBringBackDate());
+			reservationDAOStore.add(dao);
+		}
+		
+		return reservationDAOStore;
 	}
 	
 	public void saveGeoToolReservation(String userName, String instrumentId, String additionalId, String startDate, String endDate) 
@@ -235,7 +255,8 @@ public class GeoToolReservationService {
 			
 			instrumentRepo.save(instrument);
 		}
-		else if( !"-".equals(additionalId) ) {
+		
+		if( !"-".equals(additionalId) ) {
 			
 			Long id = Long.parseLong(additionalId);
 			GeoAdditional additional = additionalRepo.findById(id).get();

@@ -10,9 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import com.geolink3d.toolsregistry.dao.GeoToolReservationDAO;
 import com.geolink3d.toolsregistry.model.GeoTool;
-import com.geolink3d.toolsregistry.model.GeoToolReservation;
+import com.geolink3d.toolsregistry.repository.GeoWorkerRepository;
 import com.geolink3d.toolsregistry.service.GeoAdditionalService;
 import com.geolink3d.toolsregistry.service.GeoInstrumentService;
 import com.geolink3d.toolsregistry.service.GeoToolReservationService;
@@ -29,17 +29,20 @@ public class UserReservationOperations {
 	private GeoInstrumentService instrumentService;
 	@Autowired
 	private GeoAdditionalService additionalService;
+	@Autowired
+	private GeoWorkerRepository workerRepo;
 	
 	@RequestMapping("/reservation")
 	public String goReservationPage(Model model) {
 		
 		List<GeoTool> instrumentStore = instrumentService.findUseableGeoTools();
 		List<GeoTool> additionalStore = additionalService.findUseableGeoTools();
-		List<GeoToolReservation> reservationStore = reservationService.findAllGeoReservations();
+		List<GeoToolReservationDAO> reservationStore = reservationService.findAllGeoReservationAsDAO();
 		model.addAttribute("instruments", instrumentStore);
 		model.addAttribute("additionals", additionalStore);
 		model.addAttribute("reservations", reservationStore);
 		model.addAttribute("actualDate", reservationService.getActualDate());
+		model.addAttribute("userId", workerRepo.findIdByUsername(reservationService.getAuthUser()));
 		
 		return "user/reservations";
 	}

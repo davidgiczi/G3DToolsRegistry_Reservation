@@ -59,6 +59,16 @@
 <th>Leadás időpontja</th>
 <th>Előjegyzés törlése</th>
 </tr>
+
+<tr th:each="reservation : ${reservations}">
+<td th:utext="${reservationStat.count}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
+<td th:utext="${reservation.toolName}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
+<td th:utext="${reservation.userName}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
+<td th:utext="${#temporals.format(reservation.takeAwayDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
+<td th:utext="${#temporals.format(reservation.bringBackDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
+<td th:classappend="${reservationStat.odd} ? '' : 'colored'"><button>Törlés</button> </td>
+</tr>
+
 </table>
 
 <input type="hidden" th:if="${param.noTool}" id="noTool">
