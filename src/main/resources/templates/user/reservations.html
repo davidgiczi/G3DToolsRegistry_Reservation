@@ -25,16 +25,16 @@
 
 <tr>
 <td><select class="selection_field" id="reserved-instrument">
-<option>-</option>
+<option>Válassz műszert</option>
 <option th:each="instrument : ${instruments}" th:utext="${instrument.toolName}" th:value="${instrument.id}">
 </select></td>
 <td><select class="selection_field" id="reserved-additional">
-<option>-</option>
+<option>és/vagy kiegészítőt!</option>
 <option th:each="additional : ${additionals}" th:utext="${additional.toolName}" th:value="${additional.id}">
 </select></td>
 <td><input type="date" th:min="${actualDate}" id="start-date"></td>
 <td><input type="date" th:min="${actualDate}" id="end-date"></td>
-<td><button onclick="sendData()">Előjegyzem</button></td>
+<td><button onclick="sendData()">Előjegyzés</button></td>
 </tr>
 </table>
 
@@ -66,7 +66,9 @@
 <td th:utext="${reservation.userName}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
 <td th:utext="${#temporals.format(reservation.takeAwayDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
 <td th:utext="${#temporals.format(reservation.bringBackDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
-<td th:classappend="${reservationStat.odd} ? '' : 'colored'"><button>Törlés</button> </td>
+<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId == userId && !reservation.isActive}">
+<button th:onclick="'deleteReservation(\'' + ${reservation.id} + '\');'">Törlés</button> </td>
+<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId != userId}"><button disabled="disabled">Törlés</button> </td>
 </tr>
 
 </table>

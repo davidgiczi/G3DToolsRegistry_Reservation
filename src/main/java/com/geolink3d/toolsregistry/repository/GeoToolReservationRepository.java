@@ -11,7 +11,7 @@ import com.geolink3d.toolsregistry.model.GeoToolReservation;
 public interface GeoToolReservationRepository extends CrudRepository<GeoToolReservation, Long> {
 
 	
-	@Query(value = "select * from reservations" , nativeQuery = true)
+	@Query(value = "select * from reservations order by take_away_date" , nativeQuery = true)
 	List<GeoToolReservation> findAll();
 	
 	@Query(value = "select * from reservations where tool_id = :toolId and is_instrument = true order by take_away_date" , nativeQuery = true)

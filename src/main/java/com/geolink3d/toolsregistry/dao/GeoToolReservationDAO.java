@@ -5,13 +5,20 @@ import java.time.ZonedDateTime;
 public class GeoToolReservationDAO {
 
 	
+	private Long id;
 	private Long userId;
 	private String toolName;
 	private String userName;
 	private ZonedDateTime takeAwayDate;
 	private ZonedDateTime bringBackDate;
+	private boolean isActive;
 	
-	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public Long getUserId() {
 		return userId;
 	}
@@ -42,5 +49,11 @@ public class GeoToolReservationDAO {
 	public void setBringBackDate(ZonedDateTime bringBackDate) {
 		this.bringBackDate = bringBackDate;
 	}
-	
+	public boolean isActive() {
+		return isActive;
+	}
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
 }

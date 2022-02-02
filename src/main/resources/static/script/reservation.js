@@ -27,3 +27,9 @@ if(invalidReservation != null){
 	document.getElementById("end-day").value = endDate;
 	document.getElementById("reservation-form").submit();
 }
+
+function deleteReservation(id){
+	if(confirm("Biztos, hogy törlöd az előjegyzést?")){
+	location.href = location.origin + "/tools-registry/user/reservation/delete?id=" + id;
+	}
+}

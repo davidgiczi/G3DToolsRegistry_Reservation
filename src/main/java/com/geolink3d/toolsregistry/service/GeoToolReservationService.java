@@ -47,9 +47,18 @@ public class GeoToolReservationService {
 	}
 	
 	public boolean isChosenGeoToolReservation(String instrumentId, String additionalId) {
+	
+		try {
+			Long.parseLong(instrumentId);
+			return true;
+		} catch (NumberFormatException e) {
+			
+			try {
+				Long.parseLong(additionalId);
+			} catch (NumberFormatException f) {
+				return false;
+			}
 		
-		if("-".equals(instrumentId) && "-".equals(additionalId)) {
-			return false;
 		}
 		
 		return true;
@@ -77,11 +86,13 @@ public class GeoToolReservationService {
 	
 	private boolean isRegistableGeoInstrumentReservation(String instrumentId, ZonedDateTime startDay, ZonedDateTime endDay) {
 		
-		if("-".equals(instrumentId)) {
+		Long id;
+		try {
+		id = Long.parseLong(instrumentId);
+		} catch (NumberFormatException e) {
 			return true;
 		}
-		
-		Long id = Long.parseLong(instrumentId);
+
 		List<GeoToolReservation> instrumentReservations = reservationRepo.findGeoInstrumentReservationsByToolId(id);
 		
 		if(instrumentReservations.isEmpty()) {
@@ -119,11 +130,13 @@ public class GeoToolReservationService {
 	
 	private boolean isRegistableGeoAdditionReservation(String additionalId, ZonedDateTime startDay, ZonedDateTime endDay) {
 	
-		if("-".equals(additionalId)) {
+		Long id;
+		try {
+			id = Long.parseLong(additionalId);
+		} catch (NumberFormatException e) {
 			return true;
 		}
-		
-		Long id = Long.parseLong(additionalId);
+	
 		List<GeoToolReservation> additionalReservations = reservationRepo.findGeoAdditionalReservationsByToolId(id);
 		
 		if(additionalReservations.isEmpty()) {
@@ -167,13 +180,23 @@ public class GeoToolReservationService {
 		
 		for (GeoToolReservation reservation : reservations) {
 			GeoToolReservationDAO dao = new GeoToolReservationDAO();
+			dao.setId(reservation.getId());
 			dao.setUserId(reservation.getUserId());
-			GeoInstrument instrument = instrumentRepo.findById(reservation.getId()).get();
-			dao.setToolName(instrument.getName());
+			GeoInstrument instrument;
+			GeoAdditional additional;
+			if(reservation.isInstrument()) {
+				instrument  = instrumentRepo.findById(reservation.getToolId()).get();
+				dao.setToolName(instrument.getName());
+			}
+			else {
+				additional = additionalRepo.findById(reservation.getToolId()).get();
+				dao.setToolName(additional.getName());
+			}
 			GeoWorker user = workerRepo.findById(reservation.getUserId()).get();
 			dao.setUserName(user.getLastname() + " " + user.getFirstname());
 			dao.setTakeAwayDate(reservation.getTakeAwayDate());
 			dao.setBringBackDate(reservation.getBringBackDate());
+			dao.setActive(reservation.isActive());
 			reservationDAOStore.add(dao);
 		}
 		
@@ -185,25 +208,35 @@ public class GeoToolReservationService {
 		
 		GeoToolReservation instrumentReservation = null;
 		GeoToolReservation additionalReservation = null;
+		boolean isParseableInstrumentId;
+		Long id;
 		
-		if( !"-".equals(instrumentId) && "-".equals(additionalId)) {
-		instrumentReservation = new GeoToolReservation();
-		instrumentReservation.setToolId(Long.parseLong(instrumentId));
-		instrumentReservation.setInstrument(true);
+		try {
+			id = Long.parseLong(instrumentId);
+			instrumentReservation = new GeoToolReservation();
+			instrumentReservation.setToolId(id);
+			instrumentReservation.setInstrument(true);
+			isParseableInstrumentId = true;
+		} catch (NumberFormatException e) {
+			id = Long.parseLong(additionalId);
+			additionalReservation = new GeoToolReservation();
+			additionalReservation.setToolId(id);
+			additionalReservation.setInstrument(false);
+			isParseableInstrumentId = false;
 		}
-		else if( "-".equals(instrumentId) && !"-".equals(additionalId)) {
-		additionalReservation = new GeoToolReservation();
-		additionalReservation.setToolId(Long.parseLong(additionalId));
-		additionalReservation.setInstrument(false);
+		
+		if(isParseableInstrumentId) {
+			
+			try {
+				id = Long.parseLong(additionalId);
+				additionalReservation = new GeoToolReservation();
+				additionalReservation.setToolId(id);
+				additionalReservation.setInstrument(false);
+			} catch (NumberFormatException e) {
+			}
+				
 		}
-		else if( !"-".equals(instrumentId) && !"-".equals(additionalId)) {
-		instrumentReservation = new GeoToolReservation();
-		instrumentReservation.setToolId(Long.parseLong(instrumentId));
-		instrumentReservation.setInstrument(true);
-		additionalReservation = new GeoToolReservation();
-		additionalReservation.setToolId(Long.parseLong(additionalId));
-		additionalReservation.setInstrument(false);
-		}
+	
 		Long userId = workerRepo.findIdByUsername(userName);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		ZonedDateTime startDay = format.parse(startDate).toInstant().atZone(ZoneId.of("Europe/Budapest"));
@@ -240,12 +273,11 @@ public class GeoToolReservationService {
 		String userLastName = workerRepo.findByUsername(userName).getLastname();
 		String infoText = userLastName + " " + userFirstName + " előjegyezte az eszközt " + startDate + " - " + endDate + " időszakra.";
 		
-		if( !"-".equals(instrumentId) ) {
+		try {
 			
 			Long id = Long.parseLong(instrumentId);
 			GeoInstrument instrument = instrumentRepo.findById(id).get();
-		
-			
+
 			if(instrument.getComment() == null || instrument.getComment().isEmpty()) {
 				instrument.setComment(infoText);
 			}
@@ -254,10 +286,12 @@ public class GeoToolReservationService {
 			}
 			
 			instrumentRepo.save(instrument);
-		}
-		
-		if( !"-".equals(additionalId) ) {
 			
+		} catch (NumberFormatException e) {
+			
+		}
+					
+		try {
 			Long id = Long.parseLong(additionalId);
 			GeoAdditional additional = additionalRepo.findById(id).get();
 			
@@ -268,7 +302,26 @@ public class GeoToolReservationService {
 				additional.setComment(additional.getComment() + "\n" + infoText);
 			}
 			additionalRepo.save(additional);
+		} catch (Exception e) {
+			
 		}
+		
+	}
+	
+	public void deleteReservation(Long id) {
+		
+		GeoToolReservation reservation = reservationRepo.findById(id).get();
+		
+		if(reservation.isInstrument()) {
+			GeoInstrument instrument = instrumentRepo.findById(id).get();
+			String comment = instrument.getComment();
+		}
+		else {
+			GeoAdditional additional = additionalRepo.findById(id).get();
+			String comment = additional.getComment();
+		}
+		
+		reservationRepo.deleteById(id);
 	}
 	
 	private boolean isExchangeDates(ZonedDateTime startDate, ZonedDateTime endDate) {
