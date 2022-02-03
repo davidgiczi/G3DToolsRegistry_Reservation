@@ -68,6 +68,8 @@
 <td th:utext="${#temporals.format(reservation.bringBackDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
 <td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId == userId && !reservation.isActive}">
 <button th:onclick="'deleteReservation(\'' + ${reservation.id} + '\');'">Törlés</button> </td>
+<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId == userId && reservation.isActive}">
+<button disabled="disabled">Törlés</button> </td>
 <td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId != userId}"><button disabled="disabled">Törlés</button> </td>
 </tr>
 

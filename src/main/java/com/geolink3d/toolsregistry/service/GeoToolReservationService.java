@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -269,20 +270,17 @@ public class GeoToolReservationService {
 	
 	public void addReservationTextToGeoTool(String userName, String instrumentId, String additionalId, String startDate, String endDate) {
 		
-		String userFirstName = workerRepo.findByUsername(userName).getFirstname();
-		String userLastName = workerRepo.findByUsername(userName).getLastname();
-		String infoText = userLastName + " " + userFirstName + " előjegyezte az eszközt " + startDate + " - " + endDate + " időszakra.";
-		
+	
 		try {
 			
 			Long id = Long.parseLong(instrumentId);
 			GeoInstrument instrument = instrumentRepo.findById(id).get();
 
 			if(instrument.getComment() == null || instrument.getComment().isEmpty()) {
-				instrument.setComment(infoText);
+				instrument.setComment( createReservationComment(userName, startDate, endDate) );
 			}
 			else {
-				instrument.setComment(instrument.getComment() + "\n" + infoText);
+				instrument.setComment( instrument.getComment() + "\n" + createReservationComment(userName, startDate, endDate) );
 			}
 			
 			instrumentRepo.save(instrument);
@@ -296,10 +294,10 @@ public class GeoToolReservationService {
 			GeoAdditional additional = additionalRepo.findById(id).get();
 			
 			if(additional.getComment() == null || additional.getComment().isEmpty()) {
-				additional.setComment(infoText);
+				additional.setComment(createReservationComment(userName, startDate, endDate));
 			}
 			else {
-				additional.setComment(additional.getComment() + "\n" + infoText);
+				additional.setComment( additional.getComment() + "\n" + createReservationComment(userName, startDate, endDate) );
 			}
 			additionalRepo.save(additional);
 		} catch (Exception e) {
@@ -308,17 +306,52 @@ public class GeoToolReservationService {
 		
 	}
 	
+	private String createReservationComment(String userName, String startDate, String endDate) {
+		String userFirstName = workerRepo.findByUsername(userName).getFirstname();
+		String userLastName = workerRepo.findByUsername(userName).getLastname();
+		return userLastName + " " + userFirstName + " előjegyezte az eszközt " + startDate + " - " + endDate + " időszakra.";
+	}
+	
+	private String convertReservationComment(String comment, String userName, 
+			String startDate, String endDate) {
+		
+		String[] commentComponents = comment.split("\n");
+		
+		if(commentComponents.length == 1) {
+			return "";
+		}
+		
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < commentComponents.length; i++) {
+			if(commentComponents[i].equals(createReservationComment(userName, startDate, endDate))) {
+				continue;
+			}
+			builder.append(commentComponents[i]).append("\n");
+		}
+		
+		builder.setLength(builder.length() - 1);
+		
+		return builder.toString();
+	}
+	
 	public void deleteReservation(Long id) {
 		
 		GeoToolReservation reservation = reservationRepo.findById(id).get();
-		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 		if(reservation.isInstrument()) {
-			GeoInstrument instrument = instrumentRepo.findById(id).get();
+			GeoInstrument instrument = instrumentRepo.findById(reservation.getToolId()).get();
 			String comment = instrument.getComment();
+			instrument.setComment(convertReservationComment(comment, getAuthUser(),
+					reservation.getTakeAwayDate().format(formatter), reservation.getBringBackDate().format(formatter)));
+			instrumentRepo.save(instrument);
 		}
 		else {
-			GeoAdditional additional = additionalRepo.findById(id).get();
+			GeoAdditional additional = additionalRepo.findById(reservation.getToolId()).get();
 			String comment = additional.getComment();
+			additional.setComment(convertReservationComment(comment, getAuthUser(),
+					reservation.getTakeAwayDate().format(formatter), reservation.getBringBackDate().format(formatter)));
+			additionalRepo.save(additional);
 		}
 		
 		reservationRepo.deleteById(id);
