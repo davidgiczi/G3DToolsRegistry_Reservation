@@ -404,6 +404,65 @@ public class GeoToolReservationService {
 		}
 	}
 	
+	public void reservationProcess(Long toolId, boolean isInstrument) {
+		
+		if(isInstrument) {
+			List<GeoToolReservation> instrumentReservations = reservationRepo.findGeoInstrumentReservationsByToolId(toolId);
+			
+			for (GeoToolReservation instrumentReservation : instrumentReservations) {
+				
+			Long actualTime = getCurrentDateTime().toEpochSecond();
+			
+				if(instrumentReservation.getTakeAwayDate().toEpochSecond() <= actualTime &&
+						actualTime < instrumentReservation.getBringBackDate().toEpochSecond()) {
+						
+					if(instrumentReservation.isActive()){
+						putDownGeoToolBy(instrumentReservation);
+						reservationRepo.delete(instrumentReservation);
+					}
+					else if (pickUpGeoToolBy(instrumentReservation)) {
+						instrumentReservation.setTakeAwayDate(getCurrentDateTime());
+						instrumentReservation.setActive(true);
+						reservationRepo.save(instrumentReservation);
+					}
+					
+				}
+				else if(instrumentReservation.getBringBackDate().toEpochSecond() <= actualTime) {
+					putDownGeoToolBy(instrumentReservation);
+					reservationRepo.delete(instrumentReservation);
+				}
+			}
+		}
+		else {
+			
+			List<GeoToolReservation> additionalReservations = reservationRepo.findGeoAdditionalReservationsByToolId(toolId);
+			
+			for (GeoToolReservation additionalReservation : additionalReservations) {
+				
+				Long actualTime = getCurrentDateTime().toEpochSecond();
+				
+				if(additionalReservation.getTakeAwayDate().toEpochSecond() <= actualTime &&
+						actualTime < additionalReservation.getBringBackDate().toEpochSecond()) {
+						
+					if(additionalReservation.isActive()){
+						putDownGeoToolBy(additionalReservation);
+						reservationRepo.delete(additionalReservation);
+					}
+					else if(pickUpGeoToolBy(additionalReservation)) {
+						additionalReservation.setTakeAwayDate(getCurrentDateTime());
+						additionalReservation.setActive(true);
+						reservationRepo.save(additionalReservation);
+					}
+				}
+				else if(additionalReservation.getBringBackDate().toEpochSecond() <= actualTime) {
+					putDownGeoToolBy(additionalReservation);
+					reservationRepo.delete(additionalReservation);
+				}
+				
+			}
+		}
+	}
+	
 	private boolean pickUpGeoToolBy(GeoToolReservation actualReservation) {
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
