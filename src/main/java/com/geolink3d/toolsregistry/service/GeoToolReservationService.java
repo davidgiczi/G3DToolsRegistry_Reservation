@@ -379,7 +379,7 @@ public class GeoToolReservationService {
 	
 	for (GeoToolReservation reservation : reservations) {
 		Long currentTime = getCurrentDateTime().toEpochSecond();
-		if(reservation.getBringBackDate().toEpochSecond() < currentTime) {
+		if(reservation.getBringBackDate().toEpochSecond() <= currentTime) {
 			putDownGeoToolBy(reservation);
 			reservationRepo.delete(reservation);
 			}
