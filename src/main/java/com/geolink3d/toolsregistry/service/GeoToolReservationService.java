@@ -319,6 +319,10 @@ public class GeoToolReservationService {
 	private String modifyCommentText(String comment, String userName, 
 			String startDate, String endDate) {
 		
+		if(comment == null || comment.isEmpty()) {
+			return "";
+		}
+		
 		String[] commentComponents = comment.split("\n");
 		
 		if(commentComponents.length == 1) {
@@ -473,8 +477,11 @@ public class GeoToolReservationService {
 		if( !instrument.isUsed() ) {
 			instrument.setUsed(true);
 			instrument.setGeoworker(worker);
-			instrument.setComment("Az eszköz előjegyezve " + 
-			actualReservation.getBringBackDate().format(formatter) + "-ig.");
+			instrument.setComment(
+					modifyCommentText(instrument.getComment(), getAuthUser(), 
+							actualReservation.getTakeAwayDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) + 
+					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate().format(formatter) + "-ig.");
 			instrument.setPickUpPlace("Dunakeszi");
 			instrument.setPickUpDate(getCurrentDateTime());
 			instrumentRepo.save(instrument);
@@ -486,8 +493,11 @@ public class GeoToolReservationService {
 		if( !additional.isUsed() ) {
 			additional.setUsed(true);
 			additional.setGeoworker(worker);
-			additional.setComment("Az eszköz előjegyezve " + 
-			actualReservation.getBringBackDate().format(formatter) + "-ig.");
+			additional.setComment(
+					modifyCommentText(additional.getComment(), getAuthUser(), 
+							actualReservation.getTakeAwayDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))+ 
+					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate().format(formatter) + "-ig.");
 			additional.setPickUpPlace("Dunakeszi");
 			additional.setPickUpDate(getCurrentDateTime());
 			additionalRepo.save(additional);
@@ -510,7 +520,7 @@ public class GeoToolReservationService {
 			instrument.setUsed(false);	
 			instrument.setPutDownDate(getCurrentDateTime());
 			instrument.setPutDownPlace("Dunakeszi");
-			instrument.setComment("");
+			instrument.setComment(null);
 			instrument.setFrequency(instrument.getFrequency() + 1);
 			
 			usedInstrument.setToolname(instrument.getName());
@@ -536,7 +546,7 @@ public class GeoToolReservationService {
 			additional.setUsed(false);	
 			additional.setPutDownDate(getCurrentDateTime());
 			additional.setPutDownPlace("Dunakeszi");
-			additional.setComment("");
+			additional.setComment(null);
 			additional.setFrequency(additional.getFrequency() + 1);	
 			
 			usedInstrument.setToolname(additional.getName());
