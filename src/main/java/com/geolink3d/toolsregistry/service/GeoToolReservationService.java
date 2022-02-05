@@ -2,22 +2,22 @@ package com.geolink3d.toolsregistry.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import com.geolink3d.toolsregistry.dao.GeoToolReservationDAO;
 import com.geolink3d.toolsregistry.model.GeoAdditional;
 import com.geolink3d.toolsregistry.model.GeoInstrument;
 import com.geolink3d.toolsregistry.model.GeoToolReservation;
 import com.geolink3d.toolsregistry.model.GeoWorker;
+import com.geolink3d.toolsregistry.model.UsedGeoTool;
 import com.geolink3d.toolsregistry.repository.GeoAdditionalRepository;
 import com.geolink3d.toolsregistry.repository.GeoInstrumentRepository;
 import com.geolink3d.toolsregistry.repository.GeoToolReservationRepository;
@@ -35,16 +35,20 @@ public class GeoToolReservationService {
 	private GeoInstrumentRepository instrumentRepo;
 	@Autowired
 	private GeoAdditionalRepository additionalRepo;
+	@Autowired
+	private UsedGeoToolService usedToolService;
 	
-	
-	public String getActualDate() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		return dateFormat.format(new Date(System.currentTimeMillis()));
-	}
 	
 	public String getAuthUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return authentication.getName();
+	}
+	
+	public ZonedDateTime getCurrentDateTime() {
+		Instant now = Instant.now();
+		ZoneId hun = ZoneId.of("Europe/Budapest");
+		ZonedDateTime nowHun = ZonedDateTime.ofInstant(now, hun);
+		return nowHun;
 	}
 	
 	public boolean isChosenGeoToolReservation(String instrumentId, String additionalId) {
@@ -277,10 +281,10 @@ public class GeoToolReservationService {
 			GeoInstrument instrument = instrumentRepo.findById(id).get();
 
 			if(instrument.getComment() == null || instrument.getComment().isEmpty()) {
-				instrument.setComment( createReservationComment(userName, startDate, endDate) );
+				instrument.setComment( createCommentText(userName, startDate, endDate) );
 			}
 			else {
-				instrument.setComment( instrument.getComment() + "\n" + createReservationComment(userName, startDate, endDate) );
+				instrument.setComment( instrument.getComment() + "\n" + createCommentText(userName, startDate, endDate) );
 			}
 			
 			instrumentRepo.save(instrument);
@@ -294,10 +298,10 @@ public class GeoToolReservationService {
 			GeoAdditional additional = additionalRepo.findById(id).get();
 			
 			if(additional.getComment() == null || additional.getComment().isEmpty()) {
-				additional.setComment(createReservationComment(userName, startDate, endDate));
+				additional.setComment(createCommentText(userName, startDate, endDate));
 			}
 			else {
-				additional.setComment( additional.getComment() + "\n" + createReservationComment(userName, startDate, endDate) );
+				additional.setComment( additional.getComment() + "\n" + createCommentText(userName, startDate, endDate) );
 			}
 			additionalRepo.save(additional);
 		} catch (Exception e) {
@@ -306,13 +310,13 @@ public class GeoToolReservationService {
 		
 	}
 	
-	private String createReservationComment(String userName, String startDate, String endDate) {
+	private String createCommentText(String userName, String startDate, String endDate) {
 		String userFirstName = workerRepo.findByUsername(userName).getFirstname();
 		String userLastName = workerRepo.findByUsername(userName).getLastname();
 		return userLastName + " " + userFirstName + " előjegyezte az eszközt " + startDate + " - " + endDate + " időszakra.";
 	}
 	
-	private String convertReservationComment(String comment, String userName, 
+	private String modifyCommentText(String comment, String userName, 
 			String startDate, String endDate) {
 		
 		String[] commentComponents = comment.split("\n");
@@ -323,7 +327,7 @@ public class GeoToolReservationService {
 		
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < commentComponents.length; i++) {
-			if(commentComponents[i].equals(createReservationComment(userName, startDate, endDate))) {
+			if(commentComponents[i].equals(createCommentText(userName, startDate, endDate))) {
 				continue;
 			}
 			builder.append(commentComponents[i]).append("\n");
@@ -339,22 +343,25 @@ public class GeoToolReservationService {
 		GeoToolReservation reservation = reservationRepo.findById(id).get();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+		if( !reservation.isActive() ) {
+		
 		if(reservation.isInstrument()) {
 			GeoInstrument instrument = instrumentRepo.findById(reservation.getToolId()).get();
 			String comment = instrument.getComment();
-			instrument.setComment(convertReservationComment(comment, getAuthUser(),
+			instrument.setComment(modifyCommentText(comment, getAuthUser(),
 					reservation.getTakeAwayDate().format(formatter), reservation.getBringBackDate().format(formatter)));
 			instrumentRepo.save(instrument);
 		}
 		else {
 			GeoAdditional additional = additionalRepo.findById(reservation.getToolId()).get();
 			String comment = additional.getComment();
-			additional.setComment(convertReservationComment(comment, getAuthUser(),
+			additional.setComment(modifyCommentText(comment, getAuthUser(),
 					reservation.getTakeAwayDate().format(formatter), reservation.getBringBackDate().format(formatter)));
 			additionalRepo.save(additional);
 		}
 		
 		reservationRepo.deleteById(id);
+		}
 	}
 	
 	private boolean isExchangeDates(ZonedDateTime startDate, ZonedDateTime endDate) {
@@ -366,4 +373,128 @@ public class GeoToolReservationService {
 		return false;
 	}
 	
+	public void restoreGeoTool() {
+		
+	List<GeoToolReservation> reservations = reservationRepo.findAll();
+	
+	for (GeoToolReservation reservation : reservations) {
+		Long currentTime = getCurrentDateTime().toEpochSecond();
+		if(reservation.getBringBackDate().toEpochSecond() < currentTime) {
+			putDownGeoToolBy(reservation);
+			reservationRepo.delete(reservation);
+			}
+		}
+	}
+	
+	public void issueGeoTool() {
+		
+		List<GeoToolReservation> reservations = reservationRepo.findAll();
+		
+		for (GeoToolReservation reservation : reservations) {
+			Long currentTime = getCurrentDateTime().toEpochSecond();
+			if(reservation.getTakeAwayDate().toEpochSecond() < currentTime &&
+					currentTime < reservation.getBringBackDate().toEpochSecond() && !reservation.isActive()) {
+				
+				if(pickUpGeoToolBy(reservation)) {
+					reservation.setTakeAwayDate(getCurrentDateTime());
+					reservation.setActive(true);
+					reservationRepo.save(reservation);
+				}	
+			}				
+		}
+	}
+	
+	private boolean pickUpGeoToolBy(GeoToolReservation actualReservation) {
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		GeoWorker worker = workerRepo.findById(actualReservation.getUserId()).get();
+		 
+		if(actualReservation.isInstrument()) {
+			GeoInstrument instrument = instrumentRepo.findById(actualReservation.getToolId()).get();
+		if( !instrument.isUsed() ) {
+			instrument.setUsed(true);
+			instrument.setGeoworker(worker);
+			instrument.setComment("Az eszköz előjegyezve " + 
+			actualReservation.getBringBackDate().format(formatter) + "-ig.");
+			instrument.setPickUpPlace("Dunakeszi");
+			instrument.setPickUpDate(getCurrentDateTime());
+			instrumentRepo.save(instrument);
+			return true;
+			}
+		}
+		else {
+			GeoAdditional additional = additionalRepo.findById(actualReservation.getToolId()).get();
+		if( !additional.isUsed() ) {
+			additional.setUsed(true);
+			additional.setGeoworker(worker);
+			additional.setComment("Az eszköz előjegyezve " + 
+			actualReservation.getBringBackDate().format(formatter) + "-ig.");
+			additional.setPickUpPlace("Dunakeszi");
+			additional.setPickUpDate(getCurrentDateTime());
+			additionalRepo.save(additional);
+			return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private void putDownGeoToolBy(GeoToolReservation actualReservation) {
+		
+		GeoWorker worker = workerRepo.findById(actualReservation.getUserId()).get();
+		UsedGeoTool usedInstrument = new UsedGeoTool();
+		
+		if(actualReservation.isInstrument()) {
+			GeoInstrument instrument = instrumentRepo.findById(actualReservation.getToolId()).get();
+			if(instrument.isUsed()) {
+			usedInstrument.setComment(instrument.getComment());	
+			instrument.setUsed(false);	
+			instrument.setPutDownDate(getCurrentDateTime());
+			instrument.setPutDownPlace("Dunakeszi");
+			instrument.setComment("");
+			instrument.setFrequency(instrument.getFrequency() + 1);
+			
+			usedInstrument.setToolname(instrument.getName());
+			usedInstrument.setWorkername(worker.getLastname() + " " + worker.getFirstname());
+			usedInstrument.setPickUpPlace("Dunakeszi");
+			usedInstrument.setPickUpDate(actualReservation.getTakeAwayDate());
+			usedInstrument.setPutDownPlace("Dunakeszi");
+			usedInstrument.setPutDownDate(getCurrentDateTime());
+			usedInstrument.setInstrument(true);
+			usedToolService.save(usedInstrument);
+			
+			instrument.setGeoworker(null);
+			instrument.setPickUpPlace("Dunakeszi");
+			instrumentRepo.save(instrument);
+			
+			}
+		
+		}
+		else {
+			GeoAdditional additional = additionalRepo.findById(actualReservation.getToolId()).get();
+			if(additional.isUsed()) {
+			usedInstrument.setComment(additional.getComment());	
+			additional.setUsed(false);	
+			additional.setPutDownDate(getCurrentDateTime());
+			additional.setPutDownPlace("Dunakeszi");
+			additional.setComment("");
+			additional.setFrequency(additional.getFrequency() + 1);	
+			
+			usedInstrument.setToolname(additional.getName());
+			usedInstrument.setWorkername(worker.getLastname() + " " + worker.getFirstname());
+			usedInstrument.setPickUpPlace("Dunakeszi");
+			usedInstrument.setPickUpDate(actualReservation.getTakeAwayDate());
+			usedInstrument.setPutDownPlace("Dunakeszi");
+			usedInstrument.setPutDownDate(getCurrentDateTime());
+			usedInstrument.setInstrument(true);
+			usedToolService.save(usedInstrument);
+			
+			additional.setGeoworker(null);
+			additional.setPickUpPlace("Dunakeszi");
+			additionalRepo.save(additional);
+			}
+		
+		}
+		
+	}
 }

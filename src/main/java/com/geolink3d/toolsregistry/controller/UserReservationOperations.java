@@ -1,6 +1,7 @@
 package com.geolink3d.toolsregistry.controller;
 
 import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,8 @@ public class UserReservationOperations {
 		model.addAttribute("instruments", instrumentStore);
 		model.addAttribute("additionals", additionalStore);
 		model.addAttribute("reservations", reservationStore);
-		model.addAttribute("actualDate", reservationService.getActualDate());
+		model.addAttribute("actualDate", reservationService
+				.getCurrentDateTime().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		model.addAttribute("userId", workerRepo.findIdByUsername(reservationService.getAuthUser()));
 		
 		return "user/reservations";
