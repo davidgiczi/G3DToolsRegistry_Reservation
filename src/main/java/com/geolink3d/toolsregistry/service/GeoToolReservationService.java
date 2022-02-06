@@ -396,7 +396,7 @@ public class GeoToolReservationService {
 		
 		for (GeoToolReservation reservation : reservations) {
 			Long currentTime = getCurrentDateTime().toEpochSecond();
-			if(reservation.getTakeAwayDate().toEpochSecond() < currentTime &&
+			if(reservation.getTakeAwayDate().toEpochSecond() <= currentTime &&
 					currentTime < reservation.getBringBackDate().toEpochSecond() && !reservation.isActive()) {
 				
 				if(pickUpGeoToolBy(reservation)) {
@@ -469,7 +469,6 @@ public class GeoToolReservationService {
 	
 	private boolean pickUpGeoToolBy(GeoToolReservation actualReservation) {
 		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		GeoWorker worker = workerRepo.findById(actualReservation.getUserId()).get();
 		 
 		if(actualReservation.isInstrument()) {
@@ -478,10 +477,11 @@ public class GeoToolReservationService {
 			instrument.setUsed(true);
 			instrument.setGeoworker(worker);
 			instrument.setComment(
-					modifyCommentText(instrument.getComment(), getAuthUser(), 
+					modifyCommentText(instrument.getComment(), worker.getUsername(), 
 							actualReservation.getTakeAwayDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
 							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) + 
-					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate().format(formatter) + "-ig.");
+					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "-ig.");
 			instrument.setPickUpPlace("Dunakeszi");
 			instrument.setPickUpDate(getCurrentDateTime());
 			instrumentRepo.save(instrument);
@@ -494,10 +494,11 @@ public class GeoToolReservationService {
 			additional.setUsed(true);
 			additional.setGeoworker(worker);
 			additional.setComment(
-					modifyCommentText(additional.getComment(), getAuthUser(), 
+					modifyCommentText(additional.getComment(), worker.getUsername(), 
 							actualReservation.getTakeAwayDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
 							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))+ 
-					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate().format(formatter) + "-ig.");
+					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate()
+					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "-ig.");
 			additional.setPickUpPlace("Dunakeszi");
 			additional.setPickUpDate(getCurrentDateTime());
 			additionalRepo.save(additional);
