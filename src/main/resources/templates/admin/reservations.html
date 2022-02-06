@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="layouts/user-account">
+	layout:decorate="layouts/admin-account">
 <head>
 <meta charset="UTF-8">
 <title th:text="#{title}"></title>
@@ -12,10 +12,12 @@
 <body>
 
 <div layout:fragment="reservations">
+
 <h1>Előjegyzés</h1>
 
 <table style="width: 50%">
 <tr>
+<th>Előjegyző neve</th>
 <th>Műszerek</th>
 <th>Kiegészítők</th>
 <th>Felvétel tervezett napja</th>
@@ -24,6 +26,10 @@
 </tr>
 
 <tr>
+<td><select class="selection_field" id="reserver-worker">
+<option>Válassz dolgozót!</option>
+<option th:each="worker : ${workers}" th:utext="${worker.lastname + ' ' + worker.firstname}" th:value="${worker.id}">
+</select></td>
 <td><select class="selection_field" id="reserved-instrument">
 <option>Válassz műszert</option>
 <option th:each="instrument : ${instruments}" th:utext="${instrument.toolName}" th:value="${instrument.id}">
@@ -34,11 +40,12 @@
 </select></td>
 <td><input type="date" th:min="${actualDate}" id="start-date"></td>
 <td><input type="date" th:min="${actualDate}" id="end-date"></td>
-<td><button onclick="sendDataForUser()">Előjegyzés</button></td>
+<td><button onclick="sendDataForAdmin()">Előjegyzés</button></td>
 </tr>
 </table>
 
-<form th:action="@{/tools-registry/user/userReservation}" method="post" id="reservation-form">
+<form th:action="@{/tools-registry/admin/adminReservation}" method="post" id="reservation-form">
+<input type="hidden" id="send-worker" name="worker"> 
 <input type="hidden" id="send-instrument" name="instrument">
 <input type="hidden" id="send-additional" name="additional">
 <input type="hidden" id="start-day" name="start-day">
@@ -66,23 +73,20 @@
 <td th:utext="${reservation.userName}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
 <td th:utext="${#temporals.format(reservation.takeAwayDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
 <td th:utext="${#temporals.format(reservation.bringBackDate, 'yyyy-MM-dd HH:mm')}" th:classappend="${reservationStat.odd} ? '' : 'colored'"></td>
-<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId == userId && !reservation.isActive}">
-<button th:onclick="'deleteReservationForUser(\'' + ${reservation.id} + '\');'">Törlés</button> </td>
-<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId == userId && reservation.isActive}">
-<button disabled="disabled">Törlés</button> </td>
-<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.userId != userId}">
+<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${!reservation.isActive}">
+<button th:onclick="'deleteReservationForAdmin(\'' + ${reservation.id} + '\');'">Törlés</button></td>
+<td th:classappend="${reservationStat.odd} ? '' : 'colored'" th:if="${reservation.isActive}">
 <button disabled="disabled">Törlés</button> </td>
 </tr>
 
 </table>
 
+<input type="hidden" th:if="${param.noWorker}" id="noWorker">
 <input type="hidden" th:if="${param.noTool}" id="noTool">
 <input type="hidden" th:if="${param.invalidDates}" id="invalidDates">
 <input type="hidden" th:if="${param.invalidReservation}" id="invalidReservation">
 <script type="text/javascript" th:src="@{/script/reservation.js}"></script>
 </div>
 
-
 </body>
-
 </html>

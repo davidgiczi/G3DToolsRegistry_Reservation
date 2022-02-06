@@ -51,6 +51,17 @@ public class GeoToolReservationService {
 		return nowHun;
 	}
 	
+	public boolean isChosenWorker(String workerId) {
+		
+		try {
+			Long.parseLong(workerId);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public boolean isChosenGeoToolReservation(String instrumentId, String additionalId) {
 	
 		try {

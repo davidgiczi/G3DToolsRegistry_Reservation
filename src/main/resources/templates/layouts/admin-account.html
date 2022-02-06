@@ -22,6 +22,7 @@
  <a th:href="@{/tools-registry/admin/instruments}" th:text="#{instruments}"></a>&nbsp;&nbsp;&nbsp;
  <a th:href="@{/tools-registry/admin/additionals}" th:text="#{additionals}"></a>&nbsp;&nbsp;&nbsp;
  <a th:href="@{/tools-registry/admin/tools-in-use}" th:text="#{tools.in.use}"></a>&nbsp;&nbsp;&nbsp;
+ <a th:href="@{/tools-registry/admin/reservation}" th:text="#{tools.reservation}"></a>&nbsp;&nbsp;&nbsp;
  <a th:href="@{/tools-registry/admin/get-first-50-used-tools}" th:text="#{tools.history}"></a>&nbsp;&nbsp;&nbsp;
 </span>
 
@@ -31,6 +32,7 @@
 <div layout:fragment="additionals"></div>
 <div layout:fragment="tools-in-use"></div>
 <div layout:fragment="tools-history"></div>
+<div layout:fragment="reservations"></div>
 <img id="backdrop" alt="GeoLink3D logo watermark" th:src="@{/images/G3D_logo_back.png}">
 </body>
 <script type="text/javascript" th:src="@{/script/admin-account.js}"></script>
