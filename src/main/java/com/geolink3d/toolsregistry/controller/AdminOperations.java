@@ -41,6 +41,7 @@ import com.geolink3d.toolsregistry.model.UsedGeoTool;
 import com.geolink3d.toolsregistry.service.GeoAdditionalService;
 import com.geolink3d.toolsregistry.service.GeoInstrumentService;
 import com.geolink3d.toolsregistry.service.GeoToolInUseService;
+import com.geolink3d.toolsregistry.service.GeoToolReservationService;
 import com.geolink3d.toolsregistry.service.GeoWorkerService;
 import com.geolink3d.toolsregistry.service.LocationService;
 import com.geolink3d.toolsregistry.service.RoleService;
@@ -58,6 +59,7 @@ public class AdminOperations {
 	private UsedGeoToolService usedToolService;
 	private GeoAdditionalService additionalService;
 	private GeoToolInUseService toolInUseService;
+	private GeoToolReservationService reservationService;
  	
 	@Autowired
 	public void setWorkerService(GeoWorkerService workerService) {
@@ -92,6 +94,11 @@ public class AdminOperations {
 	@Autowired
 	public void setToolInUseService(GeoToolInUseService toolInUseService) {
 		this.toolInUseService = toolInUseService;
+	}
+	
+	@Autowired
+	public void setReservationService(GeoToolReservationService reservationService) {
+		this.reservationService = reservationService;
 	}
 
 	@RequestMapping("/account")
@@ -704,8 +711,10 @@ public class AdminOperations {
 				additionalService.save(additional.get());
 
 			}
-			
 		}
+		
+		reservationService.reservationProcess(toolId, isInstrument);
+		
 		return "redirect:/tools-registry/admin/tools-in-use";
 	}
 	

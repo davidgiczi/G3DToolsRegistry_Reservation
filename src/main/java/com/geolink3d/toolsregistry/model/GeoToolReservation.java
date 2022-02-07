@@ -1,6 +1,5 @@
 package com.geolink3d.toolsregistry.model;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,9 +36,7 @@ public class GeoToolReservation {
 	}
 
 	public ZonedDateTime getTakeAwayDate() {
-		if(takeAwayDate != null) {
-			return takeAwayDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
-		}
+		
 		return takeAwayDate;
 	}
 
@@ -48,9 +45,7 @@ public class GeoToolReservation {
 	}
 
 	public ZonedDateTime getBringBackDate() {
-		if(bringBackDate != null) {
-		return bringBackDate.withZoneSameInstant(ZoneId.of("Europe/Budapest"));
-		}
+		
 		return bringBackDate;
 	}
 
