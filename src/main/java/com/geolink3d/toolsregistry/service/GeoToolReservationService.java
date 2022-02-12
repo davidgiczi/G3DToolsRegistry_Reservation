@@ -407,6 +407,7 @@ public class GeoToolReservationService {
 		
 		for (GeoToolReservation reservation : reservations) {
 			Long currentTime = getCurrentDateTime().toEpochSecond();
+			
 			if(reservation.getTakeAwayDate().toEpochSecond() <= currentTime &&
 					currentTime < reservation.getBringBackDate().toEpochSecond() && !reservation.isActive()) {
 				
@@ -490,9 +491,9 @@ public class GeoToolReservationService {
 			instrument.setComment(
 					modifyCommentText(instrument.getComment(), worker.getUsername(), 
 							actualReservation.getTakeAwayDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) + 
-					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "-ig.");
+							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) + "\n" + 
+							"Az eszköz előjegyezve " + actualReservation.getBringBackDate()
+							.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "-ig.");
 			instrument.setPickUpPlace("Dunakeszi");
 			instrument.setPickUpDate(getCurrentDateTime());
 			instrumentRepo.save(instrument);
@@ -507,9 +508,9 @@ public class GeoToolReservationService {
 			additional.setComment(
 					modifyCommentText(additional.getComment(), worker.getUsername(), 
 							actualReservation.getTakeAwayDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))+ 
-					"\nAz eszköz előjegyezve " + actualReservation.getBringBackDate()
-					.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "-ig.");
+							actualReservation.getBringBackDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))+ "\n" +
+							"Az eszköz előjegyezve " + actualReservation.getBringBackDate()
+							.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "-ig.");
 			additional.setPickUpPlace("Dunakeszi");
 			additional.setPickUpDate(getCurrentDateTime());
 			additionalRepo.save(additional);
@@ -523,26 +524,26 @@ public class GeoToolReservationService {
 	private void putDownGeoToolBy(GeoToolReservation actualReservation) {
 		
 		GeoWorker worker = workerRepo.findById(actualReservation.getUserId()).get();
-		UsedGeoTool usedInstrument = new UsedGeoTool();
+		UsedGeoTool usedTool = new UsedGeoTool();
 		
 		if(actualReservation.isInstrument()) {
 			GeoInstrument instrument = instrumentRepo.findById(actualReservation.getToolId()).get();
 			if(instrument.isUsed()) {
-			usedInstrument.setComment(instrument.getComment());	
+			usedTool.setComment(instrument.getComment());	
 			instrument.setUsed(false);	
 			instrument.setPutDownDate(getCurrentDateTime());
 			instrument.setPutDownPlace("Dunakeszi");
 			instrument.setComment(null);
 			instrument.setFrequency(instrument.getFrequency() + 1);
 			
-			usedInstrument.setToolname(instrument.getName());
-			usedInstrument.setWorkername(worker.getLastname() + " " + worker.getFirstname());
-			usedInstrument.setPickUpPlace("Dunakeszi");
-			usedInstrument.setPickUpDate(actualReservation.getTakeAwayDate());
-			usedInstrument.setPutDownPlace("Dunakeszi");
-			usedInstrument.setPutDownDate(getCurrentDateTime());
-			usedInstrument.setInstrument(true);
-			usedToolService.save(usedInstrument);
+			usedTool.setToolname(instrument.getName());
+			usedTool.setWorkername(worker.getLastname() + " " + worker.getFirstname());
+			usedTool.setPickUpPlace("Dunakeszi");
+			usedTool.setPickUpDate(actualReservation.getTakeAwayDate());
+			usedTool.setPutDownPlace("Dunakeszi");
+			usedTool.setPutDownDate(getCurrentDateTime());
+			usedTool.setInstrument(true);
+			usedToolService.save(usedTool);
 			
 			instrument.setGeoworker(null);
 			instrument.setPickUpPlace("Dunakeszi");
@@ -554,21 +555,21 @@ public class GeoToolReservationService {
 		else {
 			GeoAdditional additional = additionalRepo.findById(actualReservation.getToolId()).get();
 			if(additional.isUsed()) {
-			usedInstrument.setComment(additional.getComment());	
+			usedTool.setComment(additional.getComment());	
 			additional.setUsed(false);	
 			additional.setPutDownDate(getCurrentDateTime());
 			additional.setPutDownPlace("Dunakeszi");
 			additional.setComment(null);
 			additional.setFrequency(additional.getFrequency() + 1);	
 			
-			usedInstrument.setToolname(additional.getName());
-			usedInstrument.setWorkername(worker.getLastname() + " " + worker.getFirstname());
-			usedInstrument.setPickUpPlace("Dunakeszi");
-			usedInstrument.setPickUpDate(actualReservation.getTakeAwayDate());
-			usedInstrument.setPutDownPlace("Dunakeszi");
-			usedInstrument.setPutDownDate(getCurrentDateTime());
-			usedInstrument.setInstrument(true);
-			usedToolService.save(usedInstrument);
+			usedTool.setToolname(additional.getName());
+			usedTool.setWorkername(worker.getLastname() + " " + worker.getFirstname());
+			usedTool.setPickUpPlace("Dunakeszi");
+			usedTool.setPickUpDate(actualReservation.getTakeAwayDate());
+			usedTool.setPutDownPlace("Dunakeszi");
+			usedTool.setPutDownDate(getCurrentDateTime());
+			usedTool.setInstrument(true);
+			usedToolService.save(usedTool);
 			
 			additional.setGeoworker(null);
 			additional.setPickUpPlace("Dunakeszi");
