@@ -409,7 +409,7 @@ public class UserOperations {
 		
 		inputComment = cutLengthOfComment(inputComment);
 		
-		if(inputComment.equals(savedComment)) {
+		if(inputComment.trim().equals(savedComment.trim()) || inputComment.replace("\r", "").equals(savedComment)){
 			return null;
 		}
 		
