@@ -44,7 +44,7 @@ public class UserReservationOperations {
 		model.addAttribute("additionals", additionalStore);
 		model.addAttribute("reservations", reservationStore);
 		model.addAttribute("actualDate", reservationService
-				.getCurrentDateTime().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+				.getCurrentDateTime()./*plusDays(1).*/format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		model.addAttribute("userId", workerRepo.findIdByUsername(reservationService.getAuthUser()));
 		
 		return "user/reservations";

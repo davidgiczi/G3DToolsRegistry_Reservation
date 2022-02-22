@@ -263,7 +263,7 @@ public class GeoToolReservationService {
 			startDay = endDay;
 			endDay = temp;
 		}
-		endDay = endDay.plusMinutes( 60 * 23 + 59 );
+		endDay = endDay.plusMinutes( 60 * 14 );
 		if(instrumentReservation != null) {
 			instrumentReservation.setUserId(userId);
 			instrumentReservation.setInstrument(true);

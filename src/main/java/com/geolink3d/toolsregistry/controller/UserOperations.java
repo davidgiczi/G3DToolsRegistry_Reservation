@@ -413,7 +413,7 @@ public class UserOperations {
 			return null;
 		}
 		
-		return inputComment;
+		return inputComment.trim();
 	}
 	
 	private String cutLengthOfComment(String comment) {
